@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+### ARMA - a script to train and plot Raven's AMRA model.
+## Users must have RAVEN_DIR environment variable set.
+## This script assumes raven is in ~/Documents/projects/raven.
+readonly RAVEN="${RAVEN_DIR:-$HOME/Documents/projects/raven}"
+readonly ME="$(basename "${0}")"  # Script name
+readonly ME_DIR="$(dirname "${0}")"  # Location of script.
+declare XML_FILE
+
+## usage()
+##
+## Print script usage instructions
+usage() {
+  cat <<- EOM
+	${ME}: Train ARMA Models for EPRI
+	USAGE:
+	    ${ME} [-h] XML_FILE
+
+	OPTIONS:
+	    -h        - Show this message.
+
+	ARGUMENTS:
+	    XML_FILE  - RAVEN input file to run
+	EOM
+}
+
+## parse_args()
+##
+## This script requires an xml input file.
+parse_args() {
+  while getopts ":h" flag; do
+    case "${flag}" in
+      h)
+        usage
+        exit 0
+        ;;
+      \?)
+        usage
+        exit 1
+        ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  [[ -z "${1}" ]] && usage && exit 1
+  [[ -n "${1}" ]] && XML_FILE="${1}"
+}
+
+## run_raven()
+##
+## Run the raven framework on given xml input file.
+run_raven() {
+  eval "${RAVEN}/raven_framework" "${XML_FILE}"
+}
+
+## run_plotter()
+##
+## Run the scripts/rom_plots.py using xml input file.
+run_plotter() {
+  local xml
+  local state
+  local case
+  xml="$(basename "${XML_FILE}")"
+  state="${xml:0:2}"
+  state="${state^^}"
+  case="$(echo "${xml}" | sed -E 's/(oh|il)_//g; s/_train.*//g')"
+  eval "${ME_DIR}/rom_plots.py" "-t" "-e" "--state \"${state}\"" "--case \"${case}\""
+}
+
+## main()
+##
+## main driver function of the script.
+main() {
+  parse_args "${@}"
+  run_raven && run_plotter
+}
+
+if [[ "${BASH_SOURCE[0]}" = "${0}" ]]; then
+  main "${@}"
+fi
+
+# Local Variables:
+# mode: shell-script
+# sh-basic-offset: 2
+# End:

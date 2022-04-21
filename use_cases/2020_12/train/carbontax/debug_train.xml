@@ -1,0 +1,113 @@
+<Simulation verbosity="debug">
+  <RunInfo>
+    <WorkingDir>IL</WorkingDir>
+    <Sequence>load, train, meta, serialize, sample</Sequence>
+  </RunInfo>
+
+  <Files>
+    <Input name="input">Test.csv</Input>
+    <Input name="pk">test.pk</Input>
+  </Files>
+
+  <Steps>
+    <IOStep name="load">
+      <Input class="Files" type="">input</Input>
+      <Output class="DataObjects" type="HistorySet">input</Output>
+    </IOStep>
+    <RomTrainer name="train">
+      <Input class="DataObjects" type="HistorySet">input</Input>
+      <Output class="Models" type="ROM">arma</Output>
+    </RomTrainer>
+    <IOStep name="meta">
+      <Input class="Models" type="ROM">arma</Input>
+      <Output class="DataObjects" type="DataSet">meta</Output>
+      <Output class="OutStreams" type="Print">testMeta</Output>
+    </IOStep>
+    <IOStep name="serialize">
+      <Input class="Models" type="ROM">arma</Input>
+      <Output class="Files" type="">pk</Output>
+    </IOStep>
+    <MultiRun name="sample">
+      <Input class="DataObjects" type="PointSet">placeholder</Input>
+      <Model class="Models" type="ROM">arma</Model>
+      <Sampler class="Samplers" type="MonteCarlo">mc</Sampler>
+      <Output class="DataObjects" type="DataSet">synthetic</Output>
+      <Output class="OutStreams" type="Print">test_synthetic</Output>
+    </MultiRun>
+  </Steps>
+
+  <DataObjects>
+    <PointSet name="placeholder">
+      <Input>scaling</Input>
+      <Output>OutputPlaceHolder</Output>
+    </PointSet>
+    <HistorySet name="input">
+      <Input>scaling</Input>
+      <Output>TOTALLOAD, HOUR, YEAR</Output>
+      <options>
+        <pivotParameter>HOUR</pivotParameter>
+      </options>
+    </HistorySet>
+    <DataSet name="synthetic">
+      <Input>scaling</Input>
+      <Output>TOTALLOAD</Output>
+      <Index var="HOUR">TOTALLOAD</Index>
+      <Index var="YEAR">TOTALLOAD</Index>
+    </DataSet>
+  <DataSet name="meta"/>
+  </DataObjects>
+
+  <Models>
+    <ROM name="arma" subType="ARMA">
+      <pivotParameter>HOUR</pivotParameter>
+      <Features>scaling</Features>
+      <Target>TOTALLOAD, HOUR</Target>
+      <P>0</P>
+      <Q>1</Q>
+      <Fourier>8760, 4380, 2190, 1251.42, 973, 515.29411, 438, 172, 168, 33.6, 23.93442623, 12, 8, 6</Fourier>
+        <!--<nyquistScalar>8</nyquistScalar>-->
+      <Segment grouping='interpolate'>
+        <macroParameter>YEAR</macroParameter>
+        <Classifier class='Models' type='PostProcessor'>classifier</Classifier>
+        <evalMode>full</evalMode>
+        <subspace pivotLength='24' shift='zero'>HOUR</subspace>
+        <evaluationClusterChoice>random</evaluationClusterChoice>
+      </Segment>
+      <reseedCopies>True</reseedCopies>
+      <preserveInputCDF>False</preserveInputCDF>
+      <seed>42</seed>
+    </ROM>
+    <PostProcessor name="classifier" subType="DataMining">
+      <KDD labelFeature="labels" lib="SciKitLearn">
+        <Features>TOTALLOAD</Features>
+        <SKLtype>cluster|KMeans</SKLtype>
+        <n_clusters>2</n_clusters>
+        <tol>1E-13</tol>
+        <init>k-means++</init>
+        <random_state>2</random_state>
+        <precompute_distances>True</precompute_distances>
+      </KDD>
+    </PostProcessor>
+  </Models>
+
+  <OutStreams>
+    <Print name="testMeta">
+      <type>csv</type>
+      <source>meta</source>
+    </Print>
+    <Print name="test_synthetic">
+      <type>csv</type>
+      <source>synthetic</source>
+    </Print>
+  </OutStreams>
+
+  <Samplers>
+    <MonteCarlo name="mc">
+      <samplerInit>
+        <limit>1</limit>
+        <initialSeed>42</initialSeed>
+      </samplerInit>
+      <constant name="scaling">1.0</constant>
+    </MonteCarlo>
+  </Samplers>
+</Simulation>

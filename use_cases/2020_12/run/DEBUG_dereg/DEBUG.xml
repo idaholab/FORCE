@@ -1,0 +1,186 @@
+<HERON>
+  <Case name="Dereg">
+    <mode>opt</mode>
+    <label name="state">IL</label>
+    <label name="strategy">CarbonTax</label>
+    <label name="price_struct">Default</label>
+    <label name="regulated">No</label>
+    <num_arma_samples>3</num_arma_samples>
+    <time_discretization>
+      <year_variable>YEAR</year_variable>
+      <time_variable>HOUR</time_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>2</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.0</tax>
+      <inflation>0.0</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <custom>
+        <location>../dispatchers/dereg.py</location>
+      </custom>
+    </dispatcher>
+  </Case>
+
+  <Components>
+    <Component name="NPP">
+      <produces dispatch="fixed" resource="electricity">
+        <capacity resource="electricity">
+          <Function method="NPP_cap">functions</Function>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+    <Component name="HTSE">
+      <produces dispatch="dependent" resource="H2">
+        <capacity resource="H2">
+          <opt_bounds>0, 20</opt_bounds>
+        </capacity>
+        <consumes>electricity</consumes>
+        <transfer>
+          <linear>
+            <rate resource="electricity">-0.043</rate>
+            <rate resource="H2">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow inflation="none" mult_target="False" name="capex" taxable="True" type="one-time">
+          <driver>
+            <variable>HTSE_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-545263737</fixed_value>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>7.4</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>0.955</fixed_value>
+          </scaling_factor_x>
+          <depreciate>15</depreciate>
+        </CashFlow>
+        <CashFlow inflation="none" mult_target="False" name="fixed_OM" period="year" taxable="True" type="repeating">
+          <driver>
+            <variable>HTSE_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-70752705</fixed_value>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>7.4</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>0.955</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="H2_storage">
+      <stores dispatch="independent" resource="H2">
+        <capacity resource="H2">
+          <opt_bounds>0, 1e6</opt_bounds>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow inflation="none" mult_target="False" name="capex" taxable="True" type="one-time">
+          <driver>
+            <variable>H2_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-550</fixed_value>
+          </reference_price>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="grid">
+      <demands dispatch="dependent" resource="electricity">
+        <capacity>
+          <Function method="get_load">functions</Function>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow inflation="none" mult_target="False" name="grid_sales" taxable="True" type="repeating">
+          <driver>
+            <Function method="e_consume">functions</Function>
+          </driver>
+          <reference_price>
+            <Function method="grid_price">functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="H2_market">
+      <demands dispatch="dependent" resource="H2">
+        <capacity>
+          <opt_bounds>0, -20</opt_bounds>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow inflation="none" mult_target="False" name="H2_sales" taxable="True" type="repeating">
+          <driver>
+            <Function method="H2_activity">functions</Function>
+          </driver>
+          <reference_price>
+            <Function method="H2_price">functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="Secondary">
+      <produces dispatch="dependent" resource="electricity">
+        <capacity resource="electricity">
+          <fixed_value>1e4</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow inflation="none" mult_target="False" name="secondary_e_fixup" taxable="True" type="repeating">
+          <driver>
+            <Function method="secondary_activity">functions</Function>
+          </driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="E_Penalty">
+      <demands dispatch="dependent" resource="electricity">
+        <capacity resource="electricity">
+          <fixed_value>-1e4</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow inflation="none" mult_target="False" name="penalty_e_fixup" taxable="True" type="repeating">
+          <driver>
+            <Function method="penalty_activity">functions</Function>
+          </driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+  </Components>
+
+  <DataGenerators>
+    <ARMA evalMode="clustered" name="Load" variable="TOTALLOAD">../../train/carbontax/IL/test.pk</ARMA>
+    <Function name="functions">../functions.py</Function>
+  </DataGenerators>
+</HERON>

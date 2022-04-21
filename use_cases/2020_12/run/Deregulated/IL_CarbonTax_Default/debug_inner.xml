@@ -1,0 +1,174 @@
+<Simulation verbosity="debug">
+  <RunInfo>
+    <JobName>D_CarbonTax_Default_i</JobName>
+    <WorkingDir>D_CarbonTax_Default_i</WorkingDir>
+    <Sequence>arma_sampling, summarize</Sequence>
+    <internalParallel>False</internalParallel>
+    <!--
+    -->
+  </RunInfo>
+
+  <Steps>
+    <MultiRun name="arma_sampling">
+      <Input class="DataObjects" type="PointSet">dispatch_placeholder</Input>
+      <Model class="Models" type="EnsembleModel">sample_and_dispatch</Model>
+      <Sampler class="Samplers" type="MonteCarlo">mc_arma_dispatch</Sampler>
+      <!-- <Output class='DataObjects' type='DataSet'>arma_samples</Output> -->
+      <Output class="DataObjects" type="DataSet">arma_metrics</Output>
+    </MultiRun>
+    <PostProcess name="summarize">
+      <Input class="DataObjects" type="PointSet">arma_metrics</Input>
+      <Model class="Models" type="PostProcessor">average</Model>
+      <Output class="DataObjects" type="PointSet">metrics_avg</Output>
+      <Output class="OutStreams" type="Print">disp_results</Output>
+    </PostProcess>
+  </Steps>
+
+  <VariableGroups>
+    <Group name="GRO_dispatch">GRO_dispatch_in, GRO_dispatch_out, _ROM_Cluster, HOUR, YEAR</Group>
+    <Group name="GRO_dispatch_in">GRO_dispatch_in_scalar, GRO_dispatch_in_Time</Group>
+    <!-- <Group name='GRO_dispatch_out'       >GRO_dispatch_out_Time</Group> -->
+    <Group name="GRO_dispatch_out">NPV</Group>
+    <Group name="GRO_dispatch_in_scalar">GRO_capacities, scaling, GRO_case_labels</Group>
+    <Group name="GRO_dispatch_in_Time">TOTALLOAD</Group>
+    <!-- <Group name='GRO_dispatch_out_Time'  >GRO_init_disp</Group> -->
+    <Group name="GRO_armasamples">GRO_armasamples_in, GRO_armasamples_out</Group>
+    <Group name="GRO_armasamples_in">GRO_armasamples_in_scalar</Group>
+    <Group name="GRO_armasamples_out">GRO_armasamples_out_scalar</Group>
+    <Group name="GRO_armasamples_in_scalar">scaling, time_delta, GRO_capacities, GRO_case_labels</Group>
+    <Group name="GRO_armasamples_out_scalar">NPV</Group>
+    <Group name="GRO_final_return">
+      mean_NPV, std_NPV, med_NPV, max_NPV, min_NPV,
+      perc_5_NPV, perc_95_NPV, samp_NPV, var_NPV
+    </Group>
+    <Group name="GRO_means">Dispatch__NPP__electricity, Dispatch__HTSE__electricity, Dispatch__HTSE__H2, Dispatch__H2_storage__H2, Dispatch__H2_storage__H2, Dispatch__grid__electricity, Dispatch__H2_market__H2, Dispatch__Secondary__electricity, Dispatch__E_Penalty__electricity</Group>
+    <Group name="GRO_interp">stepwise</Group>
+    <Group name="GRO_capacities">HTSE_capacity, H2_storage_capacity, H2_market_capacity, Secondary_capacity, E_Penalty_capacity, NPP_bid_adjust</Group>
+    <Group name="GRO_init_disp">Dispatch__NPP__electricity, Dispatch__HTSE__electricity, Dispatch__HTSE__H2, Dispatch__H2_storage__H2, Dispatch__H2_storage__H2, Dispatch__grid__electricity, Dispatch__H2_market__H2, Dispatch__Secondary__electricity, Dispatch__E_Penalty__electricity</Group>
+    <Group name="GRO_case_labels">state_label, strategy_label, price_struct_label</Group>
+  </VariableGroups>
+
+  <DataObjects>
+    <DataSet name="arma_samples">
+      <Input>GRO_armasamples_in</Input>
+      <Output>GRO_armasamples_out</Output>
+    </DataSet>
+    <PointSet name="arma_metrics">
+      <Output>NPV</Output>
+    </PointSet>
+    <PointSet name="metrics_avg">
+      <Output>GRO_final_return</Output>
+    </PointSet>
+    <DataSet name="disp_avg">
+      <Output>GRO_means</Output>
+      <Index var="HOUR">GRO_means</Index>
+      <Index var="YEAR">GRO_means</Index>
+    </DataSet>
+    <DataSet name="dispatch_eval">
+      <Input>GRO_dispatch_in</Input>
+      <Index var="HOUR">GRO_dispatch_in_Time</Index>
+      <Index var="YEAR">GRO_dispatch_in_Time</Index>
+      <Index var="_ROM_Cluster">GRO_dispatch_in_Time</Index>
+    </DataSet>
+    <PointSet name="dispatch_placeholder">
+      <Input>GRO_dispatch_in_scalar</Input>
+    </PointSet>
+    <DataSet name="Load_meta" />
+    <PointSet name="Load_placeholder">
+      <Input>scaling</Input>
+    </PointSet>
+    <DataSet name="Load_samples">
+      <Input>scaling</Input>
+      <Output>TOTALLOAD</Output>
+      <Index var="HOUR">TOTALLOAD</Index>
+      <Index var="YEAR">TOTALLOAD</Index>
+      <Index var="_ROM_Cluster">TOTALLOAD</Index>
+    </DataSet>
+  </DataObjects>
+
+  <Models>
+    <ExternalModel ModuleToLoad="/Users/talbpw/projects/HERON/templates/../src/DispatchManager" name="dispatch" subType="">
+      <variables>GRO_dispatch, GRO_armasamples</variables>
+    </ExternalModel>
+    <ExternalModel ModuleToLoad="/Users/talbpw/projects/HERON/templates/../src/DispatchBypass" name="dispatch_bypass" subType="">
+      <variables>GRO_dispatch, GRO_armasamples</variables>
+    </ExternalModel>
+    <ExternalModel ModuleToLoad="/Users/talbpw/projects/HERON/templates/../src/ArmaBypass" name="arma_bypass" subType="">
+      <variables>TOTALLOAD, YEAR, _ROM_Cluster, HOUR, scaling</variables>
+    </ExternalModel>
+    <EnsembleModel name="sample_and_dispatch" subType="">
+      <Model class="Models" type="ExternalModel">dispatch_bypass
+        <Input class="DataObjects" type="PointSet">dispatch_placeholder</Input>
+        <TargetEvaluation class="DataObjects" type="DataSet">dispatch_eval</TargetEvaluation>
+      </Model>
+      <Model class="Models" type="ExternalModel">arma_bypass
+        <Input class="DataObjects" type="PointSet">Load_placeholder</Input>
+        <TargetEvaluation class="DataObjects" type="DataSet">Load_samples</TargetEvaluation>
+      </Model>
+      <!--
+      <Model class="Models" type="ROM">Load
+        <Input class="DataObjects" type="PointSet">Load_placeholder</Input>
+        <TargetEvaluation class="DataObjects" type="DataSet">Load_samples</TargetEvaluation>
+      </Model>
+      -->
+    </EnsembleModel>
+    <PostProcessor name="average" subType="BasicStatistics">
+      <expectedValue prefix="mean">NPV</expectedValue>
+      <sigma prefix="std">NPV</sigma>
+      <median prefix="med">NPV</median>
+      <maximum prefix="max">NPV</maximum>
+      <minimum prefix="min">NPV</minimum>
+      <percentile prefix="perc">NPV</percentile>
+      <samples prefix="samp">NPV</samples>
+      <variance prefix="var">NPV</variance>
+      <!-- additional optional metrics -->
+      <!--skewness prefix="skew">NPV</skewness>
+      <kurtosis prefix="kurt">NPV</kurtosis>
+      <variationCoefficient prefix="vc">NPV</variationCoefficient-->
+    </PostProcessor>
+    <ROM name="Load" subType="pickledROM">
+      <clusterEvalMode>clustered</clusterEvalMode>
+    </ROM>
+  </Models>
+
+  <Files>
+    <Input name="libs">../../heron.lib</Input>
+    <!--
+    <Input name="/Users/talbpw/run/heron_cases/2020/12/train/carbontax/IL/arma.pk">/Users/talbpw/run/heron_cases/2020/12/train/carbontax/IL/arma.pk</Input>
+    -->
+  </Files>
+
+  <Samplers>
+    <MonteCarlo name="mc_arma_dispatch">
+      <samplerInit>
+        <initialSeed>42</initialSeed>
+        <limit>3</limit>
+      </samplerInit>
+      <!-- HERON makes component capacities nodes, Outer fills them -->
+      <constant name="scaling">1.0</constant>
+      <constant name="HTSE_capacity">42</constant>
+      <constant name="H2_storage_capacity">42</constant>
+      <constant name="H2_market_capacity">42</constant>
+      <constant name="Secondary_capacity">10000.0</constant>
+      <constant name="E_Penalty_capacity">-10000.0</constant>
+      <constant name="state_label">IL</constant>
+      <constant name="strategy_label">CarbonTax</constant>
+      <constant name="price_struct_label">Default</constant>
+    </MonteCarlo>
+  </Samplers>
+
+  <OutStreams>
+    <Print name="disp_debug">
+      <type>csv</type>
+      <source>arma_samples</source>
+    </Print>
+    <Print name="disp_results">
+      <type>csv</type>
+      <source>metrics_avg</source>
+    </Print>
+    <Print name="Load_meta">
+      <type>csv</type>
+      <source>Load_meta</source>
+    </Print>
+  </OutStreams>
+</Simulation>

@@ -1,0 +1,41 @@
+Designation,Name
+clcl-x1,Existing Coal Class 1
+clcl-x2,Existing Coal Class 2
+clcl-x3,Existing Coal Class 3
+clcl-x4,Existing Coal Class 4
+clng-r1,Coal refit to NG Class 1
+clng-r2,Coal refit to NG Class 2
+clng-r3,Coal refit to NG Class 3
+cbcf-x1,Coal co-burn Biofuel Class 1
+cbcf-x2,Coal co-burn Biofuel Class 2
+cbcf-x3,Coal co-burn Biofuel Class 3
+cbcf-x4,Coal co-burn Biofuel Class 4
+ngcc-x1,NG Combined Cycle Class 1
+ngcc-x2,NG Combined Cycle Class 2
+ngcc-x3,NG Combined Cycle Class 3
+ngcc-n,NG Combined Cycle New
+ngst-x,NG Steam Existing
+nggt-x1,NG Gas Turbine Class 1
+nggt-x2,NG Gas Turbine Class 2
+nggt-x3,NG Gas Turbine Class 3
+nggt-n,NG Gas Turbine New
+ptsg-x,Petroleum Steam Gas Turbine
+othc-x,Existing Biomass/Other
+h2cc-n,Hydrogen Combined Cycle
+h2cc-ig,Integrated Gasification Hydrogen Combined Cycle
+bioe-r1,Bioenergy - Repowered
+becs-n,Bioenergy - New
+h2cc-igcs,Integrated Gasification Hydrogen Combined Cycle w/ Carbon Capture
+ngcs-n,NG Combined Cycle w/ Carbon Capture
+nucl-n1,New Nuclear (Traditional)
+nucl-n2,New Nuclear (SMR)
+hydr-x,Existing Hydropower
+wind-r,Repowered Wind
+wind-n3,Wind (Class 3 Resource)
+wind-n4,Wind (Class 4 Resource)
+wind-n5,Wind (Class 5 Resource)
+wind-n6,Wind (Class 6 Resource)
+wnos-n1,Offshore Wind
+pvft-n4,PV - Fixed Axis (Class 4 Resource)
+pvsx-n4,PV - Single Axis Tracking (Class 4 Resource)
+pvdx-n4,PV - Dual Axis Tracking (Class 4 Resource)

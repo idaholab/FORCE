@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+readonly REMOTE_ROOT="/scratch/mcdodyla/heron_cases/2021/12/run"
+readonly LOCAL_ROOT="${HOME}/Documents/projects/heron_cases/2021/12/run"
+
+readonly FNAME="opt_soln_0.csv"
+
+readonly CES_STOR="${REMOTE_ROOT}/ces_storage/CES_Stor_o/${FNAME}"
+readonly CES_NSTOR="${REMOTE_ROOT}/ces/CES_NoStor_o/${FNAME}"
+readonly REF_STOR="${REMOTE_ROOT}/default_storage/Ref_Stor_o/${FNAME}"
+readonly REF_NSTOR="${REMOTE_ROOT}/default/Ref_NoStor_o/${FNAME}"
+
+readonly SNAME="sweep.csv"
+
+readonly B_CES_STOR="${REMOTE_ROOT}/ces_storage_baseline/B_CES_Stor_o/${FNAME}"
+readonly B_CES_NSTOR="${REMOTE_ROOT}/ces_baseline/B_CES_NoStor_o/${FNAME}"
+readonly B_REF_STOR="${REMOTE_ROOT}/default_storage_baseline/B_Ref_Stor_o/${FNAME}"
+readonly B_REF_NSTOR="${REMOTE_ROOT}/default_baseline/B_Ref_NoStor_o/${FNAME}"
+readonly B_CES_SENS_NSTOR="${REMOTE_ROOT}/ces_sens_baseline/B_CES_SENS_NoStor_o/${FNAME}"
+
+
+declare -A arr=([default]="Ref_NoStor_o"
+                [default_storage]="Ref_Stor_o"
+                [ces]="CES_NoStor_o"
+                # [ces_sens]="CES_SENS_NoStor_o"
+                [ces_storage]="CES_Stor_o")
+
+for key in "${!arr[@]}"
+do
+  # echo "Copying ${REMOTE_ROOT}/${key}/${arr[$key]}/${FNAME} to ${LOCAL_ROOT}/${key}/gold/${FNAME}"
+  scp mcdodyla@falcon1:"${REMOTE_ROOT}/${key}/${arr[$key]}/${FNAME}" "${LOCAL_ROOT}/${key}/gold/${FNAME}"
+  scp mcdodyla@falcon1:"${REMOTE_ROOT}/${key}_baseline/B_${arr[$key]}/${SNAME}" "${LOCAL_ROOT}/${key}_baseline/gold/${SNAME}"
+done
+
+# scp mcdodyla@falcon1:/scratch/mcdodyla/heron_cases/2021/12/run/ces_sens_05/CES_SENS_05_NoStor_o/opt_soln_0.csv "${LOCAL_ROOT}/ces_sens_05/gold/opt_soln_0.csv"
+# scp mcdodyla@falcon1:/scratch/mcdodyla/heron_cases/2021/12/run/ces_sens_10/CES_SENS_10_NoStor_o/opt_soln_0.csv "${LOCAL_ROOT}/ces_sens_10/gold/opt_soln_0.csv"
+# scp mcdodyla@falcon1:/scratch/mcdodyla/heron_cases/2021/12/run/ces_sens_20/CES_SENS_20_NoStor_o/opt_soln_0.csv "${LOCAL_ROOT}/ces_sens_20/gold/opt_soln_0.csv"
+
+
+# scp mcdodyla@falcon1:"${REF_NSTOR}" "${LOCAL_ROOT}/default/gold/${FNAME}"
+# scp mcdodyla@falcon1:"${REF_STOR}" "${LOCAL_ROOT}/default_storage/gold/${FNAME}"
+# scp mcdodyla@falcon1:"${CES_NSTOR}" "${LOCAL_ROOT}/ces/gold/${FNAME}"
+# scp mcdodyla@falcon1:"${CES_STOR}" "${LOCAL_ROOT}/ces_storage/gold/${FNAME}"
+#
+#
+#
+# scp mcdodyla@falcon1:"${B_REF_NSTOR}" "${LOCAL_ROOT}/default_baseline/gold/${SNAME}"
+# scp mcdodyla@falcon1:"${B_REF_STOR}" "${LOCAL_ROOT}/default_storage_baseline/gold/${SNAME}"
+# scp mcdodyla@falcon1:"${B_CES_NSTOR}" "${LOCAL_ROOT}/ces_baseline/gold/${SNAME}"
+# scp mcdodyla@falcon1:"${B_CES_STOR}" "${LOCAL_ROOT}/ces_storage_baseline/gold/${SNAME}"

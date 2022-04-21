@@ -1,0 +1,187 @@
+<HERON>
+  <Case name="D_CarbonTax_Default">
+    <mode>opt</mode>
+    <label name="state">IL</label>
+    <label name="strategy">CarbonTax</label>
+    <label name="price_struct">Default</label>
+    <label name="regulated">No</label>
+    <label name="rotated">Yes</label>
+    <num_arma_samples>96</num_arma_samples>
+    <time_discretization>
+      <year_variable>YEAR</year_variable>
+      <time_variable>HOUR</time_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>26</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.25</tax>
+      <inflation>0.025</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <custom>
+        <location>../../dispatchers/dereg.py</location>
+      </custom>
+    </dispatcher>
+  </Case>
+
+  <Components>
+    <Component name="NPP">
+      <produces resource="electricity" dispatch="fixed">
+        <capacity resource="electricity">
+          <Function method="NPP_cap">functions</Function>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+    <Component name="HTSE">
+      <produces resource="H2" dispatch="dependent">
+        <capacity resource="H2">
+          <Function method="get_HTSE_cap_from_delta">functions</Function>
+        </capacity>
+        <consumes>electricity</consumes>
+        <transfer>
+          <linear>
+            <rate resource="electricity">-0.043</rate>
+            <rate resource="H2">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <Function method="get_HTSE_cap_from_delta_driver">functions</Function>
+          </driver>
+          <reference_price>
+            <fixed_value>-545263737</fixed_value>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>7.4</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>0.955</fixed_value>
+          </scaling_factor_x>
+          <depreciate>15</depreciate>
+        </CashFlow>
+        <CashFlow name="fixed_OM" type="repeating" period="year" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <Function method="get_HTSE_cap_from_delta_driver">functions</Function>
+          </driver>
+          <reference_price>
+            <fixed_value>-70752705</fixed_value>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>7.4</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>0.955</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="H2_storage">
+      <stores resource="H2" dispatch="independent">
+        <capacity resource="H2">
+          <opt_bounds>0, 1e6</opt_bounds>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>H2_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-550</fixed_value>
+          </reference_price>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="grid">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity>
+          <Function method="get_load">functions</Function>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="grid_sales" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <Function method="e_consume">functions</Function>
+          </driver>
+          <reference_price>
+            <Function method="grid_price">functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="H2_market">
+      <demands resource="H2" dispatch="dependent">
+        <capacity>
+          <opt_bounds>0, -20</opt_bounds>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="H2_sales" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <Function method="H2_activity">functions</Function>
+          </driver>
+          <reference_price>
+            <Function method="H2_price">functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="Secondary">
+      <produces resource="electricity" dispatch="dependent">
+        <capacity resource="electricity">
+          <fixed_value>1e4</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="secondary_e_fixup" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <Function method="secondary_activity">functions</Function>
+          </driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="E_Penalty">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity resource="electricity">
+          <fixed_value>-1e4</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="penalty_e_fixup" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <Function method="penalty_activity">functions</Function>
+          </driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+  </Components>
+
+  <DataGenerators>
+    <ARMA name="Load" variable="TOTALLOAD" evalMode="clustered">../../../train/carbontax/IL/arma.pk</ARMA>
+    <Function name="functions">../../functions.py</Function>
+  </DataGenerators>
+</HERON>

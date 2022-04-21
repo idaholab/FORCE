@@ -1,0 +1,85 @@
+<Simulation verbosity="debug">
+  <RunInfo>
+    <WorkingDir>LDC</WorkingDir>
+    <Sequence>load, sample</Sequence>
+  </RunInfo>
+
+  <Files>
+    <Input name="pk">../IL/arma.pk</Input>
+  </Files>
+
+  <Steps>
+    <IOStep name="load">
+      <Input class="Files" type="">pk</Input>
+      <Output class="Models" type="ROM">arma</Output>
+    </IOStep>
+    <MultiRun name="sample">
+      <Input class="DataObjects" type="PointSet">placeholder</Input>
+      <Model class="Models" type="EnsembleModel">ens</Model>
+      <Sampler class="Samplers" type="MonteCarlo">mc</Sampler>
+      <Output class="DataObjects" type="DataSet">ldc_data</Output>
+      <Output class="OutStreams" type="Print">ldc_data</Output>
+    </MultiRun>
+  </Steps>
+
+  <DataObjects>
+    <PointSet name="placeholder"/>
+    <DataSet name="eval_arma">
+      <Input>scaling</Input>
+      <Output>TOTALLOAD, cluster_multiplicity</Output>
+      <Index var="HOUR">TOTALLOAD</Index>
+      <Index var="YEAR">TOTALLOAD, cluster_multiplicity</Index>
+      <Index var="_ROM_Cluster">TOTALLOAD, cluster_multiplicity</Index>
+    </DataSet>
+    <DataSet name="eval_ldc">
+      <Input>TOTALLOAD, strategy, price_struct, cluster_multiplicity</Input>
+      <Output>counts, prices</Output>
+      <Index var="HOUR">TOTALLOAD</Index>
+      <Index var="YEAR">TOTALLOAD, cluster_multiplicity, counts, prices</Index>
+      <Index var="_ROM_Cluster">TOTALLOAD, cluster_multiplicity</Index>
+      <Index var="techs">counts, prices</Index>
+    </DataSet>
+    <DataSet name="ldc_data">
+      <Output>counts, prices</Output>
+      <Index var="techs">counts, prices</Index>
+      <Index var="YEAR">counts, prices</Index>
+    </DataSet>
+  </DataObjects>
+
+  <Models>
+    <ROM name="arma" subType="pickledROM">
+      <clusterEvalMode>clustered</clusterEvalMode>
+    </ROM>
+    <ExternalModel name='ldc' ModuleToLoad='../../analyze_stack.py' subType="">
+      <variables>TOTALLOAD, counts, prices, HOUR, YEAR, _ROM_Cluster, strategy, price_struct, cluster_multiplicity, techs</variables>
+    </ExternalModel>
+    <EnsembleModel name='ens' subType=''>
+      <Model class='Models' type='ROM'>arma
+        <Input class='DataObjects' type='PointSet'>placeholder</Input>
+        <TargetEvaluation class='DataObjects' type='DataSet'>eval_arma</TargetEvaluation>
+      </Model>
+      <Model class='Models' type='ExternalModel'>ldc
+        <Input class='DataObjects' type='PointSet'>placeholder</Input>
+        <TargetEvaluation class='DataObjects' type='DataSet'>eval_ldc</TargetEvaluation>
+      </Model>
+    </EnsembleModel>
+  </Models>
+
+  <OutStreams>
+    <Print name="ldc_data">
+      <type>csv</type>
+      <source>ldc_data</source>
+    </Print>
+  </OutStreams>
+
+  <Samplers>
+    <MonteCarlo name="mc">
+      <samplerInit>
+        <limit>1</limit>
+      </samplerInit>
+      <constant name="scaling">1.0</constant>
+      <constant name="strategy">1</constant>
+      <constant name="price_struct">0</constant>
+    </MonteCarlo>
+  </Samplers>
+</Simulation>

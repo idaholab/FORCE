@@ -1,0 +1,2 @@
+H2_storage_capacity,H2_market_capacity,Secondary_capacity,E_Penalty_capacity,IES_delta_cap,NPP_bid_adjust,mean_NPV,std_NPV,ProbabilityWeight,PointProbability,prefix
+0,0,10000,-10000,0,0,11243820312,1346090330,1,1,1

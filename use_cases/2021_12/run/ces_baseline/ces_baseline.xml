@@ -1,0 +1,255 @@
+<HERON>
+  <!-- We used 6 hour storage media cost per unit energy reference for TES -->
+  <Case name="B_CES_NoStor">
+    <label name="state">NY</label>
+    <label name="price_struct">CES</label>
+    <label name="strategy">No_Storage</label>
+    <mode>sweep</mode>
+    <num_arma_samples>10</num_arma_samples>
+    <time_discretization>
+      <year_variable>YEAR</year_variable>
+      <time_variable>HOUR</time_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>20</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.25</tax>
+      <inflation>0.025</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <custom>
+        <location>../dispatchers/dereg.py</location>
+      </custom>
+    </dispatcher>
+  </Case>
+
+  <Components>
+    <!--PRODUCING COMPONENTS-->
+    <Component name="Additional_NPP">
+      <produces resource="heat" dispatch="fixed">
+        <capacity resource="heat">
+          <sweep_values>0,50</sweep_values>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>80</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>Additional_NPP_capacity</variable>
+          </driver>
+          <reference_price>
+            <!-- 3000 $/kWe * 1e6 kWe/GWe * 0.06 GWe SMR = Cost for SMR-->
+            <fixed_value>-180e6</fixed_value> <!-- This number is based on $3000/kWe -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.85</fixed_value>
+          </scaling_factor_x>
+          <reference_driver>
+            <!-- Based on 60 MWe SMR Reactor -->
+            <fixed_value>0.18182</fixed_value>
+          </reference_driver>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="turbine">
+      <!-- Indpendent & Dependent dispatch are currently the same thing -->
+      <!-- This needs to be fixed to be flexible -->
+      <produces resource="electricity" dispatch="independent">
+        <consumes>heat</consumes>
+        <capacity resource="electricity">
+          <fixed_value>200</fixed_value>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="heat">-1</rate>
+            <rate resource="electricity">0.33</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+      </economics>
+    </Component>
+
+
+    <!--DEMANDING COMPONENTS-->
+    <Component name="grid">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity>
+          <!-- This is as large as possible sink -->
+          <fixed_value>100</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="grid_sales" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <Function method="grid_price">functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="NPP_unused">
+      <demands resource="heat" dispatch="dependent">
+        <capacity resource="heat">
+          <fixed_value>-100</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="unused_cost" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <activity>heat</activity>
+          </driver>
+          <reference_price>
+            <!-- $17000/GWe * 0.33 = 5610 $/GWhthermal -->
+            <fixed_value>5610</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <!--STORAGE COMPONENTS-->
+    <Component name="H2_storage">
+      <stores resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>0</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+        <RTE>0.38</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>H2_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-548e6</fixed_value>
+          </reference_price>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="ETES_storage">
+      <stores resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>0</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+        <RTE>0.55</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>ETES_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-417e6</fixed_value>
+          </reference_price>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="Hitec_XL_storage">
+      <stores resource="heat" dispatch="independent">
+        <capacity resource="heat">
+          <fixed_value>0</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+        <!-- RTE 0.27 / 0.33 -->
+        <RTE>0.818181818182</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>Hitec_XL_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-199e6</fixed_value>
+            <multiplier>0.33</multiplier>
+          </reference_price>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <!-- This component shouldn't win over Hitec XL-->
+    <Component name="Dowtherm_A_storage">
+      <stores resource="heat" dispatch="independent">
+        <capacity resource="heat">
+          <fixed_value>0</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+        <!-- RTE 0.27 / 0.33 -->
+        <RTE>0.818181818182</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>Dowtherm_A_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <!-- 1120e6 $/GWe -->
+            <fixed_value>-373e6</fixed_value>
+            <multiplier>0.33</multiplier>
+          </reference_price>
+          <depreciate>15</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="Li_ion_storage">
+      <stores resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>0</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0</fixed_value>
+        </initial_stored>
+        <RTE>0.88</RTE>
+      </stores>
+      <economics>
+        <lifetime>15</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <variable>Li_ion_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-828e6</fixed_value>
+          </reference_price>
+          <depreciate>10</depreciate>
+        </CashFlow>
+      </economics>
+    </Component>
+
+  </Components>
+
+  <DataGenerators>
+    <ARMA name="Load" variable="TOTALLOAD,WIND,SOLAR" evalMode="clustered">../../train/ny_ces_load/Output/arma.pk</ARMA>
+    <Function name="functions">../functions.py</Function>
+  </DataGenerators>
+</HERON>

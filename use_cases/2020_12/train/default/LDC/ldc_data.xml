@@ -1,0 +1,14 @@
+<DataObjectMetadata name="ldc_data">
+  <DataSet type="Static">
+    <dims>
+      <counts>techs,YEAR</counts>
+      <prices>techs,YEAR</prices>
+    </dims>
+    <general>
+      <outputs>counts,prices</outputs>
+      <pointwise_meta>PointProbability,ProbabilityWeight,prefix</pointwise_meta>
+      <sampleTag>RAVEN_sample_ID</sampleTag>
+    </general>
+  </DataSet>
+  
+</DataObjectMetadata>

@@ -1,0 +1,170 @@
+<Simulation verbosity="debug">
+  <RunInfo>
+    <JobName>D_CarbonTax_Default_o</JobName>
+    <WorkingDir>D_CarbonTax_Default_o</WorkingDir>
+    <Sequence>optimize</Sequence>
+    <batchSize>1</batchSize>
+    <NumMPI>1</NumMPI>
+    <!--
+    -->
+    <!--
+    <mode>mpi<runqsub/><memory>10gb</memory></mode>
+    <internalParallel>False</internalParallel>
+    <expectedTime>10:0:0</expectedTime>
+    <clusterParameters>-P nst</clusterParameters>
+    -->
+  </RunInfo>
+
+  <Steps>
+    <MultiRun name="optimize">
+      <Input class="Files" type="raven">inner_workflow</Input>
+      <Input class="Files" type="">heron_lib</Input>
+      <Input class="Files" type="">transfers</Input>
+      <Model class="Models" type="Code">raven</Model>
+      <Optimizer class="Optimizers" type="FiniteDifference">cap_opt</Optimizer>
+      <Output class="DataObjects" type="PointSet">opt_eval</Output>
+      <SolutionExport class="DataObjects" type="PointSet">opt_soln</SolutionExport>
+      <Output class="OutStreams" type="Print">opt_soln</Output>
+    </MultiRun>
+  </Steps>
+
+  <VariableGroups>
+    <Group name="GRO_capacities">HTSE_capacity, H2_storage_capacity, H2_market_capacity, Secondary_capacity, E_Penalty_capacity, NPP_bid_adjust</Group>
+    <!-- less metrics -->
+    <Group name="GRO_outer_results">
+      mean_NPV, std_NPV, med_NPV, max_NPV, min_NPV,
+      perc_5_NPV, perc_95_NPV, samp_NPV, var_NPV
+    </Group>
+    <!-- more metrics -->
+    <!-- <Group name='GRO_outer_results'>
+      mean_NPV, std_NPV, skew_NPV, kurt_NPV, vc_NPV, med_NPV, max_NPV, min_NPV,
+      perc_5_NPV, perc_95_NPV, samp_NPV, var_NPV
+    </Group> -->
+    <Group name="GRO_case_labels">state_label, strategy_label, price_struct_label</Group>
+  </VariableGroups>
+
+  <DataObjects>
+    <PointSet name="opt_eval">
+      <Input>GRO_capacities</Input>
+      <Output>mean_NPV</Output>
+    </PointSet>
+    <PointSet name="opt_soln">
+      <Input>trajID</Input>
+      <Output>iteration, accepted, GRO_capacities, mean_NPV</Output>
+    </PointSet>
+  </DataObjects>
+
+  <Models>
+    <Code name="raven" subType="RAVEN">
+      <executable>/Users/talbpw/projects/raven/raven_framework</executable>
+      <outputExportOutStreams>disp_results</outputExportOutStreams>
+      <conversion>
+        <input source="../write_inner.py" />
+      </conversion>
+      <alias type="input" variable="denoises">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:denoises</alias>
+      <alias type="input" variable="NPP_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:NPP_capacity</alias>
+      <alias type="input" variable="HTSE_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:HTSE_capacity</alias>
+      <alias type="input" variable="H2_storage_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:H2_storage_capacity</alias>
+      <alias type="input" variable="grid_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:grid_capacity</alias>
+      <alias type="input" variable="H2_market_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:H2_market_capacity</alias>
+      <alias type="input" variable="Secondary_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:Secondary_capacity</alias>
+      <alias type="input" variable="E_Penalty_capacity">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:E_Penalty_capacity</alias>
+      <alias type="input" variable="state_label">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:state_label</alias>
+      <alias type="input" variable="strategy_label">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:strategy_label</alias>
+      <alias type="input" variable="price_struct_label">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:price_struct_label</alias>
+      <alias type="input" variable="NPP_bid_adjust">Samplers|MonteCarlo@name:mc_arma_dispatch|constant@name:NPP_bid_adjust</alias>
+    </Code>
+  </Models>
+
+  <Distributions>
+    <Uniform name="HTSE_capacity_dist">
+      <lowerBound>0.0</lowerBound>
+      <upperBound>20.0</upperBound>
+    </Uniform>
+    <Uniform name="H2_storage_capacity_dist">
+      <lowerBound>0.0</lowerBound>
+      <upperBound>1000000.0</upperBound>
+    </Uniform>
+    <Uniform name="H2_market_capacity_dist">
+      <lowerBound>-20.0</lowerBound>
+      <upperBound>0.0</upperBound>
+    </Uniform>
+    <Uniform name="NPP_bid_adjust_capacity_dist">
+      <lowerBound>0</lowerBound>
+      <upperBound>100000.0</upperBound>
+    </Uniform>
+  </Distributions>
+
+  <Optimizers>
+    <GradientDescent name="cap_opt">
+      <objective>mean_NPV</objective>
+      <!-- <variable> nodes filled by HERON -->
+      <constant name="denoises">3</constant>
+      <TargetEvaluation class="DataObjects" type="PointSet">opt_eval</TargetEvaluation>
+      <samplerInit>
+        <limit>200</limit>
+        <writeSteps>every</writeSteps>
+        <type>max</type>
+      </samplerInit>
+      <gradient>
+        <FiniteDifference />
+      </gradient>
+      <stepSize>
+        <GradientHistory>
+          <growthFactor>2</growthFactor>
+          <shrinkFactor>2</shrinkFactor>
+        </GradientHistory>
+      </stepSize>
+      <acceptance>
+        <Strict />
+      </acceptance>
+      <convergence>
+        <gradient>1e-2</gradient>
+        <objective>1e-2</objective>
+      </convergence>
+      <constant name="state_label">IL</constant>
+      <constant name="strategy_label">CarbonTax</constant>
+      <constant name="price_struct_label">Default</constant>
+      <variable name="HTSE_capacity">
+        <distribution>HTSE_capacity_dist</distribution>
+        <initial>10.0</initial>
+      </variable>
+      <variable name="H2_storage_capacity">
+        <distribution>H2_storage_capacity_dist</distribution>
+        <initial>500000.0</initial>
+      </variable>
+      <variable name="H2_market_capacity">
+        <distribution>H2_market_capacity_dist</distribution>
+        <initial>-10.0</initial>
+      </variable>
+      <constant name="Secondary_capacity">10000.0</constant>
+      <constant name="E_Penalty_capacity">-10000.0</constant>
+      <Constraint class="Functions" type="External">h2_sizing</Constraint>
+      <variable name="NPP_bid_adjust">
+        <distribution>NPP_bid_adjust_capacity_dist</distribution>
+        <initial>50000.0</initial>
+      </variable>
+    </GradientDescent>
+  </Optimizers>
+
+  <Files>
+    <Input name="inner_workflow" type="raven">../debug_inner.xml</Input>
+    <Input name="heron_lib">../heron.lib</Input>
+    <!-- TODO other model/function files -->
+    <Input name="transfers">../../../functions.py</Input>
+  </Files>
+
+  <OutStreams>
+    <Print name="opt_soln">
+      <type>csv</type>
+      <source>opt_soln</source>
+      <clusterLabel>trajID</clusterLabel>
+    </Print>
+  </OutStreams>
+
+  <Functions>
+    <External file="../../functions" name="h2_sizing">
+      <variables>HTSE_capacity, H2_market_capacity</variables>
+    </External>
+  </Functions>
+</Simulation>
