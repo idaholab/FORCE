@@ -40,7 +40,7 @@
 				<produces resource='h2' dispatch='independent'>
 					<consumes>electricity</consumes>
 					<capacity resource ='electricity'>
-						<fixed_value>-1499e3</fixed_value> <!-- kW -->
+						<opt_bounds>-1499e3,-1e3</opt_bounds> <!-- kW -->
 					</capacity>
 					<transfer>
 						<linear>
@@ -81,7 +81,7 @@
 			<Component name='h2_storage'>
 				<stores resource="h2" dispatch="independent">
 					<capacity resource='h2'>
-						<fixed_value>200e3</fixed_value>
+						<opt_bounds>1,200e3</opt_bounds>
 						<!-- Max storage of 200MT of H2 -->
 					</capacity>
 					<initial_stored>
