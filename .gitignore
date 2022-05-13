@@ -1,0 +1,9 @@
+__pycache__/
+train/
+*cash.xml
+*outer.xml
+*inner.xml
+*heron.lib
+*write_inner.py
+*_o/
+*.out
