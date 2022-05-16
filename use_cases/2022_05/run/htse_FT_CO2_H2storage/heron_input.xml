@@ -1,0 +1,174 @@
+<HERON>
+  <Case name="HTSE">
+    <mode>opt</mode>
+    <verbosity>debug</verbosity>
+    <num_arma_samples>3</num_arma_samples>
+    <time_discretization>
+      <time_variable>HOUR</time_variable>
+      <year_variable>YEAR</year_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>3</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.1</tax>
+      <inflation>0.07</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <pyomo><debug_mode>True</debug_mode></pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <metric>expectedValue</metric>
+      <type>max</type>
+      <persistence>5</persistence>
+    </optimization_settings>
+  </Case>
+
+  <Components>
+  <!-- PRODUCTION Components -->
+    <Component name='turbine'>
+      <produces resource='electricity' dispatch='fixed'>
+        <capacity resource='electricity'>
+          <opt_bounds>1e3,1e5</opt_bounds> <!-- kWe -->
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>20</lifetime>
+      </economics>
+    </Component>
+
+    <Component name='htse'>
+      <produces resource='h2' dispatch='independent'>
+        <consumes>electricity</consumes>
+        <capacity resource ='electricity'>
+          <opt_bounds>-1e5,-1e3</opt_bounds> <!-- kW -->
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource='electricity'>-1</rate>
+            <rate resource='h2'>0.025</rate>
+            <!-- from 39.8kWh/kg electricity consumption for H2 prod-->
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>20</lifetime>
+      </economics>
+    </Component>
+
+    <Component name='ft'>
+      <produces resource='syngas' dispatch='independent'>
+        <!--<consumes>electricity</consumes>-->
+        <consumes>h2, co2</consumes>
+        <capacity resource='syngas'>
+          <opt_bounds>1,1e5</opt_bounds> <!-- kg/h -->
+        </capacity>
+        <transfer>
+          <linear>
+            <!--<rate resource='electricity'>-1</rate>-->
+            <rate resource='h2'>-0.05</rate>
+            <rate resource='co2'>-1</rate>
+            <!-- dummy value for now -->
+            <rate resource='syngas'>1</rate>
+            <!-- Figure out the numbers from ANL paper -->
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>20</lifetime>
+      </economics>
+    </Component>
+
+    <Component name='CO2_source'>
+      <produces resource='co2' dispatch='independent'>
+        <capacity resource='co2'>
+          <opt_bounds>1,1e5</opt_bounds>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>20</lifetime>
+      </economics>
+    </Component>
+
+  <!-- MARKETS Components -->
+    <Component name='elec_market'>
+      <demands resource='electricity' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value> 
+          <!-- Can sell infinite amount of electricity to the market -->
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='e_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>0.5</fixed_value>
+            <!-- $/kWh (high usually 0.2$/kWh) -->
+            <!-- Replace with ARMA signal in a future model-->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name='h2_market'>
+      <demands resource='h2' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value> 
+          <!-- Can sell infinite amount of electricity to the market -->
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='h2_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>h2</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>2</fixed_value>
+            <!-- $/kg  -->
+            <!-- Replace with ARMA signal in a future model ?-->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name='syngas_market'>
+      <!-- Make it syngas market fixed -->
+      <demands resource='syngas' dispatch='fixed'>
+        <capacity>
+          <fixed_value>-1</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='syngas_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>syngas</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>2</fixed_value>
+            <!-- Dummy value of syngas -->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+  <!-- STORAGE Components -->
+
+  </Components>
+
+<DataGenerators>
+  <!-- ARMA from NY ISO data from a previous FORCE use case -->
+  <ARMA name='Price' variable="TOTALLOAD">../../../2021_12/train/ny_default_load/Output/arma.pk</ARMA>
+  <!--<Function name="transfers">transfers.py</Function>-->
+</DataGenerators>
+
+</HERON>
