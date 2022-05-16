@@ -1,0 +1,6 @@
+iteration,accepted,turbine_capacity,htse_capacity,elec_market_capacity,h2_market_capacity,h2_storage_capacity,mean_NPV
+0.0,first,75950.0,-75900.0,-1e+200,-1e+200,10000.95,-3150777.61481
+1.0,accepted,254020.474104,-75900.0,-1e+200,-1e+200,1.0,6185848.52322
+2.0,accepted,432090.948228,-75900.0,-1e+200,-1e+200,1.0,10522499.6617
+3.0,accepted,769414.663373,-75900.0,-1e+200,-1e+200,1.0,18737535.2005
+4.0,accepted,1444062.09366,-75900.0,-1e+200,-1e+200,1.0,35167606.2779
