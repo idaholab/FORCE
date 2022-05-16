@@ -21,7 +21,7 @@
 			<optimization_settings>
 				<metric>expectedValue</metric>
 				<type>max</type>
-				<!--<persistence>5</persistence>-->
+				<persistence>3</persistence>
 			</optimization_settings>
     </Case>
 
