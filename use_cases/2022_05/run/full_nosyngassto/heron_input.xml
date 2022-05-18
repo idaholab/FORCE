@@ -31,7 +31,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity'>
-          <opt_bounds>1e3,1e5</opt_bounds> <!-- kWe -->
+          <opt_bounds>1e3,750e3</opt_bounds> <!-- kWe -->
         </capacity>
       </produces>
       <economics>
@@ -43,7 +43,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds>-1e5,-1e3</opt_bounds> <!-- kW -->
+          <opt_bounds>-750e5,-1e3</opt_bounds> <!-- kW -->
         </capacity>
         <transfer>
           <linear>
@@ -63,16 +63,18 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2, co2, electricity</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-1e3,-1</opt_bounds> <!-- MT/day -->
+          <opt_bounds>-100e3,-1e3</opt_bounds> 
+          <!-- kg/h -->
         </capacity>
         <transfer>
           <linear>
-            <rate resource='electricity'>-0.0149</rate>
-            <rate resource='h2'>-0.255</rate>
-            <rate resource='co2'>-1.580</rate>
-            <rate resource='naphta'>0.176</rate>
-            <rate resource='jet_fuel'>0.213</rate>
-            <rate resource='diesel'>0.118</rate>
+            <!-- TRying with kg/h units for mass flows -->
+            <rate resource='electricity'>-1.49</rate>
+            <rate resource='h2'>-1.06</rate>
+            <rate resource='co2'>-6.58</rate>
+            <rate resource='naphta'>0.733</rate>
+            <rate resource='jet_fuel'>0.888</rate>
+            <rate resource='diesel'>0.492</rate>
           </linear>
         </transfer>
       </produces>
@@ -84,7 +86,7 @@
     <Component name='CO2_source'>
       <produces resource='co2' dispatch='independent'>
         <capacity resource='co2'>
-          <opt_bounds>1,1e5</opt_bounds>
+          <opt_bounds>1e3,500e3</opt_bounds>
         </capacity>
       </produces>
       <economics>
@@ -109,8 +111,8 @@
           </driver>
           <reference_price>
             <fixed_value>0.5</fixed_value>
-            <!-- $/kWh (high usually 0.2$/kWh) -->
-            <!-- Replace with ARMA signal in a future model-->
+            <!-- 0.5$/kWh = $500/MWh very high, highest share possible of electricity
+            should go to the grid -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -130,8 +132,9 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>1000</fixed_value>
-            <!-- $/MT -->
+            <fixed_value>1e-4</fixed_value>
+            <!-- $/kg -->
+            <!-- Normal price should be around $1000/MT = $1/kg -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -151,8 +154,9 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>1300</fixed_value>
-            <!-- $/MT -->
+            <fixed_value>1e-4</fixed_value>
+            <!-- $/kg -->
+            <!-- Normal price should be around $1300/MT = $1.3/kg -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -172,8 +176,10 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>25000</fixed_value>
-            <!-- $/MT ?? Check on this, computed from ~ $5.6/gal -->
+            <fixed_value>1e-4</fixed_value>
+            <!-- $/kg -->
+            <!-- Normal price should be around $25000/MT = $25/kg 
+            (computed from $5.6/gal) -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -183,7 +189,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>1,1e4</opt_bounds>
+          <opt_bounds>1e3,200e3</opt_bounds>
         </capacity>
         <initial_stored>
           <fixed_value>1</fixed_value>
@@ -199,6 +205,7 @@
           </driver>
           <reference_price>
             <fixed_value>-500</fixed_value>
+            <!-- CApex cost of $500/kg-H2 -->
           </reference_price>
           <depreciate>15</depreciate>
         </CashFlow>
