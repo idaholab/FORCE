@@ -67,7 +67,7 @@
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
-        <consumes>h2, co2, electricity</consumes>
+        <consumes>h2, co2</consumes>
         <capacity resource='h2'>
           <opt_bounds debug_value="-100e3">-750e3,-1e3</opt_bounds>
           <!-- kg/h -->
@@ -90,7 +90,7 @@
       </economics>
     </Component>
 
-    <Component name='ft_elec'>
+    <Component name='ft_elec_consumption'>
       <demands resource='electricity' dispatch='fixed'>
         <capacity>
           <fixed_value>-14.9e3</fixed_value>
