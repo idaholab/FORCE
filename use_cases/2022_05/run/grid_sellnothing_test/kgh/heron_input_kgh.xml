@@ -1,12 +1,9 @@
 <HERON>
   <Case name="HTSE">
-    <mode>sweep</mode>
-    <debug>
-      <inner_samples>1</inner_samples>
-      <macro_steps>2</macro_steps>
-    </debug>
+    <mode>opt</mode>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>3</num_arma_samples>
+    <num_arma_samples>2</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -26,7 +23,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>10</persistence>
+      <persistence>5</persistence>
     </optimization_settings>
   </Case>
 
@@ -105,7 +102,7 @@
     <Component name='CO2_source'>
       <produces resource='co2' dispatch='independent'>
         <capacity resource='co2'>
-          <opt_bounds>1e3,1e20</opt_bounds>
+          <opt_bounds>1e3,1e30</opt_bounds>
           <!-- From Arg. March 2022, CO2 flow to FT is 1580 MT/day = 65.8e3 kg/h-->
           <!-- Can get as much CO2 as needed -->
         </capacity>
@@ -209,7 +206,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>1e3,200e3</opt_bounds>
+          <opt_bounds>0,200e3</opt_bounds>
         </capacity>
         <initial_stored>
           <fixed_value>0</fixed_value>
