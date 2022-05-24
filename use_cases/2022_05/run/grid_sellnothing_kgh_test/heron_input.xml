@@ -14,7 +14,7 @@
       <ProjectTime>3</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
       <tax>0.1</tax>
-      <inflation>0.07</inflation>
+      <inflation>0.00</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
@@ -23,7 +23,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>10</persistence>
     </optimization_settings>
   </Case>
 
@@ -128,7 +128,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>-1</fixed_value>
+            <fixed_value>0</fixed_value>
             <!-- Electricity is worth nothing so nothing should go to the grid -->
           </reference_price>
         </CashFlow>

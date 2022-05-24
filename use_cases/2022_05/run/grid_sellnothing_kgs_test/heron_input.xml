@@ -14,7 +14,7 @@
       <ProjectTime>3</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
       <tax>0.1</tax>
-      <inflation>0.07</inflation>
+      <inflation>0</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
@@ -217,7 +217,7 @@
 
 <DataGenerators>
   <!-- ARMA from NY ISO data from a previous FORCE use case -->
-  <ARMA name='Price' variable="TOTALLOAD">../../../2021_12/train/ny_default_load/Output/arma.pk</ARMA>
+  <ARMA name='price' variable="price">C:\Users\garrm\projects\Jakub_ARMA_model\Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168\arma.pk</ARMA>
   <!--<Function name="transfers">transfers.py</Function>-->
 </DataGenerators>
 

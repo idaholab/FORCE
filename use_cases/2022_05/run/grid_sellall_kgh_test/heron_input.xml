@@ -13,7 +13,7 @@
       <ProjectTime>3</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
       <tax>0.1</tax>
-      <inflation>0.07</inflation>
+      <inflation>0</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
@@ -111,9 +111,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.5</fixed_value>
-            <!-- 0.5$/kWh = $500/MWh very high, highest share possible of electricity
-            should go to the grid -->
+            <fixed_value>50</fixed_value>
+            <!-- Really high price -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -133,7 +132,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>1e-4</fixed_value>
+            <fixed_value>0</fixed_value>
             <!-- $/kg -->
             <!-- Normal price should be around $1000/MT = $1/kg -->
           </reference_price>
@@ -155,7 +154,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>1e-4</fixed_value>
+            <fixed_value>0</fixed_value>
             <!-- $/kg -->
             <!-- Normal price should be around $1300/MT = $1.3/kg -->
           </reference_price>
@@ -177,7 +176,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>1e-4</fixed_value>
+            <fixed_value>0</fixed_value>
             <!-- $/kg -->
             <!-- Normal price should be around $25000/MT = $25/kg 
             (computed from $5.6/gal) -->
@@ -217,7 +216,7 @@
 
 <DataGenerators>
   <!-- ARMA from NY ISO data from a previous FORCE use case -->
-  <ARMA name='Price' variable="TOTALLOAD">../../../../2021_12/train/ny_default_load/Output/arma.pk</ARMA>
+  <ARMA name='price' variable="price">C:\Users\garrm\projects\Jakub_ARMA_model\Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168\arma.pk</ARMA>
   <!--<Function name="transfers">transfers.py</Function>-->
 </DataGenerators>
 
