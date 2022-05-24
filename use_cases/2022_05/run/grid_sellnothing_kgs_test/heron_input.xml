@@ -31,7 +31,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity'>
-          <opt_bounds debug_value="125e3">1e3,750e3</opt_bounds> <!-- kWe -->
+          <opt_bounds debug_value="124.9e3">1e3,750e3</opt_bounds> <!-- kWe -->
         </capacity>
       </produces>
       <economics>
@@ -43,7 +43,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-100e3">-750e3,-1e3</opt_bounds> <!-- kW -->
+          <opt_bounds debug_value="-100e3">-750e3,0</opt_bounds> <!-- kW -->
         </capacity>
         <transfer>
           <linear>
@@ -61,15 +61,14 @@
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
-        <consumes>h2, co2, electricity</consumes>
+        <consumes>h2, co2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-100e3">-750e3,-1e3</opt_bounds>
+          <opt_bounds debug_value="-100e3">-750e3,0</opt_bounds>
           <!-- kg/h ? -->
         </capacity>
         <transfer>
           <linear>
             <!-- TRying with kg/s units for mass flows -->
-            <rate resource='electricity'>-1.49e4</rate>
             <rate resource='h2'>-2.95</rate>
             <rate resource='co2'>-18.3</rate>
             <rate resource='naphta'>2.04</rate>
@@ -83,10 +82,22 @@
       </economics>
     </Component>
 
+    <Component name='ft_elec_consumption'>
+      <demands resource='electricity' dispatch='fixed'>
+        <capacity>
+          <fixed_value>-14.9e3</fixed_value>
+          <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+      </economics>
+    </Component>
+
     <Component name='CO2_source'>
       <produces resource='co2' dispatch='independent'>
         <capacity resource='co2'>
-          <opt_bounds>1e3,1e20</opt_bounds>
+          <opt_bounds>0,1e50</opt_bounds>
           <!-- From Arg. March 2022, CO2 flow to FT is 1580 MT/day = 65.8e3 kg/h-->
         </capacity>
       </produces>
@@ -189,7 +200,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>1e3,200e3</opt_bounds>
+          <opt_bounds>0,200e3</opt_bounds>
         </capacity>
         <initial_stored>
           <fixed_value>0</fixed_value>
