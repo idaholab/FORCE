@@ -61,42 +61,43 @@ then
     fi
 fi
 
-for DIR in  user_manual; do
-    cd $DIR
-    echo Building in $DIR...
-    if [ "$(uname)" == "Darwin" ] || [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]
-    then
-      if [[ 1 -eq $VERB ]]
-      then
-        make; MADE=$?
-      else
-        make > /dev/null; MADE=$?
-      fi
-    elif [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]  || [  "$(expr substr $(uname -s) 1 4)" == "MSYS" ]
-    then
-      if [[ 1 -eq $VERB ]]
-      then
-        bash.exe make_win.sh; MADE=$?
-      else
-        bash.exe make_win.sh > /dev/null; MADE=$?
-      fi
-    fi
-    if [[ 0 -eq $MADE ]]; then
-        echo ...Successfully made docs in $DIR
-    else
-        echo ...Failed to make docs in $DIR
-        exit -1
-    fi
-    cd $SCRIPT_DIR
-done
+#for DIR in  user_manual; do
+#    cd $DIR
+#    echo Building in $DIR...
+#    if [ "$(uname)" == "Darwin" ] || [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]
+#    then
+#      if [[ 1 -eq $VERB ]]
+#      then
+#        make; MADE=$?
+#      else
+#        make > /dev/null; MADE=$?
+#      fi
+#    elif [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]  || [  "$(expr substr $(uname -s) 1 4)" == "MSYS" ]
+#    then
+#      if [[ 1 -eq $VERB ]]
+#      then
+#        bash.exe make_win.sh; MADE=$?
+#      else
+#        bash.exe make_win.sh > /dev/null; MADE=$?
+#      fi
+#    fi
+#    if [[ 0 -eq $MADE ]]; then
+#        echo ...Successfully made docs in $DIR
+#    else
+#        echo ...Failed to make docs in $DIR
+#        exit -1
+#    fi
+#    cd $SCRIPT_DIR
+#done
 
-#cd sqa
-#./make_docs.sh
+cd sqa
+./make_docs.sh
+
 #cd ..
-mkdir pdfs
-for DOC in user_manual/hybrid_user_manual.pdf; do
-    cp $DOC pdfs/
-done
+#mkdir pdfs
+#for DOC in user_manual/hybrid_user_manual.pdf; do
+#    cp $DOC pdfs/
+#done
 
 
 

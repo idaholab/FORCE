@@ -65,7 +65,7 @@ then
 fi
 # copy files that are not built
 # SQAP
-cp sqap/*.pdf sqa_built_documents/
+#cp sqap/*.pdf sqa_built_documents/
 cp sqap/*.docx sqa_built_documents/
 # Configuration Item list
 cp CIlist/*.docx sqa_built_documents/
