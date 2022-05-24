@@ -217,7 +217,7 @@
 
 <DataGenerators>
   <!-- ARMA from NY ISO data from a previous FORCE use case -->
-  <ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168\arma.pk</ARMA>  <!--<Function name="transfers">transfers.py</Function>-->
+	<ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
 </DataGenerators>
 
 </HERON>
