@@ -2,7 +2,6 @@
   <Case name="HTSE">
     <mode>opt</mode>
     <verbosity>debug</verbosity>
-    <debug></debug>
     <num_arma_samples>3</num_arma_samples>
     <time_discretization>
       <time_variable>HOUR</time_variable>
