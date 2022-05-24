@@ -1,12 +1,12 @@
 <HERON>
   <Case name="HTSE">
     <mode>opt</mode>
-    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>2</num_arma_samples>
+    <debug></debug>
+    <num_arma_samples>3</num_arma_samples>
     <time_discretization>
-      <time_variable>hour</time_variable>
-      <year_variable>Year</year_variable>
+      <time_variable>HOUR</time_variable>
+      <year_variable>YEAR</year_variable>
       <end_time>23</end_time>
       <num_steps>24</num_steps>
     </time_discretization>
@@ -23,7 +23,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>10</persistence>
     </optimization_settings>
   </Case>
 
@@ -32,8 +32,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity'>
-          <opt_bounds debug_value="124.9e3">1e3,750e3</opt_bounds> <!-- kWe -->
-          <!--<sweep_values debug_value="100e3">10e3,500e3</sweep_values>-->
+          <opt_bounds debug_value="125e3">1e3,750e3</opt_bounds> <!-- kWe -->
         </capacity>
       </produces>
       <economics>
@@ -46,7 +45,6 @@
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
           <opt_bounds debug_value="-100e3">-750e3,-1e3</opt_bounds> <!-- kW -->
-          <!--<fixed_value>-750e3</fixed_value>-->
         </capacity>
         <transfer>
           <linear>
@@ -64,21 +62,20 @@
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
-        <consumes>h2, co2</consumes>
+        <consumes>h2, co2, electricity</consumes>
         <capacity resource='h2'>
           <opt_bounds debug_value="-100e3">-750e3,-1e3</opt_bounds>
-          <!-- kg/h -->
-          <!--<fixed_value>-750e3</fixed_value>-->
+          <!-- kg/h ? -->
         </capacity>
         <transfer>
           <linear>
-            <!-- TRying with kg/h units for mass flows -->
-            <!--<rate resource='electricity'>-1.49</rate>-->
-            <rate resource='h2'>-1.06</rate>
-            <rate resource='co2'>-6.58</rate>
-            <rate resource='naphta'>0.733</rate>
-            <rate resource='jet_fuel'>0.888</rate>
-            <rate resource='diesel'>0.492</rate>
+            <!-- TRying with kg/s units for mass flows -->
+            <rate resource='electricity'>-1.49e4</rate>
+            <rate resource='h2'>-2.95</rate>
+            <rate resource='co2'>-18.3</rate>
+            <rate resource='naphta'>2.04</rate>
+            <rate resource='jet_fuel'>2.47</rate>
+            <rate resource='diesel'>1.37</rate>
           </linear>
         </transfer>
       </produces>
@@ -87,24 +84,11 @@
       </economics>
     </Component>
 
-    <Component name='ft_elec_consumption'>
-      <demands resource='electricity' dispatch='fixed'>
-        <capacity>
-          <fixed_value>-14.9e3</fixed_value>
-          <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
-        </capacity>
-      </demands>
-      <economics>
-        <lifetime>1</lifetime>
-      </economics>
-    </Component>
-
     <Component name='CO2_source'>
       <produces resource='co2' dispatch='independent'>
         <capacity resource='co2'>
-          <opt_bounds>1e3,1e30</opt_bounds>
+          <opt_bounds>1e3,1e20</opt_bounds>
           <!-- From Arg. March 2022, CO2 flow to FT is 1580 MT/day = 65.8e3 kg/h-->
-          <!-- Can get as much CO2 as needed -->
         </capacity>
       </produces>
       <economics>
@@ -206,7 +190,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>0,200e3</opt_bounds>
+          <opt_bounds>1e3,200e3</opt_bounds>
         </capacity>
         <initial_stored>
           <fixed_value>0</fixed_value>
@@ -232,8 +216,8 @@
   </Components>
 
 <DataGenerators>
-  <!-- ARMA from PJM, Jakub and Yuscheng trained it -->
-	<ARMA name='price' variable="price">C:\Users\garrm\projects\Jakub_ARMA_model\Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168\arma.pk</ARMA>
+  <!-- ARMA from NY ISO data from a previous FORCE use case -->
+  <ARMA name='Price' variable="TOTALLOAD">../../../2021_12/train/ny_default_load/Output/arma.pk</ARMA>
   <!--<Function name="transfers">transfers.py</Function>-->
 </DataGenerators>
 
