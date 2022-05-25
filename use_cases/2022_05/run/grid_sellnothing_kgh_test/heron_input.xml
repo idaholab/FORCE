@@ -108,34 +108,34 @@
       </produces>
       <economics>
         <lifetime>20</lifetime>
+        <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-378878417</fixed_value>
+            <!-- TCI -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-20156141</fixed_value>
+            <!-- Total Fixed Operating Costs -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-7085933</fixed_value>
+            <!-- Variable Operating Costs excluding feedstock and electricity costs -->
+          </reference_price>
+        </CashFlow>
       </economics>
-      <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
-        <driver>
-          <fixed_value>1</fixed_value>
-        </driver>
-        <reference_price>
-          <fixed_value>-378878417</fixed_value>
-          <!-- TCI -->
-        </reference_price>
-      </CashFlow>
-      <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
-        <driver>
-          <fixed_value>1</fixed_value>
-        </driver>
-        <reference_price>
-          <fixed_value>-20156141</fixed_value>
-          <!-- Total Fixed Operating Costs -->
-        </reference_price>
-      </CashFlow>
-      <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
-        <driver>
-          <fixed_value>1</fixed_value>
-        </driver>
-        <reference_price>
-          <fixed_value>-7085933</fixed_value>
-          <!-- Variable Operating Costs excluding feedstock and electricity costs -->
-        </reference_price>
-      </CashFlow>
     </Component>
 
     <Component name='ft_elec_consumption'>
@@ -285,7 +285,6 @@
 <DataGenerators>
   <!-- ARMA from PJM, Jakub and Yuscheng trained it -->
 	<ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
-  <Function name="functions">../functions.py</Function>
 </DataGenerators>
 
 </HERON>
