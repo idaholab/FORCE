@@ -65,6 +65,8 @@
             <fixed_value>-703</fixed_value>
             <!-- $703/kW-dc -->
           </reference_price>
+          <depreciate>20</depreciate>
+          <!-- 20 years MACRS -->
         </CashFlow>
         <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -116,6 +118,8 @@
             <fixed_value>-378878417</fixed_value>
             <!-- TCI -->
           </reference_price>
+          <depreciate>20</depreciate>
+          <!-- 20 years MACRS -->
         </CashFlow>
         <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
