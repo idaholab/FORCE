@@ -1,11 +1,12 @@
 <HERON>
   <Case name="HTSE">
-    <mode>opt</mode>
+	  <mode>opt</mode>
+	  <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>3</num_arma_samples>
     <time_discretization>
-      <time_variable>HOUR</time_variable>
-      <year_variable>YEAR</year_variable>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
       <end_time>23</end_time>
       <num_steps>24</num_steps>
     </time_discretization>
@@ -120,7 +121,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <ARMA variable='TOTALLOAD'>Price</ARMA>
+            <ARMA variable='price'>price</ARMA>
           </reference_price>
           <reference_driver>
             <fixed_value>1</fixed_value>
@@ -226,9 +227,7 @@
   </Components>
 
 <DataGenerators>
-  <!-- ARMA from NY ISO data from a previous FORCE use case -->
-  <ARMA name='Price' variable="TOTALLOAD">../../../2021_12/train/ny_default_load/Output/arma.pk</ARMA>
-  <!--<Function name="transfers">transfers.py</Function>-->
+  <ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
 </DataGenerators>
 
 </HERON>
