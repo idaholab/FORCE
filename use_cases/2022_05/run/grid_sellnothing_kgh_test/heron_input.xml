@@ -37,7 +37,7 @@
         </capacity>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
       </economics>
     </Component>
 
@@ -56,7 +56,7 @@
         </transfer>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
         <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
@@ -109,7 +109,7 @@
         </transfer>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
         <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <fixed_value>1</fixed_value>
@@ -164,7 +164,7 @@
       </produces>
       <economics>
         <!-- Just copied numbers from FT process for now -->
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
         <CashFlow name="CO2_source_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <fixed_value>1</fixed_value>
