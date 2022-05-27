@@ -1,12 +1,14 @@
 <HERON>
     <Case name="HTSE">
 			<mode>opt</mode>
+      <debug></debug>
 			<verbosity>debug</verbosity>
-			<num_arma_samples>3</num_arma_samples>
+			<num_arma_samples>2</num_arma_samples>
 			<time_discretization>
-				<time_variable>Time</time_variable>
-				<end_time>2</end_time>
-				<num_steps>21</num_steps>
+        <time_variable>hour</time_variable>
+        <year_variable>Year</year_variable>
+        <end_time>23</end_time>
+        <num_steps>24</num_steps>
 			</time_discretization>
 			<economics>
 				<ProjectTime>3</ProjectTime>
@@ -21,7 +23,7 @@
 			<optimization_settings>
 				<metric>expectedValue</metric>
 				<type>max</type>
-			        <persistence>5</persistence>
+			        <persistence>1</persistence>
 			</optimization_settings>
     </Case>
 
@@ -58,7 +60,7 @@
 
 			<Component name='elec_market'>
 				<demands resource='electricity' dispatch='dependent'>
-					<capacity>
+					<capacity skip_plot="True">
 						<fixed_value>-1e200</fixed_value> 
 						<!-- Can sell infinite amount of electricity to the market -->
 					</capacity>
@@ -67,14 +69,18 @@
 					<lifetime>30</lifetime>
 					<CashFlow name='e_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
 						<driver>
-							<activity>electricity</activity>
-							<multiplier>-1</multiplier>
-						</driver>
-						<reference_price>
-							<fixed_value>0.5</fixed_value>
-							<!-- $/kWh (high usually 0.2$/kWh) -->
-							<!-- Replace with ARMA signal in a future model-->
-						</reference_price>
+              <activity>electricity</activity>
+              <multiplier>-1</multiplier>
+            </driver>
+            <reference_price>
+              <ARMA variable='price'>price</ARMA>
+            </reference_price>
+            <reference_driver>
+              <fixed_value>1</fixed_value>
+            </reference_driver>
+            <scaling_factor_x>
+              <fixed_value>1</fixed_value>
+            </scaling_factor_x>
 					</CashFlow>
 				</economics>
 			</Component>
@@ -99,7 +105,7 @@
     </Components>
 
 	<DataGenerators>
-		<ARMA name='Price' variable="Signal">%HERON%/tests/integration_tests/ARMA/Sine/arma.pk</ARMA>
+		<ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
 		<!--<Function name="transfers">transfers.py</Function>-->
 	</DataGenerators>
 
