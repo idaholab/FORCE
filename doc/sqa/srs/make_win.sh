@@ -21,8 +21,8 @@ clean_files () {
 # Subroutine to generate files.
 gen_files () {
         git log -1 --format="%H %an %aD" .. > ../../version.tex
-        python ../../../raven/scripts/library_handler.py manual > RAVENdependencies.tex
-	python ../../../raven/developer_tools/readRequirementsAndCreateLatex.py -i requirements_list.xml -o requirements.tex
+#        python ../../../raven/scripts/library_handler.py manual > RAVENdependencies.tex
+#	python ../../../raven/developer_tools/readRequirementsAndCreateLatex.py -i requirements_list.xml -o requirements.tex
 	for file in "${files[@]}"
 	do
 		# Generate files.

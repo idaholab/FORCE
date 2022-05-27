@@ -21,7 +21,7 @@ clean_files () {
 # Subroutine to generate files.
 gen_files () {
         git log -1 --format="%H %an %aD" .. > ../../version.tex
-	python ../../../developer_tools/createSQAtracebilityMatrix.py -i ../srs/requirements_list.xml -o traceability_matrix.tex
+#	python ../../../developer_tools/createSQAtracebilityMatrix.py -i ../srs/requirements_list.xml -o traceability_matrix.tex
 	for file in "${files[@]}"
 	do
 		# Generate files.
