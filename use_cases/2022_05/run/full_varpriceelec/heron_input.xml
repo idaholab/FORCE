@@ -14,7 +14,7 @@
       <ProjectTime>3</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
       <tax>0.1</tax>
-      <inflation>0.07</inflation>
+      <inflation>0</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
