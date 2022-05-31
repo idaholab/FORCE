@@ -71,21 +71,13 @@
         </capacity>
         <transfer>
           <linear>
-            <rate resource='electricity'>-0.0149</rate>
-            <rate resource='h2'>-0.255</rate>
-            <rate resource='co2'>-1.580</rate>
-            <rate resource='naphta'>0.176</rate>
-            <rate resource='jet_fuel'>0.213</rate>
-            <rate resource='diesel'>0.118</rate>
+            <!-- kg/h units for mass flows -->
+            <rate resource='h2'>-1.06</rate>
+            <rate resource='co2'>-6.58</rate>
+            <rate resource='naphta'>0.733</rate>
+            <rate resource='jet_fuel'>0.888</rate>
+            <rate resource='diesel'>0.492</rate>
           </linear>
-          <!-- Arg March 2022, Input/output flows FT: 
-            - 1580 MT/day CO2
-            - 255 MT/day H2
-            - Total electricity consumption 14.9 MWe
-            + 176 MT/day Naphta
-            + 213 MT/day jet fuel
-            + 118 MT/day diesel
-          -->
         </transfer>
       </produces>
       <economics>
