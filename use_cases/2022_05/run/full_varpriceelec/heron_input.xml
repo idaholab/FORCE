@@ -38,7 +38,7 @@
         </capacity>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
       </economics>
     </Component>
 
@@ -57,7 +57,7 @@
         </transfer>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
       </economics>
     </Component>
 
@@ -89,7 +89,7 @@
         </transfer>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
       </economics>
     </Component>
 
@@ -101,7 +101,7 @@
         </capacity>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
       </economics>
     </Component>
 
