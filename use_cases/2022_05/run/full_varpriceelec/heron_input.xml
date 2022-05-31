@@ -64,7 +64,7 @@
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
-        <consumes>h2, co2, electricity</consumes>
+        <consumes>h2, co2</consumes>
         <capacity resource='h2'>
           <opt_bounds debug_value="-100e3">-100e3,0</opt_bounds> 
           <!-- kg/h, Arg March 2022, H2 flow to FT is 255 MT/day = 10.625e3 kg/h -->
@@ -90,6 +90,18 @@
       </produces>
       <economics>
         <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name='ft_elec_consumption'>
+      <demands resource='electricity' dispatch='fixed'>
+        <capacity>
+          <fixed_value>-14.9e3</fixed_value>
+          <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
       </economics>
     </Component>
 
