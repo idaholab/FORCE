@@ -33,7 +33,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity'>
-          <opt_bounds>1e3,750e3</opt_bounds> 
+          <opt_bounds debug_value="124.9e3">1e3,750e3</opt_bounds> 
           <!-- kWe, from Arg. March 2022, HTSE elec demand is 442 MWe + 73 MWt = 446,1 MWe-->
         </capacity>
       </produces>
@@ -46,7 +46,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds>-750e5,-1e3</opt_bounds> <!-- kWe -->
+          <opt_bounds debug_value="-100e3">-750e5,-1e3</opt_bounds> <!-- kWe -->
         </capacity>
         <transfer>
           <linear>
@@ -66,7 +66,7 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2, co2, electricity</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-100e3,-1e3</opt_bounds> 
+          <opt_bounds debug_value="-100e3">-100e3,-1e3</opt_bounds> 
           <!-- kg/h, Arg March 2022, H2 flow to FT is 255 MT/day = 10.625e3 kg/h -->
         </capacity>
         <transfer>
