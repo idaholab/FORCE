@@ -1,7 +1,6 @@
 <HERON>
   <Case name="HTSE">
 	  <mode>opt</mode>
-	  <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>3</num_arma_samples>
     <time_discretization>
@@ -23,7 +22,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>10</persistence>
     </optimization_settings>
     <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
   </Case>
@@ -46,7 +45,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-100e3">-750e5,0</opt_bounds> <!-- kWe -->
+          <opt_bounds debug_value="-100e3">-750e3,0</opt_bounds> <!-- kWe -->
         </capacity>
         <transfer>
           <linear>
