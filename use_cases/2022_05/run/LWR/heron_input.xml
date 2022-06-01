@@ -1,6 +1,7 @@
 <HERON>
   <Case name="Synfuel LWR">
 	  <mode>opt</mode>
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>3</num_arma_samples>
     <time_discretization>
@@ -61,8 +62,7 @@
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-703000</fixed_value>
-            <!-- $703/MW-dc -->
+            <Function method="htse_noak_capex">functions</Function>
           </reference_price>
           <depreciate>20</depreciate>
           <!-- 20 years MACRS -->
@@ -293,6 +293,7 @@
 
 <DataGenerators>
   <ARMA name='price' variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <Function name="functions">../functions.py</Function>
 </DataGenerators>
 
 </HERON>
