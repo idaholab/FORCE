@@ -85,7 +85,7 @@
             <!-- $3.41/MWh-dc -->
           </reference_price>
         </CashFlow>
-        <CashFlow name="elec_cap_market" period="year" type="one-time" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
           </driver>
@@ -102,8 +102,7 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-100e3">-100e3,0</opt_bounds> 
-          <!-- kg/h, Arg March 2022, H2 flow to FT is 255 MT/day = 10.625e3 kg/h -->
+          <opt_bounds>-30000,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
@@ -147,13 +146,13 @@
             <!-- Variable Operating Costs excluding feedstock and electricity costs -->
           </reference_price>
         </CashFlow>
-        <CashFlow name="elec_cap_market" type="one-time" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="elec_cap_market" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
             <variable>ft_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-30e-3</fixed_value>
-            <!-- $30/MW, sweep values later to see the influence on the system -->
+            <fixed_value>-27933.45</fixed_value>
+            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
           </reference_price>
         </CashFlow>
       </economics>
