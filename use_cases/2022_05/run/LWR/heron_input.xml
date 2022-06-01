@@ -44,12 +44,12 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-100e3">-750e3,0</opt_bounds> <!-- kWe -->
+          <opt_bounds debug_value="-500">-1117,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>0.025</rate>
+            <rate resource='h2'>25.13</rate>
             <!-- from 39.8kWh/kg electricity consumption for H2 prod, Arg. March 2022-->
           </linear>
         </transfer>
@@ -61,8 +61,8 @@
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-703</fixed_value>
-            <!-- $703/kW-dc -->
+            <fixed_value>-703000</fixed_value>
+            <!-- $703/MW-dc -->
           </reference_price>
           <depreciate>20</depreciate>
           <!-- 20 years MACRS -->
@@ -72,8 +72,8 @@
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-32.64</fixed_value>
-            <!-- $32.64/kW-dc-year -->
+            <fixed_value>-326400</fixed_value>
+            <!-- $32.64/MW-dc-year -->
           </reference_price>
         </CashFlow>
         <CashFlow name="htse_vom" type="repeating" taxable="True" inflation="None" mult_target="False">
@@ -81,17 +81,17 @@
             <activity>electricity</activity>
           </driver>
           <reference_price>
-            <fixed_value>-3.41e-3</fixed_value>
+            <fixed_value>-3.41</fixed_value>
             <!-- $3.41/MWh-dc -->
           </reference_price>
         </CashFlow>
-        <CashFlow name="elec_cap_market" type="one-time" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="elec_cap_market" period="year" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-30e-3</fixed_value>
-            <!-- $30/MW, sweep values later to see the influence on the system -->
+            <fixed_value>-27933.45</fixed_value>
+            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
           </reference_price>
         </CashFlow>
       </economics>
