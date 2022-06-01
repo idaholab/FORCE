@@ -161,7 +161,7 @@
     <Component name='ft_elec_consumption'>
       <demands resource='electricity' dispatch='fixed'>
         <capacity>
-          <fixed_value>-14.9e3</fixed_value>
+          <fixed_value>-14.9</fixed_value>
           <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
         </capacity>
       </demands>
