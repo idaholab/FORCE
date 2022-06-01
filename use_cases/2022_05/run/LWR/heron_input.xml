@@ -59,11 +59,15 @@
         <lifetime>30</lifetime>
         <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <variable>htse_capacity</variable>
+            <Function method="htse_noak_capex">functions</Function>
+            <!--<variable>htse_capacity</variable>-->
           </driver>
           <reference_price>
-            <Function method="htse_noak_capex">functions</Function>
+            <fixed_value>1</fixed_value>
           </reference_price>
+          <!--<reference_price>
+            <Function method="htse_noak_capex">functions</Function>
+          </reference_price>-->
           <depreciate>20</depreciate>
           <!-- 20 years MACRS -->
         </CashFlow>
