@@ -1,0 +1,111 @@
+<HERON>
+    <Case name="HTSE">
+	    <mode>opt</mode>
+			<verbosity>debug</verbosity>
+			<num_arma_samples>2</num_arma_samples>
+			<time_discretization>
+        <time_variable>hour</time_variable>
+        <year_variable>Year</year_variable>
+        <end_time>23</end_time>
+        <num_steps>24</num_steps>
+			</time_discretization>
+			<economics>
+				<ProjectTime>3</ProjectTime>
+				<DiscountRate>0.08</DiscountRate>
+				<tax>0.1</tax>
+				<inflation>0</inflation>
+				<verbosity>50</verbosity>
+			</economics>
+			<dispatcher>
+				<pyomo><debug_mode>True</debug_mode></pyomo>
+			</dispatcher>
+			<optimization_settings>
+				<metric>expectedValue</metric>
+				<type>max</type>
+			        <persistence>1</persistence>
+			</optimization_settings>
+    </Case>
+
+    <Components>
+			<Component name='turbine'>
+				<produces resource='electricity' dispatch='fixed'>
+					<capacity resource='electricity'>
+						<opt_bounds>1e3,1500e3</opt_bounds> <!-- kWe -->
+					</capacity>
+				</produces>
+				<economics>
+					<lifetime>20</lifetime>
+				</economics>
+			</Component>
+
+			<Component name='htse'>
+				<produces resource='h2' dispatch='independent'>
+					<consumes>electricity</consumes>
+					<capacity resource ='electricity'>
+						<opt_bounds>-1499e3,-1e3</opt_bounds> <!-- kW -->
+					</capacity>
+					<transfer>
+						<linear>
+							<rate resource='electricity'>-1</rate>
+							<rate resource='h2'>0.025</rate>
+							<!-- from 39.8kWh/kg electricity consumption for H2 prod-->
+						</linear>
+					</transfer>
+				</produces>
+				<economics>
+					<lifetime>20</lifetime>
+				</economics>
+			</Component>
+
+			<Component name='elec_market'>
+				<demands resource='electricity' dispatch='dependent'>
+					<capacity skip_plot="True">
+						<fixed_value>-1e200</fixed_value> 
+						<!-- Can sell infinite amount of electricity to the market -->
+					</capacity>
+				</demands>
+				<economics>
+					<lifetime>30</lifetime>
+					<CashFlow name='e_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+						<driver>
+              <activity>electricity</activity>
+              <multiplier>-1</multiplier>
+            </driver>
+            <reference_price>
+              <ARMA variable='price'>price</ARMA>
+            </reference_price>
+            <reference_driver>
+              <fixed_value>1</fixed_value>
+            </reference_driver>
+            <scaling_factor_x>
+              <fixed_value>1</fixed_value>
+            </scaling_factor_x>
+					</CashFlow>
+				</economics>
+			</Component>
+
+			<Component name='h2_storage'>
+				<stores resource="h2" dispatch="independent">
+					<capacity resource='h2'>
+						<opt_bounds>1,200e3</opt_bounds>
+						<!-- Max storage of 200MT of H2 -->
+					</capacity>
+					<initial_stored>
+						<fixed_value>1</fixed_value>
+					</initial_stored>
+					<RTE>0.9</RTE>
+					<!-- Need to look up this value -->
+				</stores>
+				<economics>
+					<lifetime>10</lifetime>
+				</economics>
+			</Component>
+
+    </Components>
+
+	<DataGenerators>
+		<ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+		<!--<Function name="transfers">transfers.py</Function>-->
+	</DataGenerators>
+
+</HERON>
