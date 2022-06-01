@@ -173,7 +173,7 @@
   <!-- MARKETS Components -->
     <Component name='elec_market'>
       <demands resource='electricity' dispatch='dependent'>
-        <capacity>
+        <capacity skip_plot="True">
           <fixed_value>-1e200</fixed_value> 
           <!-- Can sell infinite amount of electricity to the market -->
         </capacity>
@@ -200,7 +200,7 @@
 
     <Component name='naphta_market'>
       <demands resource='naphta' dispatch='dependent'>
-        <capacity>
+        <capacity skip_plot="True">
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
@@ -221,7 +221,7 @@
 
     <Component name='jet_fuel_market'>
       <demands resource='jet_fuel' dispatch='dependent'>
-        <capacity>
+        <capacity skip_plot="True">
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
@@ -242,7 +242,7 @@
 
     <Component name='diesel_market'>
       <demands resource='diesel' dispatch='dependent'>
-        <capacity>
+        <capacity skip_plot="True">
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
@@ -292,7 +292,7 @@
   </Components>
 
 <DataGenerators>
-  <ARMA name='price' variable="price">~/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <ARMA name='price' variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
 </DataGenerators>
 
 </HERON>
