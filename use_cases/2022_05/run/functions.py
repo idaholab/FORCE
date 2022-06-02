@@ -1,3 +1,5 @@
+import math
+
 coefs = { 'NOAK':{'m':1.294,
                   'f':1.382,
                   'a_sca':862.9, 
@@ -24,7 +26,7 @@ def compute_capex(capacity, m,f,a_sca, n_sca, a_mod, n_mod):
     @ In, n_mod, float, modular equipment scaling exponent
     @ Out, capex, float, capex in $/kW-AC
   """
-  capex = m*f* ( a_sca*(capacity*AC_to_DC)**n_sca + a_mod*(capacity*AC_to_DC)**n_mod)
+  capex = m*f* ( a_sca*math.exp(n_sca*math.log(capacity*AC_to_DC)) + a_mod*math.exp(n_mod*math.log(capacity*AC_to_DC)))
   return capex
 
 def htse_noak_capex(data, meta):
@@ -37,6 +39,13 @@ def htse_noak_capex(data, meta):
   """
   d = coefs['NOAK']
   m, f, a_sca, n_sca, a_mod, n_mod = d['m'], d['f'], d['a_sca'], d['n_sca'], d['a_mod'], d['n_mod']
-  capex = 1000*compute_capex(meta['HERON']['RAVEN_vars']['htse_capacity'], m, f, a_sca, n_sca, a_mod, n_mod)
-  data = {'reference_price': capex}
+  cap = math.fabs(meta['HERON']['RAVEN_vars']['htse_capacity']) # HTSE capacity cast as negative number
+  capex = -1000*compute_capex(cap, m, f, a_sca, n_sca, a_mod, n_mod)
+  data = {'driver': capex}
   return data, meta
+
+if __name__ == "__main__":
+  d = coefs['NOAK']
+  m, f, a_sca, n_sca, a_mod, n_mod = d['m'], d['f'], d['a_sca'], d['n_sca'], d['a_mod'], d['n_mod']
+  capex = -1000*compute_capex(250, m, f, a_sca, n_sca, a_mod, n_mod)
+  print(capex)
