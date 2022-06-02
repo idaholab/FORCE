@@ -132,6 +132,10 @@
             <fixed_value>-378878417</fixed_value>
             <!-- TCI -->
           </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.6642</fixed_value>
+            <!-- TODO Replace with a function or else once figured out -->
+          </scaling_factor_x>
           <depreciate>20</depreciate>
           <!-- 20 years MACRS -->
         </CashFlow>
