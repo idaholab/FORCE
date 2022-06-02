@@ -1,6 +1,6 @@
 <HERON>
-  <Case name="Synfuel LWR">
-	  <mode>opt</mode>
+  <Case name="Synfuel_baseline">
+	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
     <num_arma_samples>3</num_arma_samples>
     <time_discretization>
@@ -18,21 +18,16 @@
     </economics>
     <dispatcher>
       <pyomo><debug_mode>True</debug_mode></pyomo>
-    </dispatcher>
-    <optimization_settings>
-      <metric>expectedValue</metric>
-      <type>max</type>
-      <persistence>10</persistence>
-    </optimization_settings>
-    <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
+    </dispatcher> 
   </Case>
 
   <Components>
-  <!-- PRODUCTION Components -->
-    <Component name='turbine'>
-      <produces resource='electricity' dispatch='fixed'>
-        <capacity resource='electricity'>
-          <fixed_value>1117</fixed_value><!--AP1000, MWe-->
+  
+    <Component name="turbine">
+      <produces resource="electricity" dispatch="fixed">
+        <capacity resource="electricity" skip_plot="True">
+          <sweep_values>1.5,5,13,77,1117</sweep_values>
+          <!-- Micro-reactors: Oklo, eVINCI, HOLOS; SMR: NuScale; LWR: AP1000 -->
         </capacity>
       </produces>
       <economics>
@@ -40,24 +35,21 @@
       </economics>
     </Component>
 
-
-  <!-- MARKETS Components -->
-    <Component name='elec_market'>
-      <demands resource='electricity' dispatch='dependent'>
-        <capacity>
+    <Component name="elec_market">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity skip_plot="True">
           <fixed_value>-1e200</fixed_value> 
-          <!-- Can sell infinite amount of electricity to the market -->
         </capacity>
       </demands>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='e_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+        <CashFlow name="e_sales" type="repeating" taxable="True" inflation="none" mult_target="False">
           <driver>
             <activity>electricity</activity>
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <ARMA variable='price'>price</ARMA>
+            <ARMA variable="price">price</ARMA>
           </reference_price>
           <reference_driver>
             <fixed_value>1</fixed_value>
@@ -68,13 +60,11 @@
         </CashFlow>
       </economics>
     </Component>
-  
-  <!-- MARKETS Components -->
-  <!-- STORAGE Components -->
+
   </Components>
 
-<DataGenerators>
-  <ARMA name='price' variable="price">~/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
-</DataGenerators>
+  <DataGenerators>
+    <ARMA name="price" variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  </DataGenerators>
 
 </HERON>
