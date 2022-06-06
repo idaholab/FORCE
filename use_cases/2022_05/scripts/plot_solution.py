@@ -18,13 +18,9 @@ from matplotlib.ticker import MaxNLocator
 BASE_DIR = Path(__file__).resolve().parent.parent
 TRAIN_DIR = BASE_DIR.joinpath("train")
 COLORS = ["darkgreen", "firebrick", "steelblue"]
-CASEMAP = {
-    'grid_sellall_kgh_test':'Test, high electricity prices',
-    'grid_sellnothing_kgh_test':'Test, null electricity prices',
-    'full_varpriceelec':"PJM ARMA based\n varying electricity prices", 
-    'LWR': 'AP1000, 1117 MWe', 
-    'SMR': 'NuScale, 77 MWe', 
-    'micro_HOLOS': 'HOLOS, Titan, 81 MWe'
+CASEMAP = {'LWR': 'AP1000, 1117 MWe', 
+          'SMR': 'NuScale, 77 MWe', 
+          'micro_HOLOS': 'HOLOS, Titan, 81 MWe'
 }
 CAPACITIES = {
   'LWR': 1117, 
@@ -37,6 +33,8 @@ UNITS = {
   "ft_capacity": "$kg-H_{2}$",
   "h2_storage_capacity": "$kg-H_{2}$",
   "mean_NPV": r"\$ (USD, 2020)",
+  'Change': "%", 
+  "dNPV": r"\$ (USD, 2020)"
 }
 
 
@@ -65,15 +63,17 @@ def plot_optimizer(case_name, df, var_cols, baseline_mean_npv) -> None:
 
   # Info needed for plots
   colors = {v: c for v, c in zip(["accepted", "rejected", "rerun"], COLORS)}
-  units = {v: u for v, u in zip(var_cols, UNITS)}
 
   var_cols = [v for v in var_cols if v in df.columns.values]
   casetype = CASEMAP[case_name]
-  last_dat = {'case': casetype}
 
   # Loop through the var_cols and plot each variable
   fig, axes = plt.subplots(nrows=len(var_cols), sharex=True)
   axes[-1].set_xlabel("Iteration")
+
+  # Create dict for final result of optimization
+  last_dat ={'description': casetype}
+  #last_dat = {'case': casetype}
 
   for var, ax in zip(var_cols, axes):
       # Sci. notation for everything > 100.
@@ -122,31 +122,6 @@ def plot_optimizer(case_name, df, var_cols, baseline_mean_npv) -> None:
           ax.set_ylim(bottom=-0.10, top=yabs_max)
           formatter = tic.StrMethodFormatter('{x:.2f}')
           ax.yaxis.set_major_formatter(formatter)
-
-
-
-
-  print(f"{'Mean NPV:':<20} {last_dat['mean_NPV']/1e6:>10.2f} (M$ USD)")
-  #print(f"{'Delta NPV:':<20} {last_dnpv/1e6:>10.2f}")
-  last_dat['mean_NPV'] = last_dat['mean_NPV'] / 1e6
-  #last_dat['baseline_NPV'] = baseline_mean_npv / 1e6
-  #last_dat['dNPV'] = last_dnpv / 1e6
-  #last_dat['Change'] = (last_dat['mean_NPV'] - last_dat['baseline_NPV']) / last_dat['baseline_NPV']
-  last_dat_df = pd.DataFrame(last_dat, index=[0])
-  last_dat_df = last_dat_df.rename(
-      columns={
-          'mean_NPV': 'Mean NPV (M $USD)',
-          #'baseline_NPV': 'Baseline NPV',
-          #'dNPV': 'Δ NPV',
-          'h2_storage_capacity': 'H2 Storage, (kg)',
-          'CO2_source_capacity': 'CO2 Source, (kg/h)',
-          'ft_capacity': r'FT (Fischer-Tropsch), (kg-H_{2})',
-          'htse_capacity': 'HTSE (kWe)',
-          'turbine_capacity': 'Turbine (kWe)',
-          'case': 'Case'
-      }
-  )
-  last_dat_df.to_csv('./final_iter.csv', index=False)
   # Set middle axes to have legend to the right of the plot.
   # Also reorder legend to have 'accepted' appear on top.
   handles, labels = axes[-1].get_legend_handles_labels()
@@ -156,7 +131,7 @@ def plot_optimizer(case_name, df, var_cols, baseline_mean_npv) -> None:
       handles,
       labels,
       markerscale=1.2,
-      bbox_to_anchor=(1, 0.5),
+      bbox_to_anchor=(1.05, 0.5),
       title=casetype,
   )
   plt.setp(lg.get_title(), multialignment="center")
@@ -164,8 +139,17 @@ def plot_optimizer(case_name, df, var_cols, baseline_mean_npv) -> None:
   # Have to update canvas to get actual legend width
   fig.canvas.draw()
   # The following will place the legend in a non-weird place
-  frame_w = lg.get_frame().get_width()
   fig.subplots_adjust(right=get_adjust(lg.get_frame().get_width()))
+
+  # Add values to final optimization result dictionary
+  last_dat['baseline_NPV'] = baseline_mean_npv /1e6
+  last_dat['mean_NPV'] = last_dat['mean_NPV'] / 1e6
+  last_dat['dNPV'] = last_dnpv / 1e6
+  last_dat['Change'] = (last_dat['mean_NPV'] - last_dat['baseline_NPV']) / last_dat['baseline_NPV']
+
+  return last_dat
+  
+  
 
 
 
@@ -195,16 +179,37 @@ def main():
 
     # Case plot
     df = pd.read_csv(args.path)
-    var_cols = [
-        "turbine_capacity",
-        "htse_capacity",
-        "ft_capacity",
-        "h2_storage_capacity",
-        "mean_NPV",
-    ]
+    var_cols = UNITS.keys()
 
-    plot_optimizer(case_name, df, var_cols, baseline_mean_npv)
+    # Retrieve final results of optimization
+    opt_res = plot_optimizer(case_name, df, var_cols, baseline_mean_npv)
     plt.savefig(args.path.resolve().parent.parent/"solution.png")
+
+    # Save final optimization results
+    # Check if all cases file has been created
+    final = args.path.resolve().parent.parent.parent / 'final_opt.csv'
+    if final.exists(): 
+      final_df = pd.read_csv(final)
+    else: 
+      final_df = pd.DataFrame(columns =['Case', 'description']+list(UNITS.keys()))
+      final_df['Case'] = CASEMAP.keys()
+      final_df.set_index('Case', inplace=True)
+    for k,v in opt_res.items(): 
+      final_df.loc[case_name, k] = v
+    '''last_dat_df = last_dat_df.rename(
+        columns={
+            'mean_NPV': 'Mean NPV (M $USD)',
+            #'baseline_NPV': 'Baseline NPV',
+            #'dNPV': 'Δ NPV',
+            'h2_storage_capacity': 'H2 Storage, (kg)',
+            'CO2_source_capacity': 'CO2 Source, (kg/h)',
+            'ft_capacity': r'FT (Fischer-Tropsch), (kg-H_{2})',
+            'htse_capacity': 'HTSE (kWe)',
+            'turbine_capacity': 'Turbine (kWe)',
+            'case': 'Case'
+        }
+    )'''
+    final_df.to_csv(final, index=True)
 
 
 if __name__ == "__main__":
