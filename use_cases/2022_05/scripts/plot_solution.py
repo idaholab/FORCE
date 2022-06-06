@@ -21,7 +21,10 @@ COLORS = ["darkgreen", "firebrick", "steelblue"]
 CASEMAP = {
     'grid_sellall_kgh_test':'Test, high electricity prices',
     'grid_sellnothing_kgh_test':'Test, null electricity prices',
-    'full_varpriceelec':"PJM ARMA based\n varying electricity prices"
+    'full_varpriceelec':"PJM ARMA based\n varying electricity prices", 
+    'LWR': 'AP1000, 1117 MWe', 
+    'SMR': 'NuScale, 77 MWe', 
+    'micro_HOLOS': 'HOLOS, Titan, 81 MWe'
 }
 
 # Plot Settings
@@ -46,7 +49,8 @@ def plot_optimizer(df, var_cols, args) -> None:
 
     # Drop NPP_bid_adjust if in Regulated
     var_cols = [v for v in var_cols if v in df.columns.values]
-    last_dat = {'case': CASEMAP[args.path.resolve().parent.name]}
+    casetype = CASEMAP[args.path.resolve().parent.parent.name]
+    last_dat = {'case': casetype}
 
     # Loop through the var_cols and plot each variable
     fig, axes = plt.subplots(nrows=len(var_cols), sharex=True)
@@ -124,7 +128,6 @@ def plot_optimizer(df, var_cols, args) -> None:
     handles, labels = axes[-1].get_legend_handles_labels()
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
     # Add Case Title
-    casetype = CASEMAP[args.path.resolve().parent.name]
     lg = fig.legend(
         handles,
         labels,
@@ -167,6 +170,10 @@ def main():
         "h2_storage_capacity",
         "mean_NPV",
     ]
+
+    # Get the baseline mean NPV
+    baseline_path = args.path.resolve().parent.parent.parent / 'baseline' / 'gold' / 'sweep.csv'
+    print(baseline_path)
 
     plot_optimizer(df, var_cols, args)
     plt.savefig(args.path.resolve().parent/"solution.png")
