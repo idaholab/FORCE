@@ -32,7 +32,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity' skip_plot="True">
-          <fixed_value>13</fixed_value><!--NuScale, MWe-->
+          <fixed_value>81</fixed_value><!--HOLOS Titan, MWe-->
         </capacity>
       </produces>
       <economics>
@@ -44,7 +44,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-500">-13,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-500">-81,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -108,7 +108,7 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-30000,0</opt_bounds> 
+          <opt_bounds>-1000,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
@@ -170,7 +170,7 @@
 
     <Component name='ft_elec_consumption'>
       <demands resource='electricity' dispatch='fixed'>
-        <capacity>
+        <capacity skip_plot="True">
           <fixed_value>-14.9</fixed_value>
           <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
         </capacity>
