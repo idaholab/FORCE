@@ -2,7 +2,7 @@
   <Case name="Synfuel_baseline">
 	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>3</num_arma_samples>
+    <num_arma_samples>10</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -26,8 +26,8 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity" skip_plot="True">
-          <sweep_values>1.5,5,13,77,1117</sweep_values>
-          <!-- Micro-reactors: Oklo, eVINCI, HOLOS; SMR: NuScale; LWR: AP1000 -->
+          <sweep_values>77,81,1117</sweep_values>
+          <!-- SMR: NuScale; HOLOS Titan Micro-reactor: 81 MWe; LWR: AP1000 -->
         </capacity>
       </produces>
       <economics>
