@@ -26,6 +26,12 @@ CASEMAP = {
     'SMR': 'NuScale, 77 MWe', 
     'micro_HOLOS': 'HOLOS, Titan, 81 MWe'
 }
+CAPACITIES = {
+  'LWR': 1117, 
+  'SMR': 77, 
+  'micro_HOLOS': 81
+}
+
 
 # Plot Settings
 plt.rc("figure", figsize=(7, 10))
@@ -173,7 +179,11 @@ def main():
 
     # Get the baseline mean NPV
     baseline_path = args.path.resolve().parent.parent.parent / 'baseline' / 'gold' / 'sweep.csv'
-    print(baseline_path)
+    baseline_df = pd.read_csv(baseline_path)
+    case_name = args.path.resolve().parent.parent.name
+    capacity = CAPACITIES[case_name]
+    baseline_df = baseline_df.query(f'turbine_capacity == {capacity}')
+    baseline_mean_npv = (baseline_df[['mean_NPV']].squeeze())
 
     plot_optimizer(df, var_cols, args)
     plt.savefig(args.path.resolve().parent/"solution.png")
