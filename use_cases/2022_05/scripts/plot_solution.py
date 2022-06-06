@@ -190,6 +190,8 @@ def main():
     final = args.path.resolve().parent.parent.parent / 'final_opt.csv'
     if final.exists(): 
       final_df = pd.read_csv(final)
+      print('File already exists, here is the info in it')
+      print(final_df)
     else: 
       final_df = pd.DataFrame(columns =['Case', 'description']+list(UNITS.keys()))
       final_df['Case'] = CASEMAP.keys()
@@ -209,7 +211,21 @@ def main():
             'case': 'Case'
         }
     )'''
-    final_df.to_csv(final, index=True)
+    # If all cases have been written clean up columns names
+    if not final_df.isnull().values.any(): 
+      final_df.rename(columns={
+            'mean_NPV': 'Mean NPV (M $USD(2020))',
+            'description': 'Description',
+            'baseline_NPV': 'Baseline NPV (M $USD(2020))',
+            'dNPV': 'Δ NPV (M $USD(2020))',
+            'h2_storage_capacity': 'H2 Storage, (kg)',
+            'ft_capacity': 'FT (Fischer-Tropsch), (kg-H2)',
+            'htse_capacity': 'HTSE (MWe)',
+            'turbine_capacity': 'Turbine (MWe)', 
+            'Change': 'Change (%)'
+        }, inplace=True)
+    with open(final, 'w') as final:
+      final_df.to_csv(final, index=True, line_terminator='\n')
 
 
 if __name__ == "__main__":
