@@ -173,7 +173,9 @@ def main():
     baseline_path = args.path.resolve().parent.parent.parent / 'baseline' / 'gold' / 'sweep.csv'
     baseline_df = pd.read_csv(baseline_path)
     case_name = args.path.resolve().parent.parent.name
+    print(case_name)
     capacity = CAPACITIES[case_name]
+    print(capacity)
     baseline_df = baseline_df.query(f'turbine_capacity == {capacity}')
     baseline_mean_npv = (baseline_df[['mean_NPV']].squeeze())
 
@@ -224,6 +226,7 @@ def main():
             'turbine_capacity': 'Turbine (MWe)', 
             'Change': 'Change (%)'
         }, inplace=True)
+      # TODO: plot the final optimization results for each case
     with open(final, 'w') as final:
       final_df.to_csv(final, index=True, line_terminator='\n')
 
