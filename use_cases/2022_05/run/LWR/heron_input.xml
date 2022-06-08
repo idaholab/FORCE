@@ -207,13 +207,13 @@
       </demands>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='e_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+        <CashFlow name='e_sales' type='repeating' period="hour" taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>electricity</activity>
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <ARMA variable='price'>price</ARMA>
+            <ARMA variable='price'>price</ARMA> <!-- $/MWh -->
           </reference_price>
           <reference_driver>
             <fixed_value>1</fixed_value>
@@ -240,7 +240,7 @@
           </driver>
           <reference_price>
             <fixed_value>0.53</fixed_value>
-            <!-- $/kg -->
+            <!-- $/kg See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -261,7 +261,7 @@
           </driver>
           <reference_price>
             <fixed_value>0.603</fixed_value>
-            <!-- $/kg -->
+            <!-- $/kg See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -282,7 +282,7 @@
           </driver>
           <reference_price>
             <fixed_value>0.6015</fixed_value>
-            <!-- $/kg ?? Check on this, computed from ~ $5.6/gal -->
+            <!-- $/kg See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -299,7 +299,7 @@
           <fixed_value>0</fixed_value>
         </initial_stored>
         <RTE>0.9</RTE>
-        <!-- Need to look up this value -->
+        <!-- Assumption -->
       </stores>
       <economics>
         <lifetime>30</lifetime>
