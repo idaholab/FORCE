@@ -148,20 +148,19 @@
             <fixed_value>1</fixed_value>
           </driver>
           <reference_price>
-            <fixed_value>-20156141</fixed_value>
-            <!-- Total Fixed Operating Costs -->
+            <fixed_value>-27412351</fixed_value>
+            <!-- Total Fixed Operating Costs 20,156,141 in $ USD 2016 so 27,412,352 in $ USD 2020 assuming 8% inflation-->
           </reference_price>
-          <multiplier>1.360</multiplier> <!-- Go from $ USD 2016 to $ USD 2020 -->
         </CashFlow>
         <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
             <fixed_value>1</fixed_value>
           </driver>
           <reference_price>
-            <fixed_value>-7085933</fixed_value>
-            <!-- Variable Operating Costs excluding feedstock and electricity costs -->
+            <fixed_value>-9636868</fixed_value>
+            <!-- Variable Operating Costs excluding feedstock and electricity costs 
+            7,085,933 in $ USD 2016 so 9,636,869 in $ USD 2020 assuming 8% inflation-->
           </reference_price>
-          <multiplier>1.360</multiplier> <!-- Go from $ USD 2016 to $ USD 2020 -->
         </CashFlow>
         <CashFlow name="elec_cap_market" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
