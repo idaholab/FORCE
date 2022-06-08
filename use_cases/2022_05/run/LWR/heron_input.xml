@@ -2,7 +2,7 @@
   <Case name="Synfuel_LWR">
 	  <mode>opt</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>10</num_arma_samples>
+    <num_arma_samples>30</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -10,9 +10,9 @@
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>3</ProjectTime>
+      <ProjectTime>20</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
-      <tax>0.1</tax>
+      <tax>0.08</tax>
       <inflation>0</inflation>
       <verbosity>50</verbosity>
     </economics>
@@ -32,7 +32,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity' skip_plot="True">
-          <fixed_value>1117</fixed_value><!--AP1000, MWe-->
+          <fixed_value>1000</fixed_value><!-- Representative LWR power, MWe-->
         </capacity>
       </produces>
       <economics>
@@ -44,7 +44,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-500">-1117,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-500">-1000,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -108,7 +108,7 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-30000,0</opt_bounds> 
+          <opt_bounds>-500000,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
@@ -302,7 +302,7 @@
   </Components>
 
 <DataGenerators>
-  <ARMA name='price' variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <ARMA name='price' variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
   <Function name="functions">../functions.py</Function>
 </DataGenerators>
 
