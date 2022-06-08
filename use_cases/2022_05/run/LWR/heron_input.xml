@@ -80,20 +80,18 @@
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-326400</fixed_value>
-            <!-- $32.64/MW-dc-year -->
+            <fixed_value>-30320</fixed_value>
+            <!-- $32.64/kW-dc-year so $30.32/kW-ac-year so $30,320/Mw-ac-year -->
           </reference_price>
-          <multiplier>0.929</multiplier>
         </CashFlow>
         <CashFlow name="htse_vom" type="repeating" taxable="True" inflation="None" mult_target="False">
           <driver>
             <activity>electricity</activity>
           </driver>
           <reference_price>
-            <fixed_value>-3.41</fixed_value>
-            <!-- $3.41/MWh-dc -->
+            <fixed_value>-3.168</fixed_value>
+            <!-- $3.41/MWh-dc so $3.168/MWh-ac (excl. energy costs) -->
           </reference_price>
-          <multiplier>0.929</multiplier>
         </CashFlow>
         <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
