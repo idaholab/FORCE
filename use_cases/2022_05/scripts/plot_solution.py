@@ -13,6 +13,7 @@ mpl.use('Agg') # Prevents the script from blocking while plotting
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tic
 from matplotlib.ticker import MaxNLocator
+import os
 
 # Global Constants
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,7 +49,7 @@ plt.rc(["xtick", "ytick"], labelsize=12)
 
 def plot_optimizer(case_name, df, var_cols, baseline_mean_npv) -> None:
   """
-  Plot the optimization path and create a csv file with the final optimization results
+  Plot the optimization path and create/fills out a csv file with the final optimization results
     @ In, case_name, str, name of the case, must be in the CASEMAP keys
     @ In, df, pandas.DataFrame, dataframe with the case's optimization data
     @ In, var_cols, list[string], names for the optimization variables for the plot
@@ -173,9 +174,8 @@ def main():
     baseline_path = args.path.resolve().parent.parent.parent / 'baseline' / 'gold' / 'sweep.csv'
     baseline_df = pd.read_csv(baseline_path)
     case_name = args.path.resolve().parent.parent.name
-    print(case_name)
     capacity = CAPACITIES[case_name]
-    print(capacity)
+    print(f"Case being post-processed : {case_name} ({capacity} MWe)")
     baseline_df = baseline_df.query(f'turbine_capacity == {capacity}')
     baseline_mean_npv = (baseline_df[['mean_NPV']].squeeze())
 
@@ -190,10 +190,11 @@ def main():
     # Save final optimization results
     # Check if all cases file has been created
     final = args.path.resolve().parent.parent.parent / 'final_opt.csv'
-    if final.exists(): 
-      final_df = pd.read_csv(final)
+    if os.path.exists(final): 
+      final_df = pd.read_csv(final, index_col='Case')
       print('File already exists, here is the info in it')
       print(final_df)
+      os.remove(final)
     else: 
       final_df = pd.DataFrame(columns =['Case', 'description']+list(UNITS.keys()))
       final_df['Case'] = CASEMAP.keys()
@@ -215,20 +216,48 @@ def main():
     )'''
     # If all cases have been written clean up columns names
     if not final_df.isnull().values.any(): 
-      final_df.rename(columns={
+      plot_final(final_df)
+    with open(final, 'w') as final:
+      final_df.to_csv(final, index=True, line_terminator='\n')
+      
+
+
+def plot_final(df): 
+  """
+  Save the complete data from all cases and creates a bar plot to show final components' capacities
+  @ In, df, pandas.DataFrame, dataframe with data for each case
+  @ Out, None
+  """
+  columns={
             'mean_NPV': 'Mean NPV (M $USD(2020))',
             'description': 'Description',
             'baseline_NPV': 'Baseline NPV (M $USD(2020))',
-            'dNPV': 'Δ NPV (M $USD(2020))',
+            'dNPV': 'Delta NPV (M $USD(2020))',
             'h2_storage_capacity': 'H2 Storage, (kg)',
             'ft_capacity': 'FT (Fischer-Tropsch), (kg-H2)',
             'htse_capacity': 'HTSE (MWe)',
             'turbine_capacity': 'Turbine (MWe)', 
             'Change': 'Change (%)'
-        }, inplace=True)
-      # TODO: plot the final optimization results for each case
-    with open(final, 'w') as final:
-      final_df.to_csv(final, index=True, line_terminator='\n')
+        }
+  mpl.style.use('fivethirtyeight')
+  fig, axes = plt.subplots(ncols=2)
+  ax = axes[0]
+  ax.set_title("Optimized components capacities")
+  df_plot = df[['description', 'h2_storage_capacity', 'ft_capacity', 'htse_capacity', 'turbine_capacity']].copy()
+  df_plot.rename(columns, inplace=True)
+  df_plot.transpose()
+  df_plot.plot(kind="bar", ax=ax, legend=True)
+  ax = axes[1]
+  ax.set_title("Net Present Value Comparison")
+  df_plot = df[['baseline_NPV','mean_NPV', 'dNPV', 'Change']].copy()
+  df_plot.rename(columns, inplace=True)
+  df_plot.transpose()
+  df_plot.plot(kind="bar", ax=ax).legend(loc='upper center', title="Cases")
+  plt.savefig("final_cases.png")
+
+
+
+
 
 
 if __name__ == "__main__":
