@@ -22,7 +22,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>10</persistence>
+      <persistence>5</persistence>
     </optimization_settings>
     <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
   </Case>
