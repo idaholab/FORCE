@@ -133,8 +133,8 @@
             <fixed_value>1</fixed_value>
           </driver>
           <reference_price>
-            <fixed_value>-378878417</fixed_value>
-            <!-- TCI -->
+            <fixed_value>-350734933</fixed_value>
+            <!-- TCI base cost 257,800,646$ in $ USD 2016 so assuming 8% inflation: $350,734,933 in $ USD 2020-->
           </reference_price>
           <scaling_factor_x>
             <fixed_value>0.6642</fixed_value>
@@ -151,6 +151,7 @@
             <fixed_value>-20156141</fixed_value>
             <!-- Total Fixed Operating Costs -->
           </reference_price>
+          <multiplier>1.360</multiplier> <!-- Go from $ USD 2016 to $ USD 2020 -->
         </CashFlow>
         <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -160,6 +161,7 @@
             <fixed_value>-7085933</fixed_value>
             <!-- Variable Operating Costs excluding feedstock and electricity costs -->
           </reference_price>
+          <multiplier>1.360</multiplier> <!-- Go from $ USD 2016 to $ USD 2020 -->
         </CashFlow>
         <CashFlow name="elec_cap_market" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -175,7 +177,7 @@
 
     <Component name='ft_elec_consumption'>
       <demands resource='electricity' dispatch='fixed'>
-        <capacity>
+        <capacity skip_plot="True">
           <fixed_value>-14.9</fixed_value>
           <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
         </capacity>
