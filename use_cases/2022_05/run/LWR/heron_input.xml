@@ -292,7 +292,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>0,200e3</opt_bounds>
+          <opt_bounds>0,1e6</opt_bounds>
           <!-- kg : up to double the flow to FT -->
         </capacity>
         <initial_stored>
@@ -309,7 +309,7 @@
           </driver>
           <reference_price>
             <fixed_value>-500</fixed_value>
-            <!-- CApex cost of $500/kg-H2 -->
+            <!-- Capex cost of $500/kg-H2: Assumption -->
           </reference_price>
           <depreciate>15</depreciate>
         </CashFlow>
