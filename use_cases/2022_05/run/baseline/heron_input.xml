@@ -2,7 +2,7 @@
   <Case name="Synfuel_baseline">
 	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>10</num_arma_samples>
+    <num_arma_samples>1000</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -10,9 +10,9 @@
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>3</ProjectTime>
+      <ProjectTime>20</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
-      <tax>0.1</tax>
+      <tax>0.08</tax>
       <inflation>0</inflation>
       <verbosity>50</verbosity>
     </economics>
@@ -26,8 +26,8 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity" skip_plot="True">
-          <sweep_values>77,81,1117</sweep_values>
-          <!-- SMR: NuScale; HOLOS Titan Micro-reactor: 81 MWe; LWR: AP1000 -->
+          <sweep_values>50,300,1000</sweep_values>
+          <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
       </produces>
       <economics>
@@ -64,7 +64,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name="price" variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+    <ARMA name="price" variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
   </DataGenerators>
 
 </HERON>
