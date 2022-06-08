@@ -56,9 +56,11 @@
       </produces>
       <economics>
         <lifetime>30</lifetime> <!-- TODO Should be 20 years but bug in TEAL for now -->
+        <!-- Everything expressed in $/MW-DC in the report and 1.076 MW-AC for 1.00 MW-DC so DC to AC ratio is 0.929-->
         <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <Function method="htse_noak_capex">functions</Function>
+            <!-- DC to AC ratio in the function -->
             <!--<variable>htse_capacity</variable>-->
           </driver>
           <reference_price>
@@ -81,6 +83,7 @@
             <fixed_value>-326400</fixed_value>
             <!-- $32.64/MW-dc-year -->
           </reference_price>
+          <multiplier>0.929</multiplier>
         </CashFlow>
         <CashFlow name="htse_vom" type="repeating" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -90,8 +93,10 @@
             <fixed_value>-3.41</fixed_value>
             <!-- $3.41/MWh-dc -->
           </reference_price>
+          <multiplier>0.929</multiplier>
         </CashFlow>
         <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
             <variable>htse_capacity</variable>
           </driver>
@@ -177,6 +182,16 @@
       </demands>
       <economics>
         <lifetime>1</lifetime>
+        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
+          <driver>
+            <variable>ft_elec_consumption_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-27933.45</fixed_value>
+            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
+          </reference_price>
+        </CashFlow>
       </economics>
     </Component>
 
