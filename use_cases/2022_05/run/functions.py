@@ -1,4 +1,6 @@
 import math
+import pandas as pd
+import os
 
 coefs = { 'NOAK':{'m':1.294,
                   'f':1.382,
@@ -44,8 +46,47 @@ def htse_noak_capex(data, meta):
   data = {'driver': capex}
   return data, meta
 
-if __name__ == "__main__":
+def find_lower_nearest_idx(array, value): 
+  idx = 0
+  for i,a in enumerate(array):
+    if value>a:
+      idx = i
+  return idx
+
+
+def co2_supply_curve(data, meta):
+  """
+    Determines the cost of CO2 as a function of the quantity asked for, 
+    Based on preliminary data from D. Wendt analysis for Braidwood NPP
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ In, meta, dict, state information
+  """
+  co2_cost = 0
+  activity = meta['HERON']['activity']
+  co2_demand = math.fabs(activity['co2'])
+  # co2 demand will be in kg/h
+  # Get the data for the Braidwood plant
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
+  cost_data = list(df.iloc[:,-1].to_numpy())
+  co2_demand_data = list(df.iloc[:,-2].to_numpy())
+  co2_cost = cost_data[find_lower_nearest_idx(co2_demand_data, co2_demand)]
+  data = {'driver': co2_cost}
+  return data, meta 
+
+
+def test_capex():
   d = coefs['NOAK']
   m, f, a_sca, n_sca, a_mod, n_mod = d['m'], d['f'], d['a_sca'], d['n_sca'], d['a_mod'], d['n_mod']
   capex = -1000*compute_capex(250, m, f, a_sca, n_sca, a_mod, n_mod)
   print(capex)
+
+def test_co2_supply_curve():
+  meta = {'HERON':{'activity':{'co2':340000}}}
+  data ={}
+  data, meta = co2_supply_curve(data, meta)
+  print(data['driver'])
+
+if __name__ == "__main__":
+  test_co2_supply_curve()# Works!
