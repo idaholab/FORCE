@@ -3,7 +3,7 @@
 	  <mode>opt</mode>
     <debug></debug>
     <verbosity>debug</verbosity>
-    <num_arma_samples>1000</num_arma_samples>
+    <num_arma_samples>500</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -191,21 +191,21 @@
       </economics>
     </Component>
 
-    <Component name='co2_source'>
+    <Component name='CO2_source'>
       <produces resource='co2' dispatch='independent'>
-        <capacity skip_plot='True'>
+        <capacity resource='co2' skip_plot='True'>
           <fixed_value>3.355e5</fixed_value>
           <!-- Braidwood upper boundary for co2 demand is 2,938,883 MT/year so 3.355e5 kg/h and FT process can get exactly how much co2 it needs -->
         </capacity>
       </produces>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='co2_shipping' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='CO2_shipping' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <Function method='co2_supply_curve'>functions</Function>
+            <activity>co2</activity>
           </driver>
           <reference_price>
-            <fixed_value>1</fixed_value>
+            <Function method='get_co2_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
