@@ -160,6 +160,19 @@
             7,085,933 in $ USD 2016 so 9,636,869 in $ USD 2020 assuming 8% inflation-->
           </reference_price>
         </CashFlow>
+        <CashFlow name='co2_shipping' period='hour' type='repeating' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <activity>h2</activity>
+          </driver>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <reference_price>
+            <fixed_value>0.131010</fixed_value>
+            <!-- Fixing the price of CO2 as the median price for the Braidwood location $/kg and multiplying by
+              the ratio of co2 to h2 consumed i.e.6.58/1.06 to get a $/kg-H2 price-->
+          </reference_price>
+        </CashFlow>
       </economics>
     </Component>
 
