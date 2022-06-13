@@ -1,7 +1,6 @@
 <HERON>
-  <Case name="Synfuel_baseline">
-	  <mode>opt</mode>
-    <debug></debug>
+  <Case name="Syn_bas">
+	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
     <num_arma_samples>500</num_arma_samples>
     <time_discretization>
@@ -27,7 +26,7 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity" skip_plot="True">
-          <fixed_value>1000</fixed_value>
+          <sweep_values>50,300,1000</sweep_values>
           <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
       </produces>
@@ -41,7 +40,8 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-985.1">-1001,0</opt_bounds> <!-- MWe -->
+          <sweep_values>-35.1,-285.1,-985.1</sweep_values>
+          <!--<opt_bounds debug_value="-985.1">-1001,0</opt_bounds>--> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -108,7 +108,8 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-500000,0</opt_bounds> 
+          <sweep_values>-882.063, -7164.563, -24755.563</sweep_values>
+          <!--<opt_bounds>-500000,0</opt_bounds> -->
         </capacity>
         <transfer>
           <linear>
