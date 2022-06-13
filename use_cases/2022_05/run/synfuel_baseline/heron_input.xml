@@ -1,6 +1,7 @@
 <HERON>
   <Case name="Synfuel_baseline">
 	  <mode>opt</mode>
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>500</num_arma_samples>
     <time_discretization>
@@ -40,7 +41,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-500">-1001,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-985.1">-1001,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -163,6 +164,19 @@
           <reference_price>
             <fixed_value>-27933.45</fixed_value>
             <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name='co2_shipping' period='hour' type='repeating' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <activity>h2</activity>
+          </driver>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <reference_price>
+            <fixed_value>0.131010</fixed_value>
+            <!-- Fixing the price of CO2 as the median price for the Braidwood location $/kg and multiplying by
+              the ratio of co2 to h2 consumed i.e.6.58/1.06 to get a $/kg-H2 price-->
           </reference_price>
         </CashFlow>
       </economics>
