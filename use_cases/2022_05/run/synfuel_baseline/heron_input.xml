@@ -158,15 +158,6 @@
             7,085,933 in $ USD 2016 so 9,636,869 in $ USD 2020 assuming 8% inflation-->
           </reference_price>
         </CashFlow>
-        <CashFlow name="elec_cap_market" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
-          <driver>
-            <variable>ft_capacity</variable>
-          </driver>
-          <reference_price>
-            <fixed_value>-27933.45</fixed_value>
-            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
-          </reference_price>
-        </CashFlow>
         <CashFlow name='co2_shipping' period='hour' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
             <activity>h2</activity>
