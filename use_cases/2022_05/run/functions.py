@@ -1,6 +1,7 @@
 import math
 import pandas as pd
-import os
+import os, copy
+import numpy as np
 
 coefs = { 'NOAK':{'m':1.294,
                   'f':1.382,
@@ -54,6 +55,40 @@ def find_lower_nearest_idx(array, value):
   return idx
 
 
+def get_co2_price(data, meta):
+  """
+    Determines the cost of CO2 as a function of the quantity asked for, 
+    Based on preliminary data from D. Wendt analysis for Braidwood NPP
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ In, meta, dict, state information
+  """
+  t = meta['HERON']['time_index']
+  # year = meta['HERON']['year_index']
+  for comp in meta['HERON']['Components']:
+    if comp.name == 'CO2_source':
+      npp = comp
+      break
+  else:
+    raise RuntimeError
+  print(meta['HERON'].keys())
+  #co2_demand = data['driver']
+  
+  co2_demand = meta['HERON']['activity'].get_activity(npp, 'production', 'co2', t)
+  print(co2_demand)
+  #.get_activity(npp, 'production', 'heat', t)
+
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
+  cost_data = df.iloc[:,-1].to_numpy()
+  co2_demand_data = df.iloc[:,-2].to_numpy()
+  diff = np.absolute(co2_demand_data-co2_demand)
+  idx = np.argmin(diff)
+  co2_cost = cost_data[idx]
+  data = {'reference_price': co2_cost}
+  return data, meta
+
+
 def co2_supply_curve(data, meta):
   """
     Determines the cost of CO2 as a function of the quantity asked for, 
@@ -65,14 +100,18 @@ def co2_supply_curve(data, meta):
   """
   co2_cost = 0
   activity = meta['HERON']['activity']
-  co2_demand = math.fabs(activity['co2'])
+  co2_demand = activity['production']['co2']
+  print(type(co2_demand))
   # co2 demand will be in kg/h
   # Get the data for the Braidwood plant
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
-  cost_data = list(df.iloc[:,-1].to_numpy())
-  co2_demand_data = list(df.iloc[:,-2].to_numpy())
-  co2_cost = cost_data[find_lower_nearest_idx(co2_demand_data, co2_demand)]
-  data = {'driver': co2_cost}
+  cost_data = df.iloc[:,-1].to_numpy()
+  co2_demand_data = df.iloc[:,-2].to_numpy()
+  diff = np.absolute(co2_demand_data-co2_demand)
+  idx = np.argmin(diff)
+  co2_cost = cost_data[idx]
+  #co2_cost = cost_data[find_lower_nearest_idx(co2_demand_data, co2_demand)]
+  data = {'reference_price': co2_cost}
   return data, meta 
 
 
