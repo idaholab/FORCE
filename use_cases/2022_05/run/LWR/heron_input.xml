@@ -1,6 +1,7 @@
 <HERON>
   <Case name="Synfuel_LWR">
 	  <mode>opt</mode>
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
     <time_discretization>
@@ -44,7 +45,7 @@
       <produces resource='h2' dispatch='fixed'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-500">-1000,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-885.1">-1500,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -111,7 +112,7 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-500000,0</opt_bounds> 
+          <opt_bounds>-1e6,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
@@ -200,9 +201,9 @@
 
   <!-- MARKETS Components -->
     <Component name='elec_market'>
-      <demands resource='electricity' dispatch='dependent'>
+      <demands resource='electricity' dispatch='independent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e200</fixed_value> 
+          <fixed_value>-1e20</fixed_value> 
           <!-- Can sell infinite amount of electricity to the market -->
         </capacity>
       </demands>
@@ -227,9 +228,9 @@
     </Component>
 
     <Component name='naphta_market'>
-      <demands resource='naphta' dispatch='dependent'>
+      <demands resource='naphta' dispatch='independent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e200</fixed_value>
+          <fixed_value>-1e20</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -248,9 +249,9 @@
     </Component>
 
     <Component name='jet_fuel_market'>
-      <demands resource='jet_fuel' dispatch='dependent'>
+      <demands resource='jet_fuel' dispatch='independent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e200</fixed_value>
+          <fixed_value>-1e20</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -269,9 +270,9 @@
     </Component>
 
     <Component name='diesel_market'>
-      <demands resource='diesel' dispatch='dependent'>
+      <demands resource='diesel' dispatch='independent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e200</fixed_value>
+          <fixed_value>-1e20</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -293,11 +294,11 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>0,1e6</opt_bounds>
+          <opt_bounds>-1e6,1e6</opt_bounds>
           <!-- kg : up to double the flow to FT -->
         </capacity>
         <initial_stored>
-          <fixed_value>0</fixed_value>
+          <fixed_value>10000</fixed_value>
         </initial_stored>
         <RTE>0.9</RTE>
         <!-- Assumption -->
