@@ -41,7 +41,7 @@
     </Component>
 
     <Component name='htse'>
-      <produces resource='h2' dispatch='independent'>
+      <produces resource='h2' dispatch='fixed'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
           <opt_bounds debug_value="-500">-1000,0</opt_bounds> <!-- MWe -->
@@ -108,7 +108,7 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
+      <produces resource='naphta,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
           <opt_bounds>-500000,0</opt_bounds> 
@@ -320,7 +320,7 @@
   </Components>
 
 <DataGenerators>
-  <ARMA name='price' variable="price">C:/Users/garrm/projects/FORCE/use_cases/2022_05/train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
   <Function name="functions">../functions.py</Function>
 </DataGenerators>
 
