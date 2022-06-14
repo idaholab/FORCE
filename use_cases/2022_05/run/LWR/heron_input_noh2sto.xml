@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="Synfuel_LWR">
+  <Case name="Synfuel_LWR_noH2sto">
 	  <mode>opt</mode>
     <debug></debug>
     <verbosity>debug</verbosity>
