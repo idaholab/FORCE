@@ -200,7 +200,7 @@
       </produces>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='CO2_shipping' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='CO2_shipping' type='repeating' period='hour' taxable='True' inflation='None' mult_target='False'>
           <driver>
             <activity>co2</activity>
           </driver>
