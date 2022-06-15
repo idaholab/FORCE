@@ -1,0 +1,15 @@
+<DataObjectMetadata name="synthetic">
+  <DataSet type="Static">
+    <dims>
+      <price>hour,Year</price>
+    </dims>
+    <general>
+      <datasetName>synthetic</datasetName>
+      <inputs>scaling</inputs>
+      <outputs>price</outputs>
+      <pointwise_meta>PointProbability,ProbabilityWeight,prefix</pointwise_meta>
+      <sampleTag>RAVEN_sample_ID</sampleTag>
+    </general>
+  </DataSet>
+  
+</DataObjectMetadata>
