@@ -2,18 +2,18 @@
   <Case name="HTSE">
     <mode>opt</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>3</num_arma_samples>
+    <num_arma_samples>30</num_arma_samples>
     <time_discretization>
-      <time_variable>HOUR</time_variable>
-      <year_variable>YEAR</year_variable>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
       <end_time>23</end_time>
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>3</ProjectTime>
+      <ProjectTime>20</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
-      <tax>0.1</tax>
-      <inflation>0.07</inflation>
+      <tax>0.08</tax>
+      <inflation>0.0</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
