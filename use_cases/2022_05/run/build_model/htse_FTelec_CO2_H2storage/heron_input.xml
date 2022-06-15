@@ -59,7 +59,7 @@
     </Component>
 
     <Component name='ft'>
-      <produces resource='syngas' dispatch='independent'>
+      <produces resource='syngas' dispatch='fixed'>
         <!--<consumes>electricity</consumes>-->
         <consumes>h2, co2, electricity</consumes>
         <capacity resource='syngas'>
