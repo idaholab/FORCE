@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="HTSE">
+  <Case name="FT_fixed">
     <mode>opt</mode>
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
@@ -31,7 +31,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity'>
-          <opt_bounds>1e3,1e5</opt_bounds> <!-- kWe -->
+          <fixed_value>1000</fixed_value><!-- MWe -->
         </capacity>
       </produces>
       <economics>
@@ -43,12 +43,12 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds>-1e5,-1e3</opt_bounds> <!-- kW -->
+          <opt_bounds>-1e3,-1</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>0.025</rate>
+            <rate resource='h2'>25</rate>
             <!-- from 39.8kWh/kg electricity consumption for H2 prod-->
           </linear>
         </transfer>
@@ -61,31 +61,18 @@
     <Component name='ft'>
       <produces resource='syngas' dispatch='fixed'>
         <!--<consumes>electricity</consumes>-->
-        <consumes>h2, co2, electricity</consumes>
+        <consumes>h2</consumes>
         <capacity resource='syngas'>
-          <opt_bounds>1,1e5</opt_bounds> <!-- kg/h -->
+          <opt_bounds>1,25e3</opt_bounds> <!-- kg/h -->
         </capacity>
         <transfer>
           <linear>
-            <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>-0.05</rate>
-            <rate resource='co2'>-1</rate>
+            <rate resource='h2'>-1</rate>
             <!-- dummy value for now -->
             <rate resource='syngas'>1</rate>
             <!-- Figure out the numbers from ANL paper -->
           </linear>
         </transfer>
-      </produces>
-      <economics>
-        <lifetime>20</lifetime>
-      </economics>
-    </Component>
-
-    <Component name='CO2_source'>
-      <produces resource='co2' dispatch='independent'>
-        <capacity resource='co2'>
-          <opt_bounds>1,1e5</opt_bounds>
-        </capacity>
       </produces>
       <economics>
         <lifetime>20</lifetime>
@@ -118,9 +105,9 @@
 
     <Component name='syngas_market'>
       <!-- Make it syngas market fixed -->
-      <demands resource='syngas' dispatch='fixed'>
+      <demands resource='syngas' dispatch='dependent'>
         <capacity>
-          <fixed_value>-1</fixed_value>
+          <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -142,7 +129,7 @@
   <Component name='h2_storage'>
     <stores resource="h2" dispatch="independent">
       <capacity resource='h2'>
-        <opt_bounds>1,1e4</opt_bounds>
+        <opt_bounds>1,1e200</opt_bounds>
         <!-- Max storage of 200MT of H2 -->
       </capacity>
       <initial_stored>
