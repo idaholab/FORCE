@@ -42,10 +42,10 @@
     </Component>
 
     <Component name='htse'>
-      <produces resource='h2' dispatch='fixed'>
+      <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-885.1">-1500,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-885.1">-1000,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -294,11 +294,12 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>-1e6,1e6</opt_bounds>
+          <opt_bounds>0,1e6</opt_bounds>
           <!-- kg : up to double the flow to FT -->
         </capacity>
         <initial_stored>
           <fixed_value>10000</fixed_value>
+          <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>
         <!-- Assumption -->
