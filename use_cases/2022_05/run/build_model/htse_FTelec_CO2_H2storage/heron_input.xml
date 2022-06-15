@@ -24,6 +24,10 @@
       <type>max</type>
       <persistence>5</persistence>
     </optimization_settings>
+    <parallel>
+      <outer>4</outer>
+      <inner>4</inner>
+    </parallel>
   </Case>
 
   <Components>
@@ -129,7 +133,7 @@
   <Component name='h2_storage'>
     <stores resource="h2" dispatch="independent">
       <capacity resource='h2'>
-        <opt_bounds>1,1e200</opt_bounds>
+        <opt_bounds>1,1e500</opt_bounds>
         <!-- Max storage of 200MT of H2 -->
       </capacity>
       <initial_stored>
