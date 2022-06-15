@@ -201,7 +201,7 @@
 
   <!-- MARKETS Components -->
     <Component name='elec_market'>
-      <demands resource='electricity' dispatch='independent'>
+      <demands resource='electricity' dispatch='dependent'>
         <capacity skip_plot="True">
           <fixed_value>-1e20</fixed_value> 
           <!-- Can sell infinite amount of electricity to the market -->
@@ -228,7 +228,7 @@
     </Component>
 
     <Component name='naphta_market'>
-      <demands resource='naphta' dispatch='independent'>
+      <demands resource='naphta' dispatch='dependent'>
         <capacity skip_plot="True">
           <fixed_value>-1e20</fixed_value>
         </capacity>
@@ -249,7 +249,7 @@
     </Component>
 
     <Component name='jet_fuel_market'>
-      <demands resource='jet_fuel' dispatch='independent'>
+      <demands resource='jet_fuel' dispatch='dependent'>
         <capacity skip_plot="True">
           <fixed_value>-1e20</fixed_value>
         </capacity>
@@ -270,7 +270,7 @@
     </Component>
 
     <Component name='diesel_market'>
-      <demands resource='diesel' dispatch='independent'>
+      <demands resource='diesel' dispatch='dependent'>
         <capacity skip_plot="True">
           <fixed_value>-1e20</fixed_value>
         </capacity>
