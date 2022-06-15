@@ -294,7 +294,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>0,1e500</opt_bounds>
+          <opt_bounds>0,1e300</opt_bounds>
           <!-- kg : up to double the flow to FT -->
         </capacity>
         <initial_stored>
