@@ -22,7 +22,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>10</persistence>
     </optimization_settings>
   </Case>
 
@@ -48,7 +48,7 @@
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>0.02513</rate> <!-- MT-H2/MWh -->
+            <rate resource='h2'>25.13</rate> <!-- kg-H2/MWh -->
             <!-- from 39.8kWh/kg electricity consumption for H2 prod-->
           </linear>
         </transfer>
@@ -63,7 +63,7 @@
         <!--<consumes>electricity</consumes>-->
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-3000,0</opt_bounds> <!-- kg/h -->
+          <opt_bounds>-1e6,0</opt_bounds> <!-- kg/h -->
         </capacity>
         <transfer>
           <linear>
