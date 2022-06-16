@@ -197,7 +197,7 @@
     <Component name='CO2_source'>
       <produces resource='co2' dispatch='independent'>
         <capacity resource='co2' skip_plot='True'>
-          <fixed_value>3.355e5</fixed_value>
+          <fixed_value>1e200</fixed_value>
           <!-- Braidwood upper boundary for co2 demand is 2,938,883 MT/year so 3.355e5 kg/h and FT process can get exactly how much co2 it needs -->
         </capacity>
       </produces>
