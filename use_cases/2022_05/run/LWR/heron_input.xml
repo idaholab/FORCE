@@ -1,7 +1,7 @@
 <HERON>
   <Case name="Synfuel_LWR">
 	  <mode>opt</mode>
-    <debug></debug>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
     <time_discretization>
@@ -50,7 +50,7 @@
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>25.13</rate>
+            <rate resource='h2'>0.02513</rate> <!-- MT-->
             <!-- from 39.8kWh/kg electricity consumption for H2 prod, Arg. March 2022-->
           </linear>
         </transfer>
@@ -112,11 +112,11 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-2505">-1e6,0</opt_bounds> 
+          <opt_bounds debug_value="-25">-30,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
-            <!-- kg/h units for mass flows -->
+            <!-- MT/h units for mass flows -->
             <rate resource='h2'>-1.06</rate>
             <!--<rate resource='co2'>-6.58</rate>-->
             <rate resource='naphta'>0.733</rate>
@@ -169,9 +169,9 @@
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <fixed_value>0.131010</fixed_value>
-            <!-- Fixing the price of CO2 as the median price for the Braidwood location $/kg and multiplying by
-              the ratio of co2 to h2 consumed i.e.6.58/1.06 to get a $/kg-H2 price-->
+            <fixed_value>131.010</fixed_value>
+            <!-- Fixing the price of CO2 as the median price for the Braidwood location $/MT and multiplying by
+              the ratio of co2 to h2 consumed i.e.6.58/1.06 to get a $/MT-H2 price-->
           </reference_price>
         </CashFlow>
       </economics>
@@ -203,7 +203,7 @@
     <Component name='elec_market'>
       <demands resource='electricity' dispatch='dependent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e20</fixed_value> 
+          <fixed_value>-1e200</fixed_value> 
           <!-- Can sell infinite amount of electricity to the market -->
         </capacity>
       </demands>
@@ -230,7 +230,7 @@
     <Component name='naphta_market'>
       <demands resource='naphta' dispatch='dependent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e20</fixed_value>
+          <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -241,8 +241,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.53</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <fixed_value>530</fixed_value>
+            <!-- $/MT See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -251,7 +251,7 @@
     <Component name='jet_fuel_market'>
       <demands resource='jet_fuel' dispatch='dependent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e20</fixed_value>
+          <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -262,8 +262,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.603</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <fixed_value>603</fixed_value>
+            <!-- $/MT See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -272,7 +272,7 @@
     <Component name='diesel_market'>
       <demands resource='diesel' dispatch='dependent'>
         <capacity skip_plot="True">
-          <fixed_value>-1e20</fixed_value>
+          <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
       <economics>
@@ -283,8 +283,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.6015</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <fixed_value>601.5</fixed_value>
+            <!-- $/MT See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -295,10 +295,10 @@
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
           <opt_bounds>0,1e300</opt_bounds>
-          <!-- kg : up to double the flow to FT -->
+          <!-- MT -->
         </capacity>
         <initial_stored>
-          <fixed_value>10000</fixed_value>
+          <fixed_value>10</fixed_value>
           <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>
