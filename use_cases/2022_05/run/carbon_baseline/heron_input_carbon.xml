@@ -1,5 +1,6 @@
 <HERON>
   <Case name="Synfuel_baseline_carbon">
+  <!-- Add a CO2 source component to try and use a supply curve function-->
 	  <mode>opt</mode>
     <debug></debug>
     <verbosity>debug</verbosity>
@@ -200,12 +201,12 @@
       </produces>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='CO2_shipping' type='repeating' period='hour' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='CO2_shipping' type='repeating' period='year' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <activity>co2</activity>
+            <variable>CO2_source_capacity</variable>
           </driver>
           <reference_price>
-            <Function method='get_co2_price'>functions</Function>
+            <Function method='co2_supply_curve'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
