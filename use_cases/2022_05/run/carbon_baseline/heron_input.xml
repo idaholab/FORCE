@@ -39,15 +39,15 @@
 
 
     <Component name='htse'>
-      <produces resource='h2' dispatch='independent'>
+      <produces resource='h2' dispatch='fixed'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-500">-1001,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-885.1">-1500,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>25.13</rate>
+            <rate resource='h2'>25.13</rate> <!-- kg -->
             <!-- from 39.8kWh/kg electricity consumption for H2 prod, Arg. March 2022-->
           </linear>
         </transfer>
@@ -106,10 +106,12 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
+      <produces resource='naphta,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2, co2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-500000,0</opt_bounds> 
+          <variable>htse_capacity</variable>
+          <multiplier>25.13</multiplier>
+          <!-- Set the size of the FT process as the size of the HTSE times the elec to h2 transfer ratio -->
         </capacity>
         <transfer>
           <linear>
@@ -278,32 +280,6 @@
     </Component>
 
   <!-- STORAGE Components -->
-    <Component name='h2_storage'>
-      <stores resource="h2" dispatch="independent">
-        <capacity resource='h2'>
-          <opt_bounds>0,1e6</opt_bounds>
-          <!-- kg : up to double the flow to FT -->
-        </capacity>
-        <initial_stored>
-          <fixed_value>0</fixed_value>
-        </initial_stored>
-        <RTE>0.9</RTE>
-        <!-- Assumption -->
-      </stores>
-      <economics>
-        <lifetime>30</lifetime>
-        <CashFlow name='h2_storage_capex' inflation="none" mult_target="False" taxable="True" type="one-time">
-          <driver>
-            <variable>h2_storage_capacity</variable>
-          </driver>
-          <reference_price>
-            <fixed_value>-500</fixed_value>
-            <!-- Capex cost of $500/kg-H2: Assumption -->
-          </reference_price>
-          <depreciate>15</depreciate>
-        </CashFlow>
-      </economics>
-    </Component>
 
   </Components>
 
