@@ -24,10 +24,6 @@
       <type>max</type>
       <persistence>5</persistence>
     </optimization_settings>
-    <parallel>
-      <outer>4</outer>
-      <inner>4</inner>
-    </parallel>
   </Case>
 
   <Components>
@@ -35,7 +31,7 @@
     <Component name='turbine'>
       <produces resource='electricity' dispatch='fixed'>
         <capacity resource='electricity'>
-          <fixed_value>1000</fixed_value><!-- MWe -->
+          <fixed_value>1e3</fixed_value><!--MWe -->
         </capacity>
       </produces>
       <economics>
@@ -47,12 +43,12 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds>-1e3,-1</opt_bounds> <!-- MWe -->
+          <opt_bounds>-1e3,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>25</rate>
+            <rate resource='h2'>0.02513</rate> <!-- MT-H2/MWh -->
             <!-- from 39.8kWh/kg electricity consumption for H2 prod-->
           </linear>
         </transfer>
@@ -66,8 +62,8 @@
       <produces resource='syngas' dispatch='fixed'>
         <!--<consumes>electricity</consumes>-->
         <consumes>h2</consumes>
-        <capacity resource='syngas'>
-          <opt_bounds>1,25e3</opt_bounds> <!-- kg/h -->
+        <capacity resource='h2'>
+          <opt_bounds>-30,0</opt_bounds> <!-- kg/h -->
         </capacity>
         <transfer>
           <linear>
@@ -133,11 +129,11 @@
   <Component name='h2_storage'>
     <stores resource="h2" dispatch="independent">
       <capacity resource='h2'>
-        <opt_bounds>1,1e500</opt_bounds>
+        <opt_bounds>0,1e300</opt_bounds>
         <!-- Max storage of 200MT of H2 -->
       </capacity>
       <initial_stored>
-        <fixed_value>1</fixed_value>
+        <fixed_value>0</fixed_value>
       </initial_stored>
       <RTE>0.9</RTE>
       <!-- Need to look up this value -->
