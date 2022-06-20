@@ -245,17 +245,17 @@
         </economics>
       </Component>
   
-      <Component name='naphta_market'>
-        <demands resource='naphta' dispatch='dependent'>
+      <Component name='naphtha_market'>
+        <demands resource='naphtha' dispatch='dependent'>
           <capacity skip_plot="True">
             <fixed_value>-1e200</fixed_value>
           </capacity>
         </demands>
         <economics>
           <lifetime>30</lifetime>
-          <CashFlow name='naphta_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <CashFlow name='naphtha_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
             <driver>
-              <activity>naphta</activity>
+              <activity>naphtha</activity>
               <multiplier>-1</multiplier>
             </driver>
             <reference_price>
