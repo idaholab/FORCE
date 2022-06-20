@@ -1,7 +1,7 @@
 <HERON>
   <Case name="Synfuel_LWR">
-	  <mode>opt</mode>
-   <debug></debug>
+    <mode>opt</mode>
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
     <time_discretization>
@@ -45,7 +45,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-500">-1000,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-50">-1000,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -112,7 +112,7 @@
       <produces resource='naphta,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-25">-30,0</opt_bounds> 
+          <opt_bounds debug_value="-1.5">-30,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
