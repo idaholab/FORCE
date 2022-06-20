@@ -109,7 +109,7 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphta,diesel,jet_fuel' dispatch='fixed'>
+      <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
           <opt_bounds debug_value="-1.5">-30,0</opt_bounds> 
