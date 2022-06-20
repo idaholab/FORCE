@@ -45,7 +45,7 @@
         <produces resource='h2' dispatch='independent'>
           <consumes>electricity</consumes>
           <capacity resource ='electricity'>
-            <opt_bounds debug_value="-100">-1000,0</opt_bounds> <!-- MWe -->
+            <opt_bounds>-1000,0</opt_bounds> <!-- MWe -->
           </capacity>
           <transfer>
             <linear>
@@ -112,7 +112,7 @@
         <produces resource='syngas' dispatch='fixed'>
           <consumes>h2</consumes>
           <capacity resource='h2'>
-            <opt_bounds>-30,0</opt_bounds> 
+            <opt_bounds>-100,0</opt_bounds> 
           </capacity>
           <transfer>
             <linear>
@@ -179,7 +179,7 @@
         <produces resource='naphtha,jet_fuel,diesel' dispatch='independent'>
             <consumes>syngas</consumes>
             <capacity resource='syngas'>
-                <opt_bounds>-30,0</opt_bounds>
+                <opt_bounds>-200,0</opt_bounds>
             </capacity>
             <transfer>
                 <linear>
@@ -316,7 +316,7 @@
             <!-- MT -->
           </capacity>
           <initial_stored>
-            <fixed_value>0</fixed_value>
+            <fixed_value>5</fixed_value>
             <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
           </initial_stored>
           <RTE>0.9</RTE>
