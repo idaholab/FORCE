@@ -32,7 +32,7 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity" skip_plot="True">
-          <fixed_value>50,300,1000</fixed_value>
+          <sweep_values>50,300,1000</sweep_values>
           <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
       </produces>
