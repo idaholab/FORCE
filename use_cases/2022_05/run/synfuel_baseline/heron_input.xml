@@ -46,7 +46,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-985.1">-1001,0</opt_bounds> <!-- MWe -->
+          <opt_bounds debug_value="-985.1">-1000,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
