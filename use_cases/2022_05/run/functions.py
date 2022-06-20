@@ -17,6 +17,21 @@ coefs = { 'NOAK':{'m':1.294,
                   'n_mod':0}}
 AC_to_DC = 1/1.076 # AC power consumed over DC power consumed
 
+def get_syngas_capex(data, meta):
+  """
+    Determines the capex cost of the syngas storage
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state infomation
+  """
+  capacity_kg = meta['HERON']['RAVEN_vars']['syngas_storage_capacity']
+  density = 0.95 #kg/m3
+  cap = capacity_kg/density
+  capex = cap*62.3+66223
+  data = {'driver':capex}
+  return data, meta
+
 def compute_capex(capacity, m,f,a_sca, n_sca, a_mod, n_mod):
   """ 
     Determines the capex of the HTSE plant in $/kW-AC
