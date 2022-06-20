@@ -1,7 +1,7 @@
 <HERON>
   <Case name="Syn_bas">
     <mode>opt</mode>
-    <debug></debug>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>500</num_arma_samples>
     <time_discretization>
@@ -19,7 +19,12 @@
     </economics>
     <dispatcher>
       <pyomo><debug_mode>True</debug_mode></pyomo>
-    </dispatcher> 
+    </dispatcher>
+    <optimization_settings>
+      <metric>expectedValue</metric>
+      <type>max</type>
+      <persistence>5</persistence>
+    </optimization_settings>
   </Case>
 
   <Components>
