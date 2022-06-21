@@ -10,7 +10,7 @@
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>20</ProjectTime>
+      <ProjectTime>30</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
       <tax>0.08</tax>
       <inflation>0</inflation>
