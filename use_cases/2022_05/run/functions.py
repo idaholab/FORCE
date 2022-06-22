@@ -114,17 +114,19 @@ def co2_supply_curve(data, meta):
     @ In, meta, dict, state information
   """
   co2_cost = 0
-  co2_demand_year = meta['HERON']['RAVEN_vars']['CO2_source_capacity'] #kg/year
-  co2_demand_hour = co2_demand_year/(365*24) # kg/h
+  ft_cap = meta['HERON']['RAVEN_vars']['ft_capacity'] #kg-H2
+  h2_rate = 1.06
+  co2_rate = 6.58
+  co2_demand_year = 365*24*ft_cap*co2_rate/h2_rate #(kg/year)
   # Get the data for the Braidwood plant
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
   cost_data = df.iloc[:,-1].to_numpy()
   co2_demand_data = df.iloc[:,-2].to_numpy()
-  diff = np.absolute(co2_demand_data-co2_demand_hour)
+  diff = np.absolute(co2_demand_data-co2_demand_year)
   idx = np.argmin(diff)
   co2_cost = cost_data[idx]
   #co2_cost = cost_data[find_lower_nearest_idx(co2_demand_data, co2_demand)]
-  data = {'reference_price': co2_cost}
+  data = {'driver': co2_cost}
   return data, meta 
 
 
