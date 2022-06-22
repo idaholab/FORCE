@@ -1,11 +1,11 @@
-﻿Ethanol plant location,Cumulative amount of CO2 transported (MMT/year),Cumulative Avg. Logistics cost of CO2 ($/MT),co2 (kg/h),cost ($/kg)
-Hennepin,0.677,12.1,77283.10502,0.0121
-Decatur,1.37,15.56,156392.6941,0.01556
-Pekin,1.911,17.17,218150.6849,0.01717
-Gibson City,2.189,17.7,249885.8447,0.0177
-Peoria,2.44,19.92,278538.8128,0.01992
-Linden,2.691,22.29,307191.7808,0.02229
-Rochelle,2.859,23.7,326369.863,0.0237
-Annawan,3.0282,25.34,345684.9315,0.02534
-South Bend,3.218,27.29,367351.5982,0.02729
-Rensselaer,3.319,28.69,378881.2785,0.02869
+﻿Ethanol plant location,Cumulative amount of CO2 transported (MMT/year),Cumulative Avg. Logistics cost of CO2 ($/MT),co2 (kg/year),cost ($/kg)
+Hennepin,0.68,11.95,680000,0.01195
+Decatur,1.37,15.39,1370000,0.01539
+Pekin,1.91,17,1910000,0.017
+Gibson City,2.19,17.54,2190000,0.01754
+Peoria,2.44,19.75,2440000,0.01975
+Linden,2.69,22.11,2690000,0.02211
+Rochelle,2.86,23.53,2860000,0.02353
+Annawan,3.03,25.17,3030000,0.02517
+South Bend,3.22,27.12,3220000,0.02712
+Rensselaer,3.32,28.52,3320000,0.02852
