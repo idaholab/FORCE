@@ -109,7 +109,7 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphta,diesel,jet_fuel' dispatch='independent'>
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
           <opt_bounds debug_value="-1.5">-30,0</opt_bounds> 
@@ -119,7 +119,7 @@
             <!-- MT/h units for mass flows -->
             <rate resource='h2'>-1.06</rate>
             <!--<rate resource='co2'>-6.58</rate>-->
-            <rate resource='naphta'>0.733</rate>
+            <rate resource='naphtha'>0.733</rate>
             <rate resource='jet_fuel'>0.888</rate>
             <rate resource='diesel'>0.492</rate>
           </linear>
@@ -227,17 +227,17 @@
       </economics>
     </Component>
 
-    <Component name='naphta_market'>
-      <demands resource='naphta' dispatch='dependent'>
+    <Component name='naphtha_market'>
+      <demands resource='naphtha' dispatch='dependent'>
         <capacity skip_plot="True">
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='naphta_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+        <CashFlow name='naphtha_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
-            <activity>naphta</activity>
+            <activity>naphtha</activity>
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
