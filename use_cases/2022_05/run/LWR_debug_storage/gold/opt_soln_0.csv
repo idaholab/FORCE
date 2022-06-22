@@ -1,0 +1,2 @@
+iteration,accepted,turbine_capacity,htse_capacity,ft_capacity,elec_market_capacity,syngas_market_capacity,h2_storage_capacity,mean_NPV
+0.0,first,1000.0,-50.95,1250.95,-1e+200,-1e+200,5e+198,-2.5e+201
