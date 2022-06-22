@@ -62,6 +62,22 @@ def htse_noak_capex(data, meta):
   data = {'driver': capex}
   return data, meta
 
+def htse_noak_capex_comb(data,meta):
+  """
+    Determines the Capex cost of the HTSE plant (NOAK) in $/MW-AC
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ In, meta, dict, state information
+  """
+  d = coefs['NOAK']
+  m, f, a_sca, n_sca, a_mod, n_mod = d['m'], d['f'], d['a_sca'], d['n_sca'], d['a_mod'], d['n_mod']
+  cap = math.fabs(meta['HERON']['RAVEN_vars']['htse_ft_capacity']) # HTSE capacity cast as negative number
+  capex = -1000*compute_capex(cap, m, f, a_sca, n_sca, a_mod, n_mod)
+  data = {'driver': capex}
+  return data, meta
+
+
 def find_lower_nearest_idx(array, value): 
   idx = 0
   for i,a in enumerate(array):
@@ -139,6 +155,19 @@ def co2_supply_curve_comb(data,meta):
     @ Out, data, dict, filled data
     @ In, meta, dict, state information
   """
+  co2_cost = 0
+  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe
+  elec_to_h2_rate = 25.13 #kg-H2/MWe
+  h2_to_co2_rate = 6.58/1.06 #kg-Co2/kg-h2
+  co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year)
+  # Get the data for the Braidwood plant
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
+  cost_data = df.iloc[:,-1].to_numpy()
+  co2_demand_data = df.iloc[:,-2].to_numpy()
+  diff = np.absolute(co2_demand_data-co2_demand_year)
+  idx = np.argmin(diff)
+  co2_cost = cost_data[idx]
+  data = {'driver': co2_cost}
   return data, meta
 
 def test_capex():

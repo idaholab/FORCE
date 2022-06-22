@@ -1,6 +1,7 @@
 <HERON>
   <Case name="Synfuel_LWR_noH2sto">
 	  <mode>opt</mode>
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
     <time_discretization>
@@ -59,7 +60,7 @@
         <lifetime>30</lifetime>
         <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <Function method="htse_noak_capex">functions</Function>
+            <Function method="htse_noak_capex_comb">functions</Function>
             <!-- DC to AC ratio in the function -->
             <!--<variable>htse_capacity</variable>-->
           </driver>
@@ -74,7 +75,7 @@
         </CashFlow>
         <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <variable>htse_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_price>
             <fixed_value>-30320</fixed_value>
@@ -93,7 +94,7 @@
         <CashFlow name="htse_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
-            <variable>htse_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_price>
             <fixed_value>-27933.45</fixed_value>
