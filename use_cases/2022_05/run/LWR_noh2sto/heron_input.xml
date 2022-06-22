@@ -40,23 +40,23 @@
       </economics>
     </Component>
 
-    <Component name='htse'>
-      <produces resource='h2' dispatch='fixed'>
+    <Component name='htse_ft'>
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>electricity</consumes>
-        <capacity resource ='electricity'>
-          <opt_bounds debug_value="-885.1">-1500,0</opt_bounds> <!-- MWe -->
+        <capacity resource='electricity'>
+          <opt_bounds>-1000,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>25.13</rate>
-            <!-- from 39.8kWh/kg electricity consumption for H2 prod, Arg. March 2022-->
+            <rate resource='naphtha'>17.38</rate>
+            <rate resource='jet_fuel'>21.05</rate>
+            <rate resource='diesel'>11.66</rate>
           </linear>
         </transfer>
       </produces>
       <economics>
-        <lifetime>30</lifetime> <!-- TODO Should be 20 years but bug in TEAL for now -->
-        <!-- Everything expressed in $/MW-DC in the report and 1.076 MW-AC for 1.00 MW-DC so DC to AC ratio is 0.929-->
+        <lifetime>30</lifetime>
         <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <Function method="htse_noak_capex">functions</Function>
@@ -69,9 +69,6 @@
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
-          <!--<reference_price>
-            <Function method="htse_noak_capex">functions</Function>
-          </reference_price>-->
           <depreciate>20</depreciate>
           <!-- 20 years MACRS -->
         </CashFlow>
@@ -93,7 +90,7 @@
             <!-- $3.41/MWh-dc so $3.168/MWh-ac (excl. energy costs) -->
           </reference_price>
         </CashFlow>
-        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="htse_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
             <variable>htse_capacity</variable>
@@ -103,31 +100,6 @@
             <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
           </reference_price>
         </CashFlow>
-      </economics>
-    </Component>
-
-    <Component name='ft'>
-      <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
-        <consumes>h2</consumes>
-        <capacity resource='h2'>
-          <variable>htse_capacity</variable>
-          <multiplier>25.13</multiplier>
-          <!-- Set the size of the FT process as the size of the HTSE times the elec to h2 transfer ratio -->
-        </capacity>
-        <transfer>
-          <linear>
-            <!-- kg/h units for mass flows -->
-            <rate resource='h2'>-1.06</rate>
-            <!--<rate resource='co2'>-6.58</rate>-->
-            <rate resource='naphtha'>0.733</rate>
-            <rate resource='jet_fuel'>0.888</rate>
-            <rate resource='diesel'>0.492</rate>
-          </linear>
-        </transfer>
-      </produces>
-      <economics>
-        <lifetime>30</lifetime>
         <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <fixed_value>1</fixed_value>
@@ -162,19 +134,18 @@
             7,085,933 in $ USD 2016 so 9,636,869 in $ USD 2020 assuming 8% inflation-->
           </reference_price>
         </CashFlow>
-        <CashFlow name='co2_shipping' period='hour' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <activity>h2</activity>
+            <Function method='co2_supply_curve_comb'>functions</Function>
           </driver>
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <fixed_value>0.131010</fixed_value>
-            <!-- Fixing the price of CO2 as the median price for the Braidwood location $/kg and multiplying by
-              the ratio of co2 to h2 consumed i.e.6.58/1.06 to get a $/kg-H2 price-->
+            <fixed_value>1</fixed_value>
           </reference_price>
         </CashFlow>
+
       </economics>
     </Component>
 

@@ -129,6 +129,17 @@ def co2_supply_curve(data, meta):
   data = {'driver': co2_cost}
   return data, meta 
 
+def co2_supply_curve_comb(data,meta):
+  """
+    Determines the cost of CO2 as a function of the quantity asked for, 
+    For HTSE and FT combined component cases
+    Based on preliminary data from D. Wendt analysis for Braidwood NPP
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ In, meta, dict, state information
+  """
+  return data, meta
 
 def test_capex():
   d = coefs['NOAK']
