@@ -239,8 +239,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>530</fixed_value>
-            <!-- $/MT See data folder for calculation -->
+            <fixed_value>0.530</fixed_value>
+            <!-- $/kg See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -260,8 +260,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>603</fixed_value>
-            <!-- $/MT See data folder for calculation -->
+            <fixed_value>0.603</fixed_value>
+            <!-- $/kg See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
@@ -281,8 +281,8 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>601.5</fixed_value>
-            <!-- $/MT See data folder for calculation -->
+            <fixed_value>0.6015</fixed_value>
+            <!-- $/kg See data folder for calculation -->
           </reference_price>
         </CashFlow>
       </economics>
