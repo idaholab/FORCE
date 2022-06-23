@@ -1,7 +1,6 @@
 <HERON>
   <Case name="Synfuel_LWR_noH2sto">
 	  <mode>opt</mode>
-    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
     <time_discretization>
