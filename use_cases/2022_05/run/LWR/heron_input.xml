@@ -50,7 +50,7 @@
         <transfer>
           <linear>
             <rate resource='electricity'>-1</rate>
-            <rate resource='h2'>0.02513</rate> <!-- MT-->
+            <rate resource='h2'>25.13</rate> <!-- kg-->
             <!-- from 39.8kWh/kg electricity consumption for H2 prod, Arg. March 2022-->
           </linear>
         </transfer>
@@ -112,7 +112,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-1.5">-30,0</opt_bounds> 
+          <opt_bounds debug_value="-1.5">-1e6,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
@@ -161,17 +161,15 @@
             7,085,933 in $ USD 2016 so 9,636,869 in $ USD 2020 assuming 8% inflation-->
           </reference_price>
         </CashFlow>
-        <CashFlow name='co2_shipping' period='hour' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <activity>h2</activity>
+            <Function method='co2_supply_curve'>functions</Function>
           </driver>
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <fixed_value>131.010</fixed_value>
-            <!-- Fixing the price of CO2 as the median price for the Braidwood location $/MT and multiplying by
-              the ratio of co2 to h2 consumed i.e.6.58/1.06 to get a $/MT-H2 price-->
+            <fixed_value>1</fixed_value>
           </reference_price>
         </CashFlow>
       </economics>
