@@ -22,9 +22,12 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>10</persistence>
     </optimization_settings>
-    <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
+    <data_handling>
+      <inner_to_outer>csv</inner_to_outer>
+    </data_handling>    
+<!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
   </Case>
 
   <Components>
