@@ -1,0 +1,8 @@
+iteration,accepted,turbine_capacity,htse_ft_capacity,ft_elec_consumption_capacity,elec_market_capacity,naphtha_market_capacity,jet_fuel_market_capacity,diesel_market_capacity,mean_NPV
+0.0,first,1000.0,-50.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3098684244.91
+1.0,rejected,1000.0,-250.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3023058224.57
+2.0,rerun,1000.0,-50.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3102042951.96
+3.0,rejected,1000.0,-183.333333333,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3047263893.0
+4.0,rerun,1000.0,-50.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3099730142.03
+5.0,rejected,1000.0,-138.888888889,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3065177640.14
+6.0,rerun,1000.0,-50.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,3100562827.32
