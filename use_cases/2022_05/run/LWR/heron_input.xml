@@ -25,6 +25,9 @@
       <type>max</type>
       <persistence>5</persistence>
     </optimization_settings>
+    <data_handling>
+	<inner_to_outer>csv</inner_to_outer>
+    </data_handling>
     <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
   </Case>
 
