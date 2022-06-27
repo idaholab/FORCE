@@ -157,7 +157,7 @@
 
 <DataGenerators>
   <!-- ARMA from NY ISO data from a previous FORCE use case -->
-  <ARMA name='price' variable="price">../../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
   <!--<Function name="transfers">transfers.py</Function>-->
 </DataGenerators>
 
