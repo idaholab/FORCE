@@ -1,7 +1,7 @@
 <HERON>
     <Case name="Synfuel_LWR_h2market">
       <mode>opt</mode>
-      <debug></debug>
+      <!--<debug></debug>-->
       <verbosity>debug</verbosity>
       <num_arma_samples>2</num_arma_samples>
       <time_discretization>
