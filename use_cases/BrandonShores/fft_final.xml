@@ -1,0 +1,14 @@
+<DataObjectMetadata name="fft_out">
+  <DataSet type="Static">
+    <dims>
+      <price_fft_amplitude>price_fft_frequency</price_fft_amplitude>
+      <price_fft_period>price_fft_frequency</price_fft_period>
+    </dims>
+    <general>
+      <datasetName>fft_out</datasetName>
+      <outputs>price_fft_period,price_fft_amplitude</outputs>
+      <sampleTag>RAVEN_sample_ID</sampleTag>
+    </general>
+  </DataSet>
+  
+</DataObjectMetadata>

@@ -1,0 +1,45 @@
+(   98.92 sec) OptPath Plot             : Message         -> Wrote "plotters_27.png".
+(   98.92 sec) STEP IOCOMBINED          : Message         -> ***       Run finished        ***
+(   98.92 sec) STEP IOCOMBINED          : Message         -> ***     Closing the step      ***
+(   98.92 sec) STEP IOCOMBINED          : Message         -> ***        Step closed        ***
+(   98.92 sec) SIMULATION               : Message         -> -- End step plotting of type: IOStep                           --
+
+--------------------------------------------------
+There were 2 warnings during the simulation run:
+(2 times) Nothing to write to CSV! Checking metadata ...
+--------------------------------------------------
+(   98.93 sec) SIMULATION               : Message         -> Run complete!
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:568: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+  ConvergenceWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)
+C:\Users\TOMAJN\Miniconda3\envs\raven_libraries\lib\site-packages\statsmodels\base\model.py:548: HessianInversionWarning: Inverting hessian failed, no bse or cov_params available
+  'available', HessianInversionWarning)

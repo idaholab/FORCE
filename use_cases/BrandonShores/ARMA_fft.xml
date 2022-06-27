@@ -1,0 +1,53 @@
+<Simulation verbosity="debug">
+  <RunInfo>
+    <WorkingDir>.</WorkingDir>
+    <Sequence>read,process</Sequence>
+  </RunInfo>
+
+  <Files>
+    <Input name="inFile">FFT_pointer.csv</Input>
+  </Files>
+
+  <Models>
+    <PostProcessor name="fft" subType="FastFourierTransform">
+      <target>price</target>
+    </PostProcessor>
+  </Models>
+
+  <Steps>
+    <IOStep name="read">
+      <Input class="Files" type="">inFile</Input>
+      <Output class="DataObjects" type="HistorySet">inData</Output>
+    </IOStep>
+    <PostProcess name="process" pauseAtEnd="False">
+      <Input class="DataObjects" type="HistorySet">inData</Input>
+      <Model class="Models" type="PostProcessor">fft</Model>
+      <Output class="DataObjects" type="HistorySet">fft_out</Output>
+      <Output class="OutStreams" type="Print">fft_final</Output>
+    </PostProcess>
+  </Steps>
+
+  <OutStreams>
+    <Print name="fft_final">
+      <type>csv</type>
+      <source>fft_out</source>
+    </Print>
+  </OutStreams>
+
+  <DataObjects>
+    <HistorySet name="inData">
+      <Input>scaling</Input>
+      <Output>price, hour</Output>
+      <options>
+        <pivotParameter>hour</pivotParameter>
+      </options>
+    </HistorySet>
+    <HistorySet name="fft_out">
+      <Output>price_fft_period,price_fft_amplitude</Output>
+      <options>
+        <pivotParameter>price_fft_frequency</pivotParameter>
+      </options>
+    </HistorySet>
+  </DataObjects>
+
+</Simulation>

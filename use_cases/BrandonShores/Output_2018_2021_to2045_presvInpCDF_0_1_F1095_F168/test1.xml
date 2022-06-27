@@ -1,0 +1,14 @@
+<DataObjectMetadata name="input">
+  <DataSet type="Static">
+    <dims>
+      <price>hour</price>
+    </dims>
+    <general>
+      <datasetName>input</datasetName>
+      <inputs>scaling,Year</inputs>
+      <outputs>price</outputs>
+      <sampleTag>RAVEN_sample_ID</sampleTag>
+    </general>
+  </DataSet>
+  
+</DataObjectMetadata>
