@@ -1,7 +1,7 @@
 <HERON>
     <Case name="Synfuel_LWR_h2market">
       <mode>opt</mode>
-      <!--<debug></debug>-->
+      <debug></debug>
       <verbosity>debug</verbosity>
       <num_arma_samples>2</num_arma_samples>
       <time_discretization>
@@ -25,9 +25,6 @@
         <type>max</type>
         <persistence>5</persistence>
       </optimization_settings>
-      <data_handling>
-        <inner_to_outer>csv</inner_to_outer>
-      </data_handling>
       <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
     </Case>
   
