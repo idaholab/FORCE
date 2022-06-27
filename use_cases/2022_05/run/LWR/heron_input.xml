@@ -48,7 +48,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <opt_bounds debug_value="-50">-1000,0</opt_bounds> <!-- MWe -->
+          <opt_bounds>-1000,0</opt_bounds> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -115,7 +115,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-1.5">-1e6,0</opt_bounds> 
+          <opt_bounds>-1e6,0</opt_bounds> 
         </capacity>
         <transfer>
           <linear>
