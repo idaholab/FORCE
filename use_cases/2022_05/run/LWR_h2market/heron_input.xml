@@ -3,7 +3,7 @@
       <mode>opt</mode>
       <!--<debug></debug>-->
       <verbosity>debug</verbosity>
-      <num_arma_samples>30</num_arma_samples>
+      <num_arma_samples>2</num_arma_samples>
       <time_discretization>
         <time_variable>hour</time_variable>
         <year_variable>Year</year_variable>
@@ -314,6 +314,33 @@
   
     <!-- STORAGE Components -->
       <!-- TODO: Add an h2 storage with a minimum capacity = 2 days worth of FT consumption -->
+      <Component name='h2_storage'>
+        <stores resource="h2" dispatch="independent">
+          <capacity resource='h2'>
+            <fixed_value>500</fixed_value>
+            <!-- MT -->
+          </capacity>
+          <initial_stored>
+            <fixed_value>50</fixed_value>
+            <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
+          </initial_stored>
+          <RTE>0.9</RTE>
+          <!-- Assumption -->
+        </stores>
+        <economics>
+          <lifetime>30</lifetime>
+          <CashFlow name='h2_storage_capex' inflation="none" mult_target="False" taxable="True" type="one-time">
+            <driver>
+              <variable>h2_storage_capacity</variable>
+            </driver>
+            <reference_price>
+              <fixed_value>-500</fixed_value>
+              <!-- Capex cost of $500/kg-H2: Assumption -->
+            </reference_price>
+            <depreciate>15</depreciate>
+          </CashFlow>
+        </economics>
+      </Component>
   
     </Components>
   
