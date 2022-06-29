@@ -113,7 +113,7 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphtha,diesel,jet_fuel' dispatch='independent'>
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
           <sweep_values>-50000,-12300</sweep_values>
