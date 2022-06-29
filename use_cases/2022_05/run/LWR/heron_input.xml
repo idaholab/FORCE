@@ -49,7 +49,7 @@
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
 	  <fixed_value>-500</fixed_value>
-          <!--<sweep_values>-50,-500</sweep_values>--
+          <!--<sweep_values>-50,-500</sweep_values>-->
           <!--<opt_bounds>-1000,0</opt_bounds>--> <!-- MWe -->
         </capacity>
         <transfer>
