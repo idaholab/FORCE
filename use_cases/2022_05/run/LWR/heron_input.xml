@@ -18,7 +18,7 @@
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
-      <pyomo><debug_mode>True</debug_mode></pyomo>
+      <pyomo></pyomo>
     </dispatcher>
     <optimization_settings>
       <metric>expectedValue</metric>
@@ -113,7 +113,7 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='independent'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
           <sweep_values>-50000,-12300</sweep_values>
