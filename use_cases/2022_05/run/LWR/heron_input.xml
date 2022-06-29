@@ -11,7 +11,7 @@
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>20</ProjectTime>
+      <ProjectTime>30</ProjectTime>
       <DiscountRate>0.08</DiscountRate>
       <tax>0.08</tax>
       <inflation>0</inflation>
@@ -48,7 +48,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-	  <fixed_value>-500</fixed_value>
+	  <opt_bounds>-500,-300</opt_bounds>
           <!--<sweep_values>-50,-500</sweep_values>-->
           <!--<opt_bounds>-1000,0</opt_bounds>--> <!-- MWe -->
         </capacity>
