@@ -45,7 +45,7 @@
         <produces resource='h2' dispatch='independent'>
           <consumes>electricity</consumes>
           <capacity resource ='electricity'>
-            <opt_bounds debug_value="-50">-1000,0</opt_bounds> <!-- MWe -->
+            <opt_bounds debug_value="-500">-1000,0</opt_bounds> <!-- MWe -->
           </capacity>
           <transfer>
             <linear>
@@ -112,7 +112,7 @@
         <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
           <consumes>h2</consumes>
           <capacity resource='h2'>
-            <opt_bounds debug_value="-1.5">-1e6,0</opt_bounds> 
+            <opt_bounds debug_value="-50000">-1e6,0</opt_bounds> 
           </capacity>
           <transfer>
             <linear>
@@ -314,11 +314,11 @@
       <Component name='h2_storage'>
         <stores resource="h2" dispatch="independent">
           <capacity resource='h2'>
-            <fixed_value>500</fixed_value>
+            <fixed_value>50000</fixed_value>
             <!-- MT -->
           </capacity>
           <initial_stored>
-            <fixed_value>50</fixed_value>
+            <fixed_value>500</fixed_value>
             <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
           </initial_stored>
           <RTE>0.9</RTE>

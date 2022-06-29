@@ -48,7 +48,8 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-          <sweep_values>-50,-500</sweep_values>
+	  <fixed_value>-500</fixed_value>
+          <!--<sweep_values>-50,-500</sweep_values>-->
           <!--<opt_bounds>-1000,0</opt_bounds>--> <!-- MWe -->
         </capacity>
         <transfer>
@@ -113,10 +114,11 @@
 
     <Component name='ft'>
       <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphtha,diesel,jet_fuel' dispatch='independent'>
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <sweep_values>-50000,-12300</sweep_values>
+	  <fixed_value>-50000</fixed_value>
+         <!-- <sweep_values>-50000,-12300</sweep_values>-->
          <!-- <opt_bounds>-1e6,0</opt_bounds> -->
         </capacity>
         <transfer>
@@ -297,7 +299,8 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <sweep_values>5e298,1000</sweep_values>
+	  <fixed_value>1000</fixed_value>
+          <!--<sweep_values>5e298,1000</sweep_values>-->
           <!--<opt_bounds>0,1e300</opt_bounds>-->
           <!-- MT -->
         </capacity>
