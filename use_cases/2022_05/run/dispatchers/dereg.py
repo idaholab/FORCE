@@ -8,6 +8,7 @@ import pyomo.environ as pyo
 from pyomo.opt import SolverStatus, TerminationCondition
 
 STO_TECHS = ['h2_storage']
+PROD_TECHS = ['htse', 'ft']
 # To implement: 
 # - Objective function: Elec, jet fuel, naphtha, diesel revenues minus all capex, fom, vom, elec cap costs
 # - Constraints: 
@@ -55,6 +56,15 @@ def dispatch(info, activity_matrix):
             'RTE': float(components[name].get_sqrt_RTE())
         }) for name in STO_TECHS)
 
+    # Producers data
+    prod_data = dict(
+        (name, {
+            'capacity_lower': components[name].get_capacity(info)[0][components[name].get_interaction().get_resource()],
+            'capacity_upper': components[name].get_capacity(info)[1][components[name].get_interaction().get_resource()],
+            'component': components[name]
+        }) for name in PROD_TECHS
+    )
+
     ## PYOMO Model ###
     m = pyo.ConcreteModel()
     Ts = np.arange(0,T, dtype=int)
@@ -68,8 +78,11 @@ def dispatch(info, activity_matrix):
     # HTSE, FT, Storage capacities
     m.HTSE = pyo.Var(m.T,
                     within=pyo.NonPositiveReals,
-                    bounds=())
+                    bounds=(prod_data['htse']['capacity_lower'], prod_data['htse']['capacity_lower']))
     m.FTElecConsumption = -14.9
+    m.FT = pyo.Var(m.T, 
+                   within=pyo.NonPositiveReals,
+                   bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower']))
 
     # Storage
     # Create 3 pyomo vars for each TES
@@ -90,4 +103,52 @@ def dispatch(info, activity_matrix):
         setattr(m, f'{tes}_level', level)
         setattr(m, f'{tes}_charge', charge)
         setattr(m, f'{tes}_discharge', discharge)
+    
+    # Conservation Constraints Functions
+    # Electricity
+    m.EConserve = pyo.Constraint(m.T, rule=_conserve_elec)
+    # Hydrogen 
+    m.H2Conserve = pyo.Constraint(m.T, rule=_conserve_h2)
 
+    # Transfer Functions for storage
+    for tech in STO_TECHS:
+        func = partial(_storage_mgmt_level, tech)
+        setattr(m, f'{tech}_mgmt_level', pyo.Constraint(m.T, rule=func))
+
+    # Objective function
+    m.Obj = pyo.Objective(sense=pyo.maximize, rule=_objective)
+
+    return activity_matrix
+
+
+
+
+def _objective(m):
+    # TODO write this
+    pass
+
+
+def _conserve_elec(m,t):
+    # TODO write this
+    pass
+
+
+def _conserve_h2(m,t):
+    # TODO write this
+    pass
+
+def _storage_mgmt_level(name, m, t):
+    """
+    TODO
+    """
+    level = getattr(m, f'{name}_level')
+    charge = getattr(m, f'{name}_charge')
+    discharge = getattr(m, f'{name}_discharge')
+    if t > 0:
+        prev = level[t-1]
+    else:
+        prev = m.StorageDat[name]['initial_level']
+    sqrt_rte = m.StorageDat[name]['RTE']
+    prod = (-sqrt_rte * charge[t]) - (discharge[t] / sqrt_rte)
+    # we multiply by dt here but it's 1 always
+    return level[t] == prev + prod * 1
