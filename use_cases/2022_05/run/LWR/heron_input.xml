@@ -48,7 +48,7 @@
       <produces resource='h2' dispatch='independent'>
         <consumes>electricity</consumes>
         <capacity resource ='electricity'>
-	  <opt_bounds>-500,-300</opt_bounds>
+	        <opt_bounds>-985.1,-10</opt_bounds>
           <!--<sweep_values>-50,-500</sweep_values>-->
           <!--<opt_bounds>-1000,0</opt_bounds>--> <!-- MWe -->
         </capacity>
@@ -117,7 +117,8 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-	  <fixed_value>-50000</fixed_value>
+          <opt_bounds>-24650,-250</opt_bounds>
+	        <!-- <fixed_value>-50000</fixed_value>-->
          <!-- <sweep_values>-50000,-12300</sweep_values>-->
          <!-- <opt_bounds>-1e6,0</opt_bounds> -->
         </capacity>
@@ -204,7 +205,29 @@
       </economics>
     </Component>
 
-  <!-- MARKETS Components -->
+    <!-- EXPORTS Components -->
+    <Component name='h2_export'>
+      <produces resource='h2' dispatch='dependent'>
+        <capacity resource='h2'>
+          <fixed_value>1e200</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name='h2_exports' type='repeating' period='hour' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <activity>h2</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10000</fixed_value>
+            <!-- Cost of unmet demand by the FT $10000/kg-H2, significantly higher than capex cost of h2 storage-->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+  
+    <!-- MARKETS Components -->
     <Component name='elec_market'>
       <demands resource='electricity' dispatch='dependent'>
         <capacity skip_plot="True">
@@ -299,7 +322,8 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-	  <fixed_value>1000</fixed_value>
+          <opt_bounds>0,50000</opt_bounds>
+	        <!-- <fixed_value>1000</fixed_value>-->
           <!--<sweep_values>5e298,1000</sweep_values>-->
           <!--<opt_bounds>0,1e300</opt_bounds>-->
           <!-- MT -->
