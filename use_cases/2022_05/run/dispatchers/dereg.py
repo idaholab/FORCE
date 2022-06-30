@@ -51,6 +51,7 @@ def dispatch(info, activity_matrix):
     storage_dat =  dict(
         (name, {
             'initial_level': float(components[name].get_interaction().get_initial_level(info)),
+            'resource': components[name].get_interaction().get_resource(),
             'capacity': components[name].get_capacity(info)[0][components[name].get_interaction().get_resource()],
             'component': components[name],
             'RTE': float(components[name].get_sqrt_RTE())
@@ -78,11 +79,11 @@ def dispatch(info, activity_matrix):
     # HTSE, FT, Storage capacities
     m.HTSE = pyo.Var(m.T,
                     within=pyo.NonPositiveReals,
-                    bounds=(prod_data['htse']['capacity_lower'], prod_data['htse']['capacity_lower']))
+                    bounds=(prod_data['htse']['capacity_lower'], prod_data['htse']['capacity_lower'])) #TODO: check this really reads capacity bounds
     m.FTElecConsumption = -14.9
     m.FT = pyo.Var(m.T, 
                    within=pyo.NonPositiveReals,
-                   bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower']))
+                   bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower'])) #TODO: check this really reads capacity bounds
 
     # Storage
     # Create 3 pyomo vars for each TES
@@ -118,6 +119,37 @@ def dispatch(info, activity_matrix):
     # Objective function
     m.Obj = pyo.Objective(sense=pyo.maximize, rule=_objective)
 
+    # Print and solve
+    m.pprint()
+    soln = pyo.SolverFactory('ipopt').solve(m)
+    if soln.solver.status == SolverStatus.ok and soln.solver.termination_condition == TerminationCondition.optimal:
+        print('Successful optimization solve.')
+        debug_pyomo_soln(m)
+    else:
+        print('Storage optimization FAILURE!')
+        print(' ... status:', soln.solver.status)
+        print(' ... termination:', soln.solver.termination_condition)
+        m.pprint()
+        raise RuntimeError('Failed solve!')
+
+    # Set components activity
+    # Storage
+    for stotech in STO_TECHS: 
+        for trackr in ['level', 'charge', 'discharge']: 
+            act = np.array(list(getattr(m, f'{stotech}_{trackr}')[t].value for t in m.T))
+            activity_matrix.set_activity_vector(
+                components[stotech], 
+                storage_dat[stotech]['resource'],
+                act,
+                tracker = trackr
+            )
+    # HTSE
+    htse_elec = np.array(list(m.HTSE[t].value for t in m.T))
+    activity_matrix.set_activity_vector(components['htse'], 'electricity', htse_elec)
+    # FT
+    ft_h2 = np.array(list(m.FT[t].value for t in m.T))
+    activity_matrix.set_activity_vector(components['ft'], 'h2', ft_h2)
+
     return activity_matrix
 
 
@@ -152,3 +184,13 @@ def _storage_mgmt_level(name, m, t):
     prod = (-sqrt_rte * charge[t]) - (discharge[t] / sqrt_rte)
     # we multiply by dt here but it's 1 always
     return level[t] == prev + prod * 1
+
+def debug_pyomo_soln(m):
+    print('DEBUGG solution:')
+    print('  -> objective:', m.OBJ())
+    print('t: ' + ', '.join(f'{var.name:9s}' for var in m.component_objects(pyo.Var)))
+    for t in m.T:
+        msg = f'{t}: '
+        for var in m.component_objects(pyo.Var):
+            msg += f'{var[t].value:1.3e}, '
+            print(msg)
