@@ -20,7 +20,7 @@ PROD_TECHS = ['htse', 'ft']
 #       - Fixed dispatch
 #   - Markets: act as sinks taking whatever is left from one resource
 #   - H2 storage: 
-#       - independent dispathc
+#       - independent dispathc 
 #       - specific to storage level, charge, discharge, RTE
 
 def dispatch(info, activity_matrix): 
@@ -156,8 +156,21 @@ def dispatch(info, activity_matrix):
 
 
 def _objective(m):
-    # TODO write this
-    pass
+    """ 
+    Computes the objective function i.e. the differential revenue of the system once the components' capacities 
+    are set. For now only the electricity sold to the grid (vs. used by the HTSE) will influence the revenue on
+    an hourly basis. 
+    Assumes a price taker model: the NPP sales to the grid are small enough to not influence the market clearing price 
+    (taken from ARMA model).
+    @ In, m, Pyomo model, pyomo optimization problem 
+    @ Out, total, float, value of the NPV in $ for the system over a cluster time interval (usually 24 hours) 
+    """
+    total = 0
+    for t in m.T:
+        # Economic drivers
+        # 1. Profit of Turbine selling E
+        total += m.elecPrice * (m.turbineCap - m.HTSE[t]) #Value of elec sold to the grid each hour
+    return total
 
 
 def _conserve_elec(m,t):
@@ -171,7 +184,9 @@ def _conserve_h2(m,t):
 
 def _storage_mgmt_level(name, m, t):
     """
-    TODO
+    Determines the level of a storage technology
+    @ In, name, string, name of the storage component
+    @ In, m, Pyomo model, 
     """
     level = getattr(m, f'{name}_level')
     charge = getattr(m, f'{name}_charge')
