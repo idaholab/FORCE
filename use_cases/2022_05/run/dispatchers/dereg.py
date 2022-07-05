@@ -9,6 +9,7 @@ from pyomo.opt import SolverStatus, TerminationCondition
 
 STO_TECHS = ['h2_storage']
 PROD_TECHS = ['htse', 'ft']
+ELEC_TO_H2 = 25.13 # kg-h2/MWh, production rate of the HTSE
 # To implement: 
 # - Objective function: Elec, jet fuel, naphtha, diesel revenues minus all capex, fom, vom, elec cap costs
 # - Constraints: 
@@ -81,13 +82,15 @@ def dispatch(info, activity_matrix):
                     within=pyo.NonPositiveReals,
                     bounds=(prod_data['htse']['capacity_lower'], prod_data['htse']['capacity_lower'])) #TODO: check this really reads capacity bounds
     m.FTElecConsumption = -14.9
-    m.FT = pyo.Var(m.T, 
-                   within=pyo.NonPositiveReals,
-                   bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower'])) #TODO: check this really reads capacity bounds
+    # Constant production for the FT process
+    m.FT = components['ft'].get_capacity(info)[0]['electricity']
+    #m.FT = pyo.Var(m.T, 
+    #               within=pyo.NonPositiveReals,
+    #               bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower'])) #TODO: check this really reads capacity bounds
     
-    marketCons = components['elec_market'].get_capacity(info)
+    
     # Get electricity consumed by the market at each time stamp
-    m.elecMarket = pyo.Param(m.T, initialize= _init_market)
+    #m.elecMarket = pyo.Param(m.T, initialize= _init_market)
 
     # Storage
     # Create 3 pyomo vars for each TES
@@ -151,7 +154,7 @@ def dispatch(info, activity_matrix):
     htse_elec = np.array(list(m.HTSE[t].value for t in m.T))
     activity_matrix.set_activity_vector(components['htse'], 'electricity', htse_elec)
     # FT
-    ft_h2 = np.array(list(m.FT[t].value for t in m.T))
+    ft_h2 = np.array(list(m.FT for t in m.T))
     activity_matrix.set_activity_vector(components['ft'], 'h2', ft_h2)
 
     return activity_matrix
@@ -189,7 +192,14 @@ def _conserve_elec(m,t):
 
 
 def _conserve_h2(m,t):
-    # TODO write this
+    """
+    Constraint on the electricity conservation 
+    @ In, m, Pyomo model, pyomo optimization problem
+    @ In, t, Pyomo time stamp, time at which the electricity conservation is checked
+    @ Out, , bool, whether the electricity is conserved
+    """
+    sources = -m.HTSE[t]*ELEC_TO_H2 
+    sinks = m.FT[t]
     pass
 
 def _storage_mgmt_level(name, m, t):
