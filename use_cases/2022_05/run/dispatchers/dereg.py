@@ -198,9 +198,13 @@ def _conserve_h2(m,t):
     @ In, t, Pyomo time stamp, time at which the electricity conservation is checked
     @ Out, , bool, whether the electricity is conserved
     """
+    # HTSE and FT expressed as negative numbers in HERON input
     sources = -m.HTSE[t]*ELEC_TO_H2 
-    sinks = m.FT[t]
-    pass
+    sinks = m.FT
+    charge = getattr(m, 'h2_storage_charge')[t]
+    discharge = getattr(m, 'h2_storage_discharge')[t]
+    storage = charge + discharge
+    return sources + storage + sinks == 0
 
 def _storage_mgmt_level(name, m, t):
     """
