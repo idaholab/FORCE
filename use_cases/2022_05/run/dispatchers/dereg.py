@@ -84,6 +84,10 @@ def dispatch(info, activity_matrix):
     m.FT = pyo.Var(m.T, 
                    within=pyo.NonPositiveReals,
                    bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower'])) #TODO: check this really reads capacity bounds
+    
+    marketCons = components['elec_market'].get_capacity(info)
+    # Get electricity consumed by the market at each time stamp
+    m.elecMarket = pyo.Param(m.T, initialize= _init_market)
 
     # Storage
     # Create 3 pyomo vars for each TES
@@ -107,7 +111,7 @@ def dispatch(info, activity_matrix):
     
     # Conservation Constraints Functions
     # Electricity
-    m.EConserve = pyo.Constraint(m.T, rule=_conserve_elec)
+    #m.EConserve = pyo.Constraint(m.T, rule=_conserve_elec)
     # Hydrogen 
     m.H2Conserve = pyo.Constraint(m.T, rule=_conserve_h2)
 
@@ -174,7 +178,13 @@ def _objective(m):
 
 
 def _conserve_elec(m,t):
-    # TODO write this
+    """
+    Constraint on the electricity conservation 
+    @ In, m, Pyomo model, pyomo optimization problem
+    @ In, t, Pyomo time stamp, time at which the electricity conservation is checked
+    @ Out, , bool, whether the electricity is conserved
+    """
+    # Don't need it since the market has a dependent dispatch ?
     pass
 
 
@@ -184,9 +194,11 @@ def _conserve_h2(m,t):
 
 def _storage_mgmt_level(name, m, t):
     """
-    Determines the level of a storage technology
+    Constraint on the level of a storage technology
     @ In, name, string, name of the storage component
-    @ In, m, Pyomo model, 
+    @ In, m, Pyomo model, pyomo optimization problem
+    @ In, t, Pyomo time stamp, time at which the level is checked
+    @ Out, , bool, whether or not the level is consistent with the production and the previous level 
     """
     level = getattr(m, f'{name}_level')
     charge = getattr(m, f'{name}_charge')
