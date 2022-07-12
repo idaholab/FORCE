@@ -17,6 +17,18 @@ coefs = { 'NOAK':{'m':1.294,
                   'n_mod':0}}
 AC_to_DC = 1/1.076 # AC power consumed over DC power consumed
 
+# Conversion coefficients for liquid fuel products
+# https://www.bts.gov/content/energy-consumption-mode-transportation and 
+# https://hextobinary.com/unit/energy/from/mmbtu/to/galnaphthaus
+FUEL_CONV_MMBtu_GAL = {'jet_fuel':0.135, 
+                      'diesel':0.1387, 
+                      'naphtha':0.1269} # Gal/MMBtu
+# Average densities for fuel products, from Wikipedia (kg/L)
+FUEL_DENSITY = {'jet_fuel':0.8, 
+                'diesel':0.85,
+                'naphtha':0.77}
+GAL_to_L = 3.785 # L/gal
+
 def get_syngas_capex(data, meta):
   """
     Determines the capex cost of the syngas storage
@@ -183,8 +195,8 @@ def jet_fuel_price_ref(data, meta):
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
-  price = float(df.loc[(df['Year']==year)]['ref'].values)
-  data = {'driver': price}
+  price = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  data = {'reference_price': price}
   return data, meta 
 
 def test_capex():
