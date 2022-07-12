@@ -170,6 +170,23 @@ def co2_supply_curve_comb(data,meta):
   data = {'driver': co2_cost}
   return data, meta
 
+def jet_fuel_price_ref(data, meta):
+  """
+    Determines the price of naphtha given the year of the simulation
+    for the reference EIA scenario
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  # Get the data about jet fuel prices
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
+  year = meta['HERON']['active_index']['year'] + 2020
+  # Get the price 
+  price = float(df.loc[(df['Year']==year)]['ref'].values)
+  data = {'driver': price}
+  return data, meta 
+
 def test_capex():
   d = coefs['NOAK']
   m, f, a_sca, n_sca, a_mod, n_mod = d['m'], d['f'], d['a_sca'], d['n_sca'], d['a_mod'], d['n_mod']
@@ -183,4 +200,9 @@ def test_co2_supply_curve():
   print(data['driver'])
 
 if __name__ == "__main__":
-  test_co2_supply_curve()# Works!
+  #test_co2_supply_curve()# Works!
+  # Test jet fuel get price with reference EIA AEO
+  meta = {'HERON':{'active_index':{'year':23}}}
+  data = {}
+  data, meta = jet_fuel_price_ref(data, meta)
+  print(data['driver'])
