@@ -9,6 +9,7 @@ from pyomo.opt import SolverStatus, TerminationCondition
 
 STO_TECHS = ['h2_storage']
 PROD_TECHS = ['htse', 'ft']
+ELEC_TO_H2 = 25.13 # kg-h2/MWh, production rate of the HTSE
 # To implement: 
 # - Objective function: Elec, jet fuel, naphtha, diesel revenues minus all capex, fom, vom, elec cap costs
 # - Constraints: 
@@ -20,7 +21,7 @@ PROD_TECHS = ['htse', 'ft']
 #       - Fixed dispatch
 #   - Markets: act as sinks taking whatever is left from one resource
 #   - H2 storage: 
-#       - independent dispathc
+#       - independent dispathc 
 #       - specific to storage level, charge, discharge, RTE
 
 def dispatch(info, activity_matrix): 
@@ -81,9 +82,15 @@ def dispatch(info, activity_matrix):
                     within=pyo.NonPositiveReals,
                     bounds=(prod_data['htse']['capacity_lower'], prod_data['htse']['capacity_lower'])) #TODO: check this really reads capacity bounds
     m.FTElecConsumption = -14.9
-    m.FT = pyo.Var(m.T, 
-                   within=pyo.NonPositiveReals,
-                   bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower'])) #TODO: check this really reads capacity bounds
+    # Constant production for the FT process
+    m.FT = components['ft'].get_capacity(info)[0]['electricity']
+    #m.FT = pyo.Var(m.T, 
+    #               within=pyo.NonPositiveReals,
+    #               bounds=(prod_data['ft']['capacity_lower'], prod_data['ft']['capacity_lower'])) #TODO: check this really reads capacity bounds
+    
+    
+    # Get electricity consumed by the market at each time stamp
+    #m.elecMarket = pyo.Param(m.T, initialize= _init_market)
 
     # Storage
     # Create 3 pyomo vars for each TES
@@ -107,7 +114,7 @@ def dispatch(info, activity_matrix):
     
     # Conservation Constraints Functions
     # Electricity
-    m.EConserve = pyo.Constraint(m.T, rule=_conserve_elec)
+    #m.EConserve = pyo.Constraint(m.T, rule=_conserve_elec)
     # Hydrogen 
     m.H2Conserve = pyo.Constraint(m.T, rule=_conserve_h2)
 
@@ -147,7 +154,7 @@ def dispatch(info, activity_matrix):
     htse_elec = np.array(list(m.HTSE[t].value for t in m.T))
     activity_matrix.set_activity_vector(components['htse'], 'electricity', htse_elec)
     # FT
-    ft_h2 = np.array(list(m.FT[t].value for t in m.T))
+    ft_h2 = np.array(list(m.FT for t in m.T))
     activity_matrix.set_activity_vector(components['ft'], 'h2', ft_h2)
 
     return activity_matrix
@@ -156,22 +163,56 @@ def dispatch(info, activity_matrix):
 
 
 def _objective(m):
-    # TODO write this
-    pass
+    """ 
+    Computes the objective function i.e. the differential revenue of the system once the components' capacities 
+    are set. For now only the electricity sold to the grid (vs. used by the HTSE) will influence the revenue on
+    an hourly basis. 
+    Assumes a price taker model: the NPP sales to the grid are small enough to not influence the market clearing price 
+    (taken from ARMA model).
+    @ In, m, Pyomo model, pyomo optimization problem 
+    @ Out, total, float, value of the NPV in $ for the system over a cluster time interval (usually 24 hours) 
+    """
+    total = 0
+    for t in m.T:
+        # Economic drivers
+        # 1. Profit of Turbine selling E
+        total += m.elecPrice * (m.turbineCap - m.HTSE[t]) #Value of elec sold to the grid each hour
+    return total
 
 
 def _conserve_elec(m,t):
-    # TODO write this
+    """
+    Constraint on the electricity conservation 
+    @ In, m, Pyomo model, pyomo optimization problem
+    @ In, t, Pyomo time stamp, time at which the electricity conservation is checked
+    @ Out, , bool, whether the electricity is conserved
+    """
+    # Don't need it since the market has a dependent dispatch ?
     pass
 
 
 def _conserve_h2(m,t):
-    # TODO write this
-    pass
+    """
+    Constraint on the electricity conservation 
+    @ In, m, Pyomo model, pyomo optimization problem
+    @ In, t, Pyomo time stamp, time at which the electricity conservation is checked
+    @ Out, , bool, whether the electricity is conserved
+    """
+    # HTSE and FT expressed as negative numbers in HERON input
+    sources = -m.HTSE[t]*ELEC_TO_H2 
+    sinks = m.FT
+    charge = getattr(m, 'h2_storage_charge')[t]
+    discharge = getattr(m, 'h2_storage_discharge')[t]
+    storage = charge + discharge
+    return sources + storage + sinks == 0
 
 def _storage_mgmt_level(name, m, t):
     """
-    TODO
+    Constraint on the level of a storage technology
+    @ In, name, string, name of the storage component
+    @ In, m, Pyomo model, pyomo optimization problem
+    @ In, t, Pyomo time stamp, time at which the level is checked
+    @ Out, , bool, whether or not the level is consistent with the production and the previous level 
     """
     level = getattr(m, f'{name}_level')
     charge = getattr(m, f'{name}_charge')

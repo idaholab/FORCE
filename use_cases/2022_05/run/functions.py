@@ -17,6 +17,20 @@ coefs = { 'NOAK':{'m':1.294,
                   'n_mod':0}}
 AC_to_DC = 1/1.076 # AC power consumed over DC power consumed
 
+# Conversion coefficients for liquid fuel products
+# https://www.bts.gov/content/energy-consumption-mode-transportation and 
+# https://hextobinary.com/unit/energy/from/mmbtu/to/galnaphthaus
+FUEL_CONV_MMBtu_GAL = {'jet_fuel':0.135, 
+                      'diesel':0.1387, 
+                      'naphtha':0.1269} # Gal/MMBtu
+# Average densities for fuel products, from Wikipedia (kg/L)
+FUEL_DENSITY = {'jet_fuel':0.8, 
+                'diesel':0.85,
+                'naphtha':0.77}
+GAL_to_L = 3.785 # L/gal
+# To convert from $/MMBtu to $/kg: 
+# $/kg  = $/MMBtu x FUEL_CONV_MMBtu_GAL x (1/GAL_to_L) x (1/FUEL_DENSITY)
+
 def get_syngas_capex(data, meta):
   """
     Determines the capex cost of the syngas storage
@@ -170,6 +184,24 @@ def co2_supply_curve_comb(data,meta):
   data = {'driver': co2_cost}
   return data, meta
 
+def jet_fuel_price_ref(data, meta):
+  """
+    Determines the price of naphtha given the year of the simulation
+    for the reference EIA scenario
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  # Get the data about jet fuel prices
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
+  year = meta['HERON']['active_index']['year'] + 2020
+  # Get the price 
+  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  price = priceBtu*FUEL_CONV_MMBtu_GAL['jet_fuel']*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel'])
+  data = {'reference_price': price}
+  return data, meta 
+
 def test_capex():
   d = coefs['NOAK']
   m, f, a_sca, n_sca, a_mod, n_mod = d['m'], d['f'], d['a_sca'], d['n_sca'], d['a_mod'], d['n_mod']
@@ -183,4 +215,9 @@ def test_co2_supply_curve():
   print(data['driver'])
 
 if __name__ == "__main__":
-  test_co2_supply_curve()# Works!
+  #test_co2_supply_curve()# Works!
+  # Test jet fuel get price with reference EIA AEO
+  meta = {'HERON':{'active_index':{'year':23}}}
+  data = {}
+  data, meta = jet_fuel_price_ref(data, meta)
+  print(data['driver'])
