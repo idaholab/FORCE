@@ -28,6 +28,8 @@ FUEL_DENSITY = {'jet_fuel':0.8,
                 'diesel':0.85,
                 'naphtha':0.77}
 GAL_to_L = 3.785 # L/gal
+# To convert from $/MMBtu to $/kg: 
+# $/kg  = $/MMBtu x FUEL_CONV_MMBtu_GAL x (1/GAL_to_L) x (1/FUEL_DENSITY)
 
 def get_syngas_capex(data, meta):
   """
@@ -195,7 +197,8 @@ def jet_fuel_price_ref(data, meta):
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
-  price = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  price = priceBtu*FUEL_CONV_MMBtu_GAL['jet_fuel']*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel'])
   data = {'reference_price': price}
   return data, meta 
 
