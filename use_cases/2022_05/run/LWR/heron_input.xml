@@ -1,6 +1,6 @@
 <HERON>
   <Case name="LWR">
-    <mode>sweep</mode>
+    <mode>opt</mode>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
