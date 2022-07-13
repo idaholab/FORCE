@@ -186,7 +186,7 @@ def co2_supply_curve_comb(data,meta):
 
 def jet_fuel_price_ref(data, meta):
   """
-    Determines the price of naphtha given the year of the simulation
+    Determines the price of jet fuel given the year of the simulation
     for the reference EIA scenario
     @ In, data, dict, request for data
     @ In, meta, dict, state information
@@ -199,6 +199,24 @@ def jet_fuel_price_ref(data, meta):
   # Get the price 
   priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
   price = priceBtu*FUEL_CONV_MMBtu_GAL['jet_fuel']*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel'])
+  data = {'reference_price': price}
+  return data, meta 
+
+def diesel_price_ref(data, meta):
+  """
+    Determines the price of diesel given the year of the simulation
+    for the reference EIA scenario
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  # Get the data about diesel prices
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_DF.csv'), skiprows=6)
+  year = meta['HERON']['active_index']['year'] + 2020
+  # Get the price 
+  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  price = priceBtu*FUEL_CONV_MMBtu_GAL['diesel']*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel'])
   data = {'reference_price': price}
   return data, meta 
 

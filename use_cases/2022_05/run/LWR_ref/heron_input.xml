@@ -1,7 +1,7 @@
 <HERON>
   <Case name="LWR">
     <mode>opt</mode>
-    <!--<debug></debug>-->
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>30</num_arma_samples>
     <time_discretization>
@@ -25,9 +25,6 @@
       <type>max</type>
       <persistence>5</persistence>
     </optimization_settings>
-    <data_handling>
-	<inner_to_outer>csv</inner_to_outer>
-    </data_handling>
     <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
   </Case>
 
@@ -310,8 +307,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.6015</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <Function method='diesel_price_ref'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
@@ -352,7 +348,7 @@
   </Components>
 
 <DataGenerators>
-  <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
   <Function name="functions">../functions.py</Function>
 </DataGenerators>
 
