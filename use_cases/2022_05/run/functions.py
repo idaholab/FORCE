@@ -30,6 +30,10 @@ FUEL_DENSITY = {'jet_fuel':0.8,
 GAL_to_L = 3.785 # L/gal
 # To convert from $/MMBtu to $/kg: 
 # $/kg  = $/MMBtu x FUEL_CONV_MMBtu_GAL x (1/GAL_to_L) x (1/FUEL_DENSITY)
+# To get naphtha prices use scaling factor from jet fuel price to naphtha based on current prices
+# Naphtha $0.530/kg
+# Jet fuel $0.603/kg
+JF_to_N = 0.530/0.603
 
 def get_syngas_capex(data, meta):
   """
@@ -199,6 +203,25 @@ def jet_fuel_price_ref(data, meta):
   # Get the price 
   priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
   price = priceBtu*FUEL_CONV_MMBtu_GAL['jet_fuel']*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel'])
+  data = {'reference_price': price}
+  return data, meta 
+
+def naphtha_price_ref(data, meta):
+  """
+    Determines the price of naphtha given the year of the simulation
+    for the reference EIA scenario
+    For now assuming the price of naphtha is proportional to the price of jet fuel
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  # Get the data about jet fuel prices
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
+  year = meta['HERON']['active_index']['year'] + 2020
+  # Get the price 
+  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  price = JF_to_N*priceBtu*FUEL_CONV_MMBtu_GAL['naphtha']*(1/GAL_to_L)*(1/FUEL_DENSITY['naphtha'])
   data = {'reference_price': price}
   return data, meta 
 

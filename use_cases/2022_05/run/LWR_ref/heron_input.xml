@@ -266,8 +266,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.530</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <Function method='naphtha_price_ref'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
