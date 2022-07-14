@@ -198,7 +198,7 @@ def jet_fuel_price(data, meta):
     @ Out, meta, dict, state information
   """
   # Get the data about jet fuel prices
-  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
+  df = pd.read_csv(os.path.join(os.path.abspath(__file__+'../../'), 'data/ENC_JF.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
   scenario = meta['HERON']['Case'].get_labels()['scenario']
@@ -263,5 +263,5 @@ if __name__ == "__main__":
   # Test jet fuel get price with reference EIA AEO
   meta = {'HERON':{'active_index':{'year':23}}}
   data = {}
-  data, meta = jet_fuel_price_ref(data, meta)
+  data, meta = jet_fuel_price(data, meta)
   print(data['driver'])
