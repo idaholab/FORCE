@@ -1,5 +1,7 @@
 <HERON>
   <Case name="Syn_bas">
+    <label name="scenario">ref</label>
+    <label name="location">braidwood</label>
     <mode>sweep</mode>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
@@ -190,8 +192,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.53</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <Function method='naphtha_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
@@ -211,8 +212,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.603</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <Function method='jet_fuel_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
@@ -232,8 +232,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>0.6015</fixed_value>
-            <!-- $/kg See data folder for calculation -->
+            <Function method='diesel_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
