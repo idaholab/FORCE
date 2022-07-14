@@ -198,7 +198,9 @@ def jet_fuel_price(data, meta):
     @ Out, meta, dict, state information
   """
   # Get the data about jet fuel prices
-  df = pd.read_csv(os.path.join(os.path.abspath(__file__+'../../'), 'data/ENC_JF.csv'), skiprows=6)
+  path = os.path.join(os.path.abspath(__file__+'../../'), 'data/ENC_JF.csv')
+  print(path)
+  df = pd.read_csv(path, skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
   scenario = meta['HERON']['Case'].get_labels()['scenario']
