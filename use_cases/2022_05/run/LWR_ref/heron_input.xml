@@ -3,9 +3,9 @@
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
     <mode>opt</mode>
-    <debug></debug>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>30</num_arma_samples>
+    <num_arma_samples>10</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
