@@ -188,10 +188,10 @@ def co2_supply_curve_comb(data,meta):
   data = {'driver': co2_cost}
   return data, meta
 
-def jet_fuel_price_ref(data, meta):
+def jet_fuel_price(data, meta):
   """
     Determines the price of jet fuel given the year of the simulation
-    for the reference EIA scenario
+    for the EIA scenario indicated in the scenario label of the case
     @ In, data, dict, request for data
     @ In, meta, dict, state information
     @ Out, data, dict, filled data
@@ -201,12 +201,13 @@ def jet_fuel_price_ref(data, meta):
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
-  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  scenario = meta['HERON']['Case'].get_labels()['scenario']
+  priceBtu = float(df.loc[(df['Year']==year)][scenario].values) # in $/MMBtu
   price = priceBtu*FUEL_CONV_MMBtu_GAL['jet_fuel']*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel'])
   data = {'reference_price': price}
   return data, meta 
 
-def naphtha_price_ref(data, meta):
+def naphtha_price(data, meta):
   """
     Determines the price of naphtha given the year of the simulation
     for the reference EIA scenario
@@ -220,12 +221,13 @@ def naphtha_price_ref(data, meta):
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
-  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  scenario = meta['HERON']['Case'].get_labels()['scenario']
+  priceBtu = float(df.loc[(df['Year']==year)][scenario].values) # in $/MMBtu
   price = JF_to_N*priceBtu*FUEL_CONV_MMBtu_GAL['naphtha']*(1/GAL_to_L)*(1/FUEL_DENSITY['naphtha'])
   data = {'reference_price': price}
   return data, meta 
 
-def diesel_price_ref(data, meta):
+def diesel_price(data, meta):
   """
     Determines the price of diesel given the year of the simulation
     for the reference EIA scenario
@@ -238,7 +240,8 @@ def diesel_price_ref(data, meta):
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_DF.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
-  priceBtu = float(df.loc[(df['Year']==year)]['ref'].values) # in $/MMBtu
+  scenario = meta['HERON']['Case'].get_labels()['scenario']
+  priceBtu = float(df.loc[(df['Year']==year)][scenario].values) # in $/MMBtu
   price = priceBtu*FUEL_CONV_MMBtu_GAL['diesel']*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel'])
   data = {'reference_price': price}
   return data, meta 
