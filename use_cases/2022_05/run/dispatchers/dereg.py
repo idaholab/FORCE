@@ -59,13 +59,23 @@ def dispatch(info, activity_matrix):
         }) for name in STO_TECHS)
 
     # Producers data
-    prod_data = dict(
+    """prod_data = dict(
         (name, {
             'capacity_lower': components[name].get_capacity(info)[0][components[name].get_interaction().get_resource()],
             'capacity_upper': components[name].get_capacity(info)[1][components[name].get_interaction().get_resource()],
             'component': components[name]
         }) for name in PROD_TECHS
-    )
+    )"""
+    prod_data = {
+        'htse': {
+            'capacity_lower':components['htse'].get_capacity(info)[0]['electricity'],
+            'capacity_upper':components['htse'].get_capacity(info)[1]['electricity'],
+            'component':components['htse']},
+        'ft': {
+            'capacity_lower':components['ft'].get_capacity(info)[0]['h2'],
+            'capacity_upper':components['ft'].get_capacity(info)[1]['h2'],
+            'component':components['ft']}
+    }
 
     ## PYOMO Model ###
     m = pyo.ConcreteModel()
