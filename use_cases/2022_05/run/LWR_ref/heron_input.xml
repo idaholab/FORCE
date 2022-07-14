@@ -268,7 +268,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <Function method='naphtha_price_ref'>functions</Function>
+            <Function method='naphtha_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
@@ -288,7 +288,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <Function method='jet_fuel_price_ref'>functions</Function>
+            <Function method='jet_fuel_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
@@ -308,7 +308,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <Function method='diesel_price_ref'>functions</Function>
+            <Function method='diesel_price'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
