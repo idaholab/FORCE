@@ -36,7 +36,7 @@
   
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
-        <capacity resource="electricity" skip_plot="True">
+        <capacity resource="electricity">
           <sweep_values>50,300,1000</sweep_values>
           <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
@@ -156,7 +156,7 @@
 
     <Component name='ft_elec_consumption'>
       <demands resource='electricity' dispatch='fixed'>
-        <capacity skip_plot="True">
+        <capacity>
           <fixed_value>-14.9</fixed_value>
           <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
         </capacity>
@@ -180,7 +180,7 @@
 
     <Component name='naphtha_market'>
       <demands resource='naphtha' dispatch='dependent'>
-        <capacity skip_plot="True">
+        <capacity>
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
@@ -200,7 +200,7 @@
 
     <Component name='jet_fuel_market'>
       <demands resource='jet_fuel' dispatch='dependent'>
-        <capacity skip_plot="True">
+        <capacity>
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
@@ -220,7 +220,7 @@
 
     <Component name='diesel_market'>
       <demands resource='diesel' dispatch='dependent'>
-        <capacity skip_plot="True">
+        <capacity>
           <fixed_value>-1e200</fixed_value>
         </capacity>
       </demands>
