@@ -1,0 +1,29 @@
+<HERON>
+  <Case name="Option1">
+    <mode>opt</mode>
+    <verbosity>debug</verbosity>
+    <num_arma_samples>10</num_arma_samples>
+    <debug></debug>
+    <time_discretization>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>30</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.08</tax>
+      <inflation>0.0</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <pyomo></pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <metric>expectedValue</metric>
+      <type>max</type>
+      <persistence>3</persistence>
+    </optimization_settings>
+  </Case>
+</HERON>
