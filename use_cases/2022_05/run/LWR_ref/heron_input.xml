@@ -3,7 +3,7 @@
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
     <mode>opt</mode>
-    <debug></debug>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>10</num_arma_samples>
     <time_discretization>
@@ -25,7 +25,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>3</persistence>
     </optimization_settings>
     <!-- Arg. March 2022: The Modeling of the Synfuel Production Process -->
   </Case>
