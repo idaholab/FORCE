@@ -3,6 +3,7 @@
 # Internal Libs
 import argparse
 from pathlib import Path
+from telnetlib import EL
 from typing import List
 
 # External Libs
@@ -18,16 +19,27 @@ import os
 # Global Constants
 BASE_DIR = Path(__file__).resolve().parent.parent
 TRAIN_DIR = BASE_DIR.joinpath("train")
+RUN_DIR = BASE_DIR.joinpath("run")
 COLORS = ["darkgreen", "firebrick", "steelblue"]
-CASEMAP = {'LWR': 'AP1000, 1117 MWe', 
-          'SMR': 'NuScale, 77 MWe', 
-          'micro_HOLOS': 'HOLOS, Titan, 81 MWe'
+CASEMAP = {'LWR_ref': 'LWR, reference fuel prices', 
+          'LWR_low': 'LWR, low fuel prices',
+          'LWR_high': 'LWR, high fuel prices',
+          'baseline': 'Electricity baseline',
+          'synfuel_baseline_high': 'Synfuels baseline, high fuel prices', 
+          'synfuel_baseline': 'Synfuels baseline, reference fuel prices',
+          'synfuel_baseline_low': 'Synfuels baseline, low fuel prices',
+}
+BASELINE_MAP ={
+  'LWR_ref': 'synfuel_baseline',
+  'LWR_low': 'synfuel_baseline_low',
+  'LWR_high': 'synfuel_baseline_high'
 }
 CAPACITIES = {
-  'LWR': 1117, 
-  'SMR': 77, 
-  'micro_HOLOS': 81
+  'LWR': 1000, 
+  'SMR': 300, 
+  'micro': 50
 }
+ELEC_BASELINE = RUN_DIR.joinpath('baseline/gold/sweep_30y.csv')
 UNITS = {
   "turbine_capacity": "$MW_{e}$",
   "htse_capacity": "$MW_{e}$",
@@ -47,13 +59,14 @@ plt.rc("savefig", bbox="tight")
 plt.rc(["xtick", "ytick"], labelsize=12)
 
 
-def plot_optimizer(case_name, df, var_cols, baseline_mean_npv) -> None:
+def plot_optimizer(case_name, df, var_cols, baseline_mean_npv, baseline_case) -> None:
   """
   Plot the optimization path and create/fills out a csv file with the final optimization results
     @ In, case_name, str, name of the case, must be in the CASEMAP keys
     @ In, df, pandas.DataFrame, dataframe with the case's optimization data
     @ In, var_cols, list[string], names for the optimization variables for the plot
     @ In, baseline_mean_npv, float, value of the baseline mean NPV to compare the case to
+    @ In, baseline_case, string, name of the baseline case to compare the case to 
     @ Out, None
   """
   # Data needed for plots
@@ -170,22 +183,29 @@ def main():
     parser.add_argument("path", type=Path, help="Path to solution output csv.")
     args = parser.parse_args()
 
-    # Get the baseline mean NPV
-    baseline_path = args.path.resolve().parent.parent.parent / 'baseline' / 'gold' / 'sweep.csv'
-    baseline_df = pd.read_csv(baseline_path)
+    # Get the baseline cases mean NPV
+    elec_baseline_path = pd.read_csv(ELEC_BASELINE)
     case_name = args.path.resolve().parent.parent.name
+    syn_fuel_path = RUN_DIR.joinpath(BASELINE_MAP['case_name'])
+    elec_baseline_df = pd.read_csv(ELEC_BASELINE)
+    syn_baseline_df = pd.read_csv(syn_fuel_path)
+    
     capacity = CAPACITIES[case_name]
     print(f"Case being post-processed : {case_name} ({capacity} MWe)")
-    baseline_df = baseline_df.query(f'turbine_capacity == {capacity}')
-    baseline_mean_npv = (baseline_df[['mean_NPV']].squeeze())
+    elec_baseline_df = elec_baseline_df.query(f'turbine_capacity == {capacity}')
+    elec_baseline_mean_npv = (elec_baseline_df[['mean_NPV']].squeeze())
+    syn_baseline_df = elec_baseline_df.query(f'turbine_capacity == {capacity}')
+    syn_baseline_mean_npv = (elec_baseline_df[['mean_NPV']].squeeze())
 
     # Case plot
     df = pd.read_csv(args.path)
     var_cols = UNITS.keys()
 
     # Retrieve final results of optimization
-    opt_res = plot_optimizer(case_name, df, var_cols, baseline_mean_npv)
-    plt.savefig(args.path.resolve().parent.parent/"solution.png")
+    opt_res = plot_optimizer(case_name, df, var_cols, elec_baseline_mean_npv, 'electricity')
+    plt.savefig(args.path.resolve().parent.parent/"solution_elec_baseline.png")
+    # TODO plot results for corresponding synfuel baseline too and save fig
+    # ...
 
     # Save final optimization results
     # Check if all cases file has been created
