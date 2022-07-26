@@ -2,6 +2,7 @@
 """Plot Solutions to HERON Runs"""
 # Internal Libs
 import argparse
+from email.mime import base
 from pathlib import Path
 from telnetlib import EL
 from typing import List
@@ -35,7 +36,7 @@ BASELINE_MAP ={
   'LWR_high': 'synfuel_baseline_high'
 }
 CAPACITIES = {
-  'LWR': 1000, 
+  'LWR_ref': 1000, 'LWR_low':1000, "LWR_high":1000, 
   'SMR': 300, 
   'micro': 50
 }
@@ -59,9 +60,10 @@ plt.rc("savefig", bbox="tight")
 plt.rc(["xtick", "ytick"], labelsize=12)
 
 
-def plot_optimizer(case_name, df, var_cols, baseline_mean_npv, baseline_case) -> None:
+def plot_optimizer(args, case_name, df, var_cols, baseline_mean_npv, baseline_case) -> None:
   """
   Plot the optimization path and create/fills out a csv file with the final optimization results
+    @ In, args, str, path to output optimization file
     @ In, case_name, str, name of the case, must be in the CASEMAP keys
     @ In, df, pandas.DataFrame, dataframe with the case's optimization data
     @ In, var_cols, list[string], names for the optimization variables for the plot
@@ -154,7 +156,9 @@ def plot_optimizer(case_name, df, var_cols, baseline_mean_npv, baseline_case) ->
   fig.canvas.draw()
   # The following will place the legend in a non-weird place
   fig.subplots_adjust(right=get_adjust(lg.get_frame().get_width()))
-
+  name_fig = "solution_"+case_name+"_"+baseline_case+"_baseline.png"
+  plt.savefig(args.path.resolve().parent.parent/name_fig)
+  plt.close()
   # Add values to final optimization result dictionary
   last_dat['baseline_NPV'] = baseline_mean_npv /1e6
   last_dat['mean_NPV'] = last_dat['mean_NPV'] / 1e6
@@ -184,9 +188,8 @@ def main():
     args = parser.parse_args()
 
     # Get the baseline cases mean NPV
-    elec_baseline_path = pd.read_csv(ELEC_BASELINE)
     case_name = args.path.resolve().parent.parent.name
-    syn_fuel_path = RUN_DIR.joinpath(BASELINE_MAP[case_name])
+    syn_fuel_path = RUN_DIR.joinpath(BASELINE_MAP[case_name]).joinpath('gold/sweep_30y.csv')
     elec_baseline_df = pd.read_csv(ELEC_BASELINE)
     syn_baseline_df = pd.read_csv(syn_fuel_path)
     
@@ -194,19 +197,17 @@ def main():
     print(f"Case being post-processed : {case_name} ({capacity} MWe)")
     elec_baseline_df = elec_baseline_df.query(f'turbine_capacity == {capacity}')
     elec_baseline_mean_npv = (elec_baseline_df[['mean_NPV']].squeeze())
-    syn_baseline_df = elec_baseline_df.query(f'turbine_capacity == {capacity}')
-    syn_baseline_mean_npv = (elec_baseline_df[['mean_NPV']].squeeze())
+    syn_baseline_df = syn_baseline_df.query(f'turbine_capacity == {capacity}')
+    syn_baseline_mean_npv = (syn_baseline_df[['mean_NPV']].squeeze())
 
     # Case plot
     df = pd.read_csv(args.path)
     var_cols = UNITS.keys()
 
     # Retrieve final results of optimization
-    elec_opt_res = plot_optimizer(case_name, df, var_cols, elec_baseline_mean_npv, 'electricity')
-    plt.savefig(args.path.resolve().parent.parent/"solution_elec_baseline.png")
+    elec_opt_res = plot_optimizer(args, case_name, df, var_cols, elec_baseline_mean_npv, 'electricity')
     # TODO plot results for corresponding synfuel baseline too and save fig
-    syn_opt_res = plot_optimizer(case_name, df, var_cols, syn_baseline_mean_npv, BASELINE_MAP[case_name])
-    plt.savefig(args.path.resolve().parent.parent/"solution_syn_baseline.png")
+    syn_opt_res = plot_optimizer(args, case_name, df, var_cols, syn_baseline_mean_npv, BASELINE_MAP[case_name])
 
     # Save final optimization results
     # Check if all cases file has been created
@@ -214,23 +215,24 @@ def main():
     final_elec = args.path.resolve().parent.parent.parent / 'final_elec_opt.csv'
     syn_str = 'final_'+BASELINE_MAP[case_name]+'_opt.csv'
     final_syn = args.path.resolve().parent.parent.parent / syn_str
-    save_final(case_name=case_name, final_path=final_elec, opt_res=elec_opt_res)
-    save_final(case_name=case_name, final_path=final_syn, opt_res=syn_opt_res)
+    save_final(case_name=case_name, final_path=final_elec, opt_res=elec_opt_res, baseline_name='elec')
+    save_final(case_name=case_name, final_path=final_syn, opt_res=syn_opt_res, baseline_name=BASELINE_MAP[case_name])
     
-def save_final(case_name, final_path, opt_res):
+def save_final(case_name, final_path, opt_res, baseline_name):
   """
   Save final optimization results
   Check if all cases file has been created 
   @ In, case_name, str, name of the case being saved
   @ In, final_path, str, path to final results compared to particular baseline
   @ In, opt_res, dict, results of optimization i.e. final components' capacities to
+  @ In, baseline_name, str, name of the baseline used for the comparison
   @ Out, None
   """
   if os.path.exists(final_path): 
       final_df = pd.read_csv(final_path, index_col='Case')
       print('File already exists, here is the info in it')
       print(final_df)
-      os.remove(final_path)
+      #os.remove(final_path)
   else: 
     final_df = pd.DataFrame(columns =['Case', 'description']+list(UNITS.keys()))
     final_df['Case'] = CASEMAP.keys()
@@ -240,8 +242,8 @@ def save_final(case_name, final_path, opt_res):
   # If all cases have been written clean up columns names
   if not final_df.isnull().values.any(): 
     plot_final(final_df)
-  with open(final, 'w') as final:
-    final_df.to_csv(final, index=True, line_terminator='\n')
+  with open(final_path, 'w') as final:
+      final_df.to_csv(final, index=True, line_terminator='\n')
 
 
 def plot_final(df): 
