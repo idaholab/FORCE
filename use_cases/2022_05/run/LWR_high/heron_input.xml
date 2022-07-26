@@ -1,6 +1,6 @@
 <HERON>
-  <Case name="LWR_ref">
-    <label name="scenario">ref</label>
+  <Case name="LWR_high">
+    <label name="scenario">high</label>
     <label name="location">braidwood</label>
     <mode>opt</mode>
     <!--<debug></debug>-->
