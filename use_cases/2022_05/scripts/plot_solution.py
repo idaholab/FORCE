@@ -186,7 +186,7 @@ def main():
     # Get the baseline cases mean NPV
     elec_baseline_path = pd.read_csv(ELEC_BASELINE)
     case_name = args.path.resolve().parent.parent.name
-    syn_fuel_path = RUN_DIR.joinpath(BASELINE_MAP['case_name'])
+    syn_fuel_path = RUN_DIR.joinpath(BASELINE_MAP[case_name])
     elec_baseline_df = pd.read_csv(ELEC_BASELINE)
     syn_baseline_df = pd.read_csv(syn_fuel_path)
     
@@ -202,44 +202,46 @@ def main():
     var_cols = UNITS.keys()
 
     # Retrieve final results of optimization
-    opt_res = plot_optimizer(case_name, df, var_cols, elec_baseline_mean_npv, 'electricity')
+    elec_opt_res = plot_optimizer(case_name, df, var_cols, elec_baseline_mean_npv, 'electricity')
     plt.savefig(args.path.resolve().parent.parent/"solution_elec_baseline.png")
     # TODO plot results for corresponding synfuel baseline too and save fig
-    # ...
+    syn_opt_res = plot_optimizer(case_name, df, var_cols, syn_baseline_mean_npv, BASELINE_MAP[case_name])
+    plt.savefig(args.path.resolve().parent.parent/"solution_syn_baseline.png")
 
     # Save final optimization results
     # Check if all cases file has been created
-    final = args.path.resolve().parent.parent.parent / 'final_opt.csv'
-    if os.path.exists(final): 
-      final_df = pd.read_csv(final, index_col='Case')
+    # Final optimization results compared to electricity baseline
+    final_elec = args.path.resolve().parent.parent.parent / 'final_elec_opt.csv'
+    syn_str = 'final_'+BASELINE_MAP[case_name]+'_opt.csv'
+    final_syn = args.path.resolve().parent.parent.parent / syn_str
+    save_final(case_name=case_name, final_path=final_elec, opt_res=elec_opt_res)
+    save_final(case_name=case_name, final_path=final_syn, opt_res=syn_opt_res)
+    
+def save_final(case_name, final_path, opt_res):
+  """
+  Save final optimization results
+  Check if all cases file has been created 
+  @ In, case_name, str, name of the case being saved
+  @ In, final_path, str, path to final results compared to particular baseline
+  @ In, opt_res, dict, results of optimization i.e. final components' capacities to
+  @ Out, None
+  """
+  if os.path.exists(final_path): 
+      final_df = pd.read_csv(final_path, index_col='Case')
       print('File already exists, here is the info in it')
       print(final_df)
-      os.remove(final)
-    else: 
-      final_df = pd.DataFrame(columns =['Case', 'description']+list(UNITS.keys()))
-      final_df['Case'] = CASEMAP.keys()
-      final_df.set_index('Case', inplace=True)
-    for k,v in opt_res.items(): 
-      final_df.loc[case_name, k] = v
-    '''last_dat_df = last_dat_df.rename(
-        columns={
-            'mean_NPV': 'Mean NPV (M $USD)',
-            #'baseline_NPV': 'Baseline NPV',
-            #'dNPV': 'Δ NPV',
-            'h2_storage_capacity': 'H2 Storage, (kg)',
-            'CO2_source_capacity': 'CO2 Source, (kg/h)',
-            'ft_capacity': r'FT (Fischer-Tropsch), (kg-H_{2})',
-            'htse_capacity': 'HTSE (kWe)',
-            'turbine_capacity': 'Turbine (kWe)',
-            'case': 'Case'
-        }
-    )'''
-    # If all cases have been written clean up columns names
-    if not final_df.isnull().values.any(): 
-      plot_final(final_df)
-    with open(final, 'w') as final:
-      final_df.to_csv(final, index=True, line_terminator='\n')
-      
+      os.remove(final_path)
+  else: 
+    final_df = pd.DataFrame(columns =['Case', 'description']+list(UNITS.keys()))
+    final_df['Case'] = CASEMAP.keys()
+    final_df.set_index('Case', inplace=True)
+  for k,v in opt_res.items(): 
+    final_df.loc[case_name, k] = v
+  # If all cases have been written clean up columns names
+  if not final_df.isnull().values.any(): 
+    plot_final(final_df)
+  with open(final, 'w') as final:
+    final_df.to_csv(final, index=True, line_terminator='\n')
 
 
 def plot_final(df): 
