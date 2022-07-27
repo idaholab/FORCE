@@ -25,10 +25,6 @@ COLORS = ["darkgreen", "firebrick", "steelblue"]
 CASEMAP = {'LWR_ref': 'LWR, reference fuel prices', 
           'LWR_low': 'LWR, low fuel prices',
           'LWR_high': 'LWR, high fuel prices',
-          'baseline': 'Electricity baseline',
-          'synfuel_baseline_high': 'Synfuels baseline, high fuel prices', 
-          'synfuel_baseline': 'Synfuels baseline, reference fuel prices',
-          'synfuel_baseline_low': 'Synfuels baseline, low fuel prices',
 }
 BASELINE_MAP ={
   'LWR_ref': 'synfuel_baseline',
@@ -213,8 +209,7 @@ def main():
     # Check if all cases file has been created
     # Final optimization results compared to electricity baseline
     final_elec = args.path.resolve().parent.parent.parent / 'final_elec_opt.csv'
-    syn_str = 'final_'+BASELINE_MAP[case_name]+'_opt.csv'
-    final_syn = args.path.resolve().parent.parent.parent / syn_str
+    final_syn = args.path.resolve().parent.parent.parent / 'final_synfuel_baseline_opt.csv'
     save_final(case_name=case_name, final_path=final_elec, opt_res=elec_opt_res, baseline_name='elec')
     save_final(case_name=case_name, final_path=final_syn, opt_res=syn_opt_res, baseline_name=BASELINE_MAP[case_name])
     
@@ -231,6 +226,7 @@ def save_final(case_name, final_path, opt_res, baseline_name):
   if os.path.exists(final_path): 
       final_df = pd.read_csv(final_path, index_col='Case')
       print('File already exists, here is the info in it')
+      print('Baseline case: {}'.format(baseline_name))
       print(final_df)
       #os.remove(final_path)
   else: 
