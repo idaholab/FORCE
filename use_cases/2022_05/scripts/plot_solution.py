@@ -119,7 +119,7 @@ def plot_optimizer(args, case_name, df, var_cols, baseline_mean_npv, baseline_ca
           )
       y = np.abs(dfa[var].to_numpy()) 
       if var == 'mean_NPV':
-          y = dfa[var].to_numpy() 
+          y = dfa[var].to_numpy() - baseline_mean_npv
       ax.plot(
           dfa.iteration.to_numpy(),
           y,
