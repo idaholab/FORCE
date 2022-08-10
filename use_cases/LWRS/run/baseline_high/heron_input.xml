@@ -1,8 +1,9 @@
 <HERON>
-  <Case name="Synfuel_baseline">
+  <Case name="Baseline_high">
+    <label name="scenario">baseline_high</label>
 	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>500</num_arma_samples>
+    <num_arma_samples>1</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -25,8 +26,8 @@
   
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
-        <capacity resource="electricity" skip_plot="True">
-          <sweep_values>50,300,1000</sweep_values>
+        <capacity resource="electricity">
+          <sweep_values>300,1000</sweep_values>
           <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
       </produces>
@@ -37,7 +38,7 @@
 
     <Component name="elec_market">
       <demands resource="electricity" dispatch="dependent">
-        <capacity skip_plot="True">
+        <capacity>
           <fixed_value>-1e200</fixed_value> 
         </capacity>
       </demands>
@@ -49,7 +50,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <ARMA variable="price">price</ARMA>
+            <fixed_value>50</fixed_value> <!-- High electricity prices ~ regulated market average level $/MWh -->
           </reference_price>
           <reference_driver>
             <fixed_value>1</fixed_value>
@@ -65,7 +66,6 @@
 
   <DataGenerators>
     <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
-    <Function name="functions">../functions.py</Function>
   </DataGenerators>
 
 </HERON>
