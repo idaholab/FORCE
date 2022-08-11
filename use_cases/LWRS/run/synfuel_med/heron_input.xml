@@ -1,6 +1,6 @@
 <HERON>
   <Case name="Synfuel_med">
-    <label name="scenario">synfuel_med</label>
+    <label name="scenario">ref</label> <!-- EIA fuel prices BAU -->
     <label name="location">braidwood</label>
     <mode>sweep</mode>
     <!--<debug></debug>-->
