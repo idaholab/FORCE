@@ -27,9 +27,6 @@
       <type>max</type>
       <persistence>5</persistence>
     </optimization_settings>
-    <data_handling>
-      <inner_to_outer>csv</inner_to_outer>
-    </data_handling>
   </Case>
 
   <Components>
@@ -37,8 +34,7 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity">
-          <sweep_values>300,1000</sweep_values>
-          <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
+          <sweep_values>500,1000</sweep_values>
         </capacity>
       </produces>
       <economics>
