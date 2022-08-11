@@ -1,0 +1,268 @@
+<HERON>
+  <Case name="Synfuel_med">
+    <label name="scenario">ref</label> <!-- EIA fuel prices BAU -->
+    <label name="location">braidwood</label>
+    <mode>sweep</mode>
+    <!--<debug></debug>-->
+    <verbosity>debug</verbosity>
+    <num_arma_samples>300</num_arma_samples>
+    <time_discretization>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>30</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.08</tax>
+      <inflation>0</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <pyomo></pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <metric>expectedValue</metric>
+      <type>max</type>
+      <persistence>5</persistence>
+    </optimization_settings>
+  </Case>
+
+  <Components>
+  
+    <Component name="turbine">
+      <produces resource="electricity" dispatch="fixed">
+        <capacity resource="electricity">
+          <sweep_values>500,1000</sweep_values>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>60</lifetime>
+      </economics>
+    </Component>
+
+    <Component name='htse_ft'>
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
+        <consumes>electricity</consumes>
+        <capacity resource='electricity'>
+          <fixed_value>-400</fixed_value> <!-- MWe -->
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource='electricity'>-1</rate>
+            <rate resource='naphtha'>17.38</rate>
+            <rate resource='jet_fuel'>21.05</rate>
+            <rate resource='diesel'>11.66</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>40</lifetime>
+        <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <Function method="htse_noak_capex_comb">functions</Function>
+            <!-- DC to AC ratio in the function -->
+            <!--<variable>htse_capacity</variable>-->
+          </driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <depreciate>20</depreciate>
+          <!-- 20 years MACRS -->
+        </CashFlow>
+        <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>htse_ft_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-30320</fixed_value>
+            <!-- $32.64/kW-dc-year so $30.32/kW-ac-year so $30,320/Mw-ac-year -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="htse_vom" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-3.168</fixed_value>
+            <!-- $3.41/MWh-dc so $3.168/MWh-ac (excl. energy costs) -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="htse_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
+          <driver>
+            <variable>htse_ft_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-27933.45</fixed_value>
+            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>htse_ft_capacity</variable>
+          </driver>
+          <reference_driver>
+            <fixed_value>400</fixed_value> <!-- MW -->
+          </reference_driver>
+          <reference_price>
+            <fixed_value>-158102945</fixed_value> <!-- $2020 -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.626</fixed_value>
+            <!-- From logarithmic regression -->
+          </scaling_factor_x>
+          <depreciate>20</depreciate>
+          <!-- 20 years MACRS -->
+        </CashFlow>
+        <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-21732221</fixed_value>
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-7640007</fixed_value>
+          </reference_price>
+        </CashFlow>
+        <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <Function method='co2_supply_curve_comb'>functions</Function>
+          </driver>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name='ft_elec_consumption'>
+      <demands resource='electricity' dispatch='fixed'>
+        <capacity>
+          <fixed_value>-14.9</fixed_value>
+          <!-- FT needs 14.9MWe no matter what level of fuel products' production -->
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
+          <driver>
+            <variable>ft_elec_consumption_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-27933.45</fixed_value>
+            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+  <!-- MARKETS Components -->
+    <Component name='electricity_market'>
+      <demands resource='electricity' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>60</lifetime>
+        <CashFlow name='e_sales' type='repeating' period='hour' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>50</fixed_value> <!-- $/MWh-->
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name='naphtha_market'>
+      <demands resource='naphtha' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='naphtha_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>naphtha</activity>
+            <multiplier>-3</multiplier>
+          </driver>
+          <reference_price>
+            <Function method='naphtha_price'>functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name='jet_fuel_market'>
+      <demands resource='jet_fuel' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='jet_fuel_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>jet_fuel</activity>
+            <multiplier>-3</multiplier>
+          </driver>
+          <reference_price>
+            <Function method='jet_fuel_price'>functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name='diesel_market'>
+      <demands resource='diesel' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='diesel_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>diesel</activity>
+            <multiplier>-3</multiplier>
+          </driver>
+          <reference_price>
+            <Function method='diesel_price'>functions</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+  <!-- STORAGE Components -->
+
+  </Components>
+
+<DataGenerators>
+  <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <Function name="functions">../functions.py</Function>
+</DataGenerators>
+
+
+</HERON>
