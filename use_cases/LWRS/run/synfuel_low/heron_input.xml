@@ -179,7 +179,7 @@
         </capacity>
       </demands>
       <economics>
-        <lifetime>60</lifetime>
+        <lifetime>1</lifetime>
         <CashFlow name='e_sales' type='repeating' period='hour' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>electricity</activity>
