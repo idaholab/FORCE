@@ -2,7 +2,7 @@
   <Case name="Synfuel_baseline">
 	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>500</num_arma_samples>
+    <num_arma_samples>5</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -25,7 +25,7 @@
   
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
-        <capacity resource="electricity" skip_plot="True">
+        <capacity resource="electricity">
           <sweep_values>50,300,1000</sweep_values>
           <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
@@ -37,7 +37,7 @@
 
     <Component name="elec_market">
       <demands resource="electricity" dispatch="dependent">
-        <capacity skip_plot="True">
+        <capacity>
           <fixed_value>-1e200</fixed_value> 
         </capacity>
       </demands>
