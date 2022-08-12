@@ -5,7 +5,7 @@
     <mode>sweep</mode>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>300</num_arma_samples>
+    <num_arma_samples>3</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -179,7 +179,7 @@
         </capacity>
       </demands>
       <economics>
-        <lifetime>1</lifetime>
+        <lifetime>30</lifetime>
         <CashFlow name='e_sales' type='repeating' period='hour' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>electricity</activity>
@@ -191,6 +191,9 @@
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
         </CashFlow>
       </economics>
     </Component>
