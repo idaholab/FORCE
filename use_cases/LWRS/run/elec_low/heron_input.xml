@@ -5,7 +5,7 @@
     <mode>sweep</mode>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>300</num_arma_samples>
+    <num_arma_samples>200</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -107,7 +107,7 @@
             <variable>htse_ft_capacity</variable>
           </driver>
           <reference_driver>
-            <fixed_value>400</fixed_value> <!-- MW -->
+            <fixed_value>-400</fixed_value> <!-- MW -->
           </reference_driver>
           <reference_price>
             <fixed_value>-158102945</fixed_value> <!-- $2020 -->
