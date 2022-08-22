@@ -5,7 +5,7 @@ Cases to run, analyzing the influence of electricity pricing, synfuel products p
 - baseline_elec: LWR, PJM LMP for electricity prices; sets the reference NPV
 - med: LWR, 400 MW FT+HTSE, EIA x3, PJM LMP
 - elec_low: LWR, 400 MW FT+HTSE, EIA x3, NPP O&M (~$25/MWh)
-- elec_high: LWR, 400 MW FT+HTSE, EIA x5, reg market (~$50/MWh)
+- elec_high: LWR, 400 MW FT+HTSE, EIA x3, reg market (~$50/MWh)
 - synfuel_low: LWR, 400 MW FT+HTSE, EIA projections for synfuel prices
 - synfuel_high: LWR, 400 MW FT+HTSE, EIA x5
 - plant_cap_low: LWR, 100 MW HTSE+FT, EIA x3, PJM LMP
