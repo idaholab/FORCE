@@ -141,7 +141,7 @@
             <variable>ft_capacity</variable>
           </driver>
           <reference_driver>
-            <fixed_value>10625</fixed_value> <!-- kg-H2/h, corresponds to 400MW data-->
+            <fixed_value>-10625</fixed_value> <!-- kg-H2/h, corresponds to 400MW data-->
           </reference_driver>
           <reference_price>
             <fixed_value>-158102945</fixed_value> <!-- $2020 -->
