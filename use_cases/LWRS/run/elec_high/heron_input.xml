@@ -186,7 +186,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>50</fixed_value> <!-- $/MWh-->
+            <fixed_value>64.71</fixed_value> <!-- $/MWh-->
           </reference_price>
           <reference_driver>
             <fixed_value>1</fixed_value>
