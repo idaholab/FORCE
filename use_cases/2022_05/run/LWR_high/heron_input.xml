@@ -72,7 +72,7 @@
             <fixed_value>1</fixed_value>
           </reference_price>
           <reference_driver>
-            <fixed_value>1</fixed_value>
+            <fixed_value>-1</fixed_value>
           </reference_driver>
           <!--<reference_price>
             <Function method="htse_noak_capex">functions</Function>
