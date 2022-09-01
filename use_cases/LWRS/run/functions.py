@@ -31,7 +31,7 @@ GAL_to_L = 3.785 # L/gal
 # To convert from $/MMBtu to $/kg: 
 # $/kg  = $/MMBtu x FUEL_CONV_MMBtu_GAL x (1/GAL_to_L) x (1/FUEL_DENSITY)
 # To get naphtha prices use scaling factor from gasoline price to naphtha based on current prices, dummy value for now
-MG_to_N = 0.85
+MG_to_N = 0.8026335 # Will Jenson data
 HTSE_ELEC_to_H2 = 25.13 #kg-H2/MWe
 
 def h2_ptc(data, meta):
