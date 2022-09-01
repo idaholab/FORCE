@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="Synfuel_baseline">
+  <Case name="Elec_baseline">
 	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
