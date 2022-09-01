@@ -34,6 +34,26 @@ GAL_to_L = 3.785 # L/gal
 # Naphtha $0.530/kg
 # Jet fuel $0.603/kg
 JF_to_N = 0.530/0.603
+HTSE_ELEC_to_H2 = 25.13 #kg-H2/MWe
+
+def h2_ptc(data, meta):
+  """
+    Determines the PTC (Production Tax Credit) for hydrogen production : 
+    PTC applicable only for the first 10 years of the simulation $3/kg-H2
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  year = meta['HERON']['active_index']['year'] # 0 to 29
+  ptc = 0
+  if year<10:
+    ptc = 3 #$/kg-H2
+  final_ptc = HTSE_ELEC_to_H2*ptc #$/MWe
+  data = {'reference_price':final_ptc}
+  # driver is electricity: 25.13 kg-H2/MWe
+  return data, meta
+  
 
 def get_syngas_capex(data, meta):
   """
@@ -160,7 +180,7 @@ def co2_supply_curve(data, meta):
   idx = np.argmin(diff)
   co2_cost = cost_data[idx]
   #co2_cost = cost_data[find_lower_nearest_idx(co2_demand_data, co2_demand)]
-  data = {'driver': co2_cost}
+  data = {'driver': -co2_cost}
   return data, meta 
 
 def co2_supply_curve_comb(data,meta):
@@ -185,7 +205,7 @@ def co2_supply_curve_comb(data,meta):
   diff = np.absolute(co2_demand_data-co2_demand_year)
   idx = np.argmin(diff)
   co2_cost = cost_data[idx]
-  data = {'driver': co2_cost}
+  data = {'driver': -co2_cost}
   return data, meta
 
 def jet_fuel_price(data, meta):
