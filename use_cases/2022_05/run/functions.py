@@ -26,14 +26,12 @@ FUEL_CONV_MMBtu_GAL = {'jet_fuel':0.135,
 # Average densities for fuel products, from Wikipedia (kg/L)
 FUEL_DENSITY = {'jet_fuel':0.8, 
                 'diesel':0.85,
-                'naphtha':0.77}
+                'naphtha':0.77} # kg/L
 GAL_to_L = 3.785 # L/gal
 # To convert from $/MMBtu to $/kg: 
 # $/kg  = $/MMBtu x FUEL_CONV_MMBtu_GAL x (1/GAL_to_L) x (1/FUEL_DENSITY)
-# To get naphtha prices use scaling factor from jet fuel price to naphtha based on current prices
-# Naphtha $0.530/kg
-# Jet fuel $0.603/kg
-JF_to_N = 0.530/0.603
+# To get naphtha prices use scaling factor from gasoline price to naphtha based on current prices, dummy value for now
+MG_to_N = 0.8026335 # Will Jenson data
 HTSE_ELEC_to_H2 = 25.13 #kg-H2/MWe
 
 def h2_ptc(data, meta):
@@ -224,8 +222,8 @@ def jet_fuel_price(data, meta):
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
   scenario = meta['HERON']['Case'].get_labels()['scenario']
-  priceBtu = float(df.loc[(df['Year']==year)][scenario].values) # in $/MMBtu
-  price = priceBtu*FUEL_CONV_MMBtu_GAL['jet_fuel']*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel'])
+  priceGal = float(df.loc[(df['Year']==year)][scenario].values) # in $/gal
+  price = priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel']) #in $/kg
   data = {'reference_price': price}
   return data, meta 
 
@@ -240,12 +238,13 @@ def naphtha_price(data, meta):
     @ Out, meta, dict, state information
   """
   # Get the data about jet fuel prices
-  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv'), skiprows=6)
+  # Using gasoline price projection and assuming naphtha prices are proportional
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_MG.csv'), skiprows=6)
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
   scenario = meta['HERON']['Case'].get_labels()['scenario']
-  priceBtu = float(df.loc[(df['Year']==year)][scenario].values) # in $/MMBtu
-  price = JF_to_N*priceBtu*FUEL_CONV_MMBtu_GAL['naphtha']*(1/GAL_to_L)*(1/FUEL_DENSITY['naphtha'])
+  priceGal = float(df.loc[(df['Year']==year)][scenario].values) # in $/gal
+  price = MG_to_N*priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['naphtha']) # in $/kg
   data = {'reference_price': price}
   return data, meta 
 
@@ -263,8 +262,8 @@ def diesel_price(data, meta):
   year = meta['HERON']['active_index']['year'] + 2020
   # Get the price 
   scenario = meta['HERON']['Case'].get_labels()['scenario']
-  priceBtu = float(df.loc[(df['Year']==year)][scenario].values) # in $/MMBtu
-  price = priceBtu*FUEL_CONV_MMBtu_GAL['diesel']*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel'])
+  priceGal = float(df.loc[(df['Year']==year)][scenario].values) # in $/gal
+  price = priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel']) # in $/kg
   data = {'reference_price': price}
   return data, meta 
 
