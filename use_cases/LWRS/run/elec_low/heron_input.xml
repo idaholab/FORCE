@@ -186,7 +186,7 @@
             <multiplier>-1</multiplier>
           </driver>
           <reference_price>
-            <fixed_value>25</fixed_value><!-- $/MWh-->
+            <fixed_value>22.98</fixed_value><!-- $/MWh ERCOT average-->
           </reference_price>
           <reference_driver>
             <fixed_value>1</fixed_value>
