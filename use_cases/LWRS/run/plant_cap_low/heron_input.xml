@@ -1,11 +1,11 @@
 <HERON>
-  <Case name="Synfuel_med">
+  <Case name="plant_cap_low">
     <label name="scenario">ref</label> <!-- EIA fuel prices BAU -->
     <label name="location">braidwood</label>
     <mode>sweep</mode>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>200</num_arma_samples>
+    <num_arma_samples>50</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
