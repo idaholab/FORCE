@@ -1,3 +1,2 @@
 turbine_capacity,htse_ft_capacity,ft_elec_consumption_capacity,electricity_market_capacity,naphtha_market_capacity,jet_fuel_market_capacity,diesel_market_capacity,scenario_label,location_label,mean_NPV,std_NPV,med_NPV,max_NPV,min_NPV,perc_5_NPV,perc_95_NPV,samp_NPV,var_NPV,ProbabilityWeight-turbine_capacity,ProbabilityWeight,PointProbability,prefix
-500.0,-400.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,ref,braidwood,4386694563.21,905691.652531,4386721711.63,4389236305.9,4384501436.53,4385074413.05,4388180300.0,200.0,820277369463.0,0.5,0.5,0.002,1
-1000.0,-400.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,ref,braidwood,6351431704.04,6645541.17285,6351536938.98,6369394578.79,6330610304.22,6340418910.23,6361836781.25,200.0,4.41632174801e+13,0.5,0.5,0.002,2
+1000.0,-400.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,ref,braidwood,5284660979.34,6238903.99332,5284690530.27,5304412416.17,5271948809.99,5274987807.38,5295597110.3,200.0,3.89239230378e+13,0.5,0.5,0.002,2
