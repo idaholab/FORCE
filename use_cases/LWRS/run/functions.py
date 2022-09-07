@@ -47,7 +47,7 @@ def h2_ptc(data, meta):
   ptc = 0
   if year<10:
     ptc = 3 #$/kg-H2
-  final_ptc = HTSE_ELEC_to_H2*ptc #$/MWe
+  final_ptc = -HTSE_ELEC_to_H2*ptc #$/MWe
   data = {'reference_price':final_ptc}
   # driver is electricity: 25.13 kg-H2/MWe
   return data, meta
