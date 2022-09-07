@@ -242,7 +242,7 @@
         </CashFlow>
         <CashFlow name='jet_fuel_credit' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <activity>diesel</activity>
+            <activity>jet_fuel</activity>
           </driver>
           <reference_price>
             <Function method='jet_fuel_credit'>functions</Function>
