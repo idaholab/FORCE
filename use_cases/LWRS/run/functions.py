@@ -51,7 +51,46 @@ def h2_ptc(data, meta):
   data = {'reference_price':final_ptc}
   # driver is electricity: 25.13 kg-H2/MWe
   return data, meta
-  
+
+def diesel_credit(data, meta):
+  """
+  Determines the credits for diesel production: 
+  credit only applicable for the first 10 years of the simulation
+  $1.67/gal: $1.25/gal base credit plus $0.01/gal additional credit 
+  for each percentage point reduction in the LCA carbon emissions 
+  above 50% attributed to the synfuel; the ANL indicates a 92% carbon reduction 
+  so $0.42/gal additional credit added to the base $1.25/gal
+  """
+  # Negative diesel activity for diesel market so credit should be negative to result in profit
+  year = meta['HERON']['active_index']['year'] # 0 to 29
+  credit = 0
+  if year<10:
+    credit = 1.67 #$/gal
+  # Diesel activity in kg
+  # Conversion
+  credit = -credit*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel']) #$/kg
+  data = {'reference_price':credit}
+  return data, meta
+
+def jet_fuel_credit(data, meta):
+  """
+  Determines the credits for jet fuel production: 
+  credit only applicable for the first 10 years of the simulation
+  $1.67/gal: $1.25/gal base credit plus $0.01/gal additional credit 
+  for each percentage point reduction in the LCA carbon emissions 
+  above 50% attributed to the synfuel; the ANL indicates a 92% carbon reduction 
+  so $0.42/gal additional credit added to the base $1.25/gal
+  """
+  # Negative diesel activity for diesel market so credit should be negative to result in profit
+  year = meta['HERON']['active_index']['year'] # 0 to 29
+  credit = 0
+  if year<10:
+    credit = 1.67 #$/gal
+  # Diesel activity in kg
+  # Conversion
+  credit = -credit*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel']) #$/kg
+  data = {'reference_price':credit}
+  return data, meta
 
 def get_syngas_capex(data, meta):
   """

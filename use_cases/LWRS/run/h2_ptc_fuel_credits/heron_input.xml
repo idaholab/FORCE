@@ -240,6 +240,14 @@
             <Function method='jet_fuel_price'>functions</Function>
           </reference_price>
         </CashFlow>
+        <CashFlow name='jet_fuel_credit' type='repeating' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <activity>diesel</activity>
+          </driver>
+          <reference_price>
+            <Function method='jet_fuel_credit'>functions</Function>
+          </reference_price>
+        </CashFlow>
       </economics>
     </Component>
 
@@ -258,6 +266,14 @@
           </driver>
           <reference_price>
             <Function method='diesel_price'>functions</Function>
+          </reference_price>
+        </CashFlow>
+        <CashFlow name='diesel_credit' type='repeating' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <activity>diesel</activity>
+          </driver>
+          <reference_price>
+            <Function method='diesel_credit'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
