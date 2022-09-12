@@ -103,7 +103,7 @@
     </Print>
 	<Print name="test2">
       <type>csv</type>
-      <source>placeholder</source>
+      <source>synthetic</source>
     </Print>
     <Print name="synthetic">
       <type>csv</type>
