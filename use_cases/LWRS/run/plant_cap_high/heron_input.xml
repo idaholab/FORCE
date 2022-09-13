@@ -146,14 +146,14 @@
             <fixed_value>1</fixed_value>
           </reference_price>
         </CashFlow>
-        <!--<CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
             <activity>electricity</activity>
           </driver>
           <reference_price>
             <Function method='h2_ptc'>functions</Function>
           </reference_price>
-        </CashFlow>-->
+        </CashFlow>
       </economics>
     </Component>
 
