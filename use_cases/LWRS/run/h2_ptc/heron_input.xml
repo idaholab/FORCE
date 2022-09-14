@@ -13,10 +13,10 @@
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>30</ProjectTime>
-      <DiscountRate>0.08</DiscountRate>
-      <tax>0.08</tax>
-      <inflation>0</inflation>
+      <ProjectTime>20</ProjectTime>
+      <DiscountRate>0.1</DiscountRate>
+      <tax>0.2960</tax>
+      <inflation>0.0218</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
@@ -34,7 +34,7 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity">
-          <sweep_values>500,1000</sweep_values>
+          <sweep_values>1193,2386</sweep_values>
         </capacity>
       </produces>
       <economics>
@@ -46,7 +46,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>electricity</consumes>
         <capacity resource='electricity'>
-          <fixed_value>-400</fixed_value> <!-- MWe -->
+          <fixed_value>-1000</fixed_value> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
@@ -71,8 +71,7 @@
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
-          <depreciate>20</depreciate>
-          <!-- 20 years MACRS -->
+          <depreciate>15</depreciate>
         </CashFlow>
         <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -116,8 +115,7 @@
             <fixed_value>0.626</fixed_value>
             <!-- From logarithmic regression -->
           </scaling_factor_x>
-          <depreciate>20</depreciate>
-          <!-- 20 years MACRS -->
+          <depreciate>15</depreciate>>
         </CashFlow>
         <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -214,7 +212,7 @@
         <CashFlow name='naphtha_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>naphtha</activity>
-            <multiplier>-3</multiplier>
+            <multiplier>-1</multiplier>
           </driver>
           <reference_price>
             <Function method='naphtha_price'>functions</Function>
@@ -234,7 +232,7 @@
         <CashFlow name='jet_fuel_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>jet_fuel</activity>
-            <multiplier>-3</multiplier>
+            <multiplier>-1</multiplier>
           </driver>
           <reference_price>
             <Function method='jet_fuel_price'>functions</Function>
@@ -254,7 +252,7 @@
         <CashFlow name='diesel_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>diesel</activity>
-            <multiplier>-3</multiplier>
+            <multiplier>-1</multiplier>
           </driver>
           <reference_price>
             <Function method='diesel_price'>functions</Function>
@@ -268,7 +266,7 @@
   </Components>
 
 <DataGenerators>
-  <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  <ARMA name='price' variable="price">../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
   <Function name="functions">../functions.py</Function>
 </DataGenerators>
 
