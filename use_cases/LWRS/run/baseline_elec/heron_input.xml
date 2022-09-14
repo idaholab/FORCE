@@ -2,7 +2,7 @@
   <Case name="Elec_baseline">
 	  <mode>sweep</mode>
     <verbosity>debug</verbosity>
-    <num_arma_samples>5</num_arma_samples>
+    <num_arma_samples>25</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -10,10 +10,10 @@
       <num_steps>24</num_steps>
     </time_discretization>
     <economics>
-      <ProjectTime>30</ProjectTime>
-      <DiscountRate>0.08</DiscountRate>
-      <tax>0.08</tax>
-      <inflation>0</inflation>
+      <ProjectTime>20</ProjectTime>
+      <DiscountRate>0.1</DiscountRate>
+      <tax>0.2960</tax>
+      <inflation>0.0218</inflation>
       <verbosity>50</verbosity>
     </economics>
     <dispatcher>
@@ -26,7 +26,7 @@
     <Component name="turbine">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity">
-          <sweep_values>50,300,1000</sweep_values>
+          <sweep_values>300,1193, 2386</sweep_values>
           <!-- Micro-reactor: 50 MWe; SMR representative: 300 MWe; LWR: 1000 MWe-->
         </capacity>
       </produces>
@@ -64,7 +64,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_2021_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_2018_202_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 
