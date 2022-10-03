@@ -197,10 +197,10 @@ def co2_supply_curve_comb(data,meta):
     @ In, meta, dict, state information
   """
   co2_cost = 0
-  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe
+  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe (negative value)
   elec_to_h2_rate = 25.13 #kg-H2/MWe
   h2_to_co2_rate = 6.58/1.06 #kg-Co2/kg-h2
-  co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year)
+  co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year) neg
   # Get the data for the Braidwood plant
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
   cost_data = df.iloc[:,-1].to_numpy()
@@ -213,21 +213,21 @@ def co2_supply_curve_comb(data,meta):
 
 def co2_cost_low(data, meta):
   """
-    Determines the yearly cost of the co2 feedstock for the FT process assuming a low price fo $25/ton
+    Determines the yearly cost of the co2 feedstock for the FT process assuming a low price fo $1/ton
     @ In, data, dict, request for data
     @ In, meta, dict, state information
     @ Out, data, dict, filled data
     @ In, meta, dict, state information
   """
   co2_cost = 0
-  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe
+  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe (negative value)
   elec_to_h2_rate = 25.13 #kg-H2/MWe
   h2_to_co2_rate = 6.58/1.06 #kg-Co2/kg-h2
   co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year)
   # Low price of $25/ton = $0.025/kg
-  co2_price = 0.025 #$/kg
+  co2_price = 0.001 #$/kg
   co2_cost = co2_price*co2_demand_year
-  data = {'driver': -co2_cost}
+  data = {'driver': co2_cost} # Cost so negative value
   return data, meta
 
 def co2_cost_high(data, meta):
@@ -239,14 +239,14 @@ def co2_cost_high(data, meta):
     @ In, meta, dict, state information
   """
   co2_cost = 0
-  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe
+  comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe negative
   elec_to_h2_rate = 25.13 #kg-H2/MWe
   h2_to_co2_rate = 6.58/1.06 #kg-Co2/kg-h2
-  co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year)
+  co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year) neg
   # High price of $75/ton = $0.075/kg
   co2_price = 0.075 #$/kg
-  co2_cost = co2_price*co2_demand_year
-  data = {'driver': -co2_cost}
+  co2_cost = co2_price*co2_demand_year # neg
+  data = {'driver': co2_cost} # Cost so negative value
   return data, meta
 
 
