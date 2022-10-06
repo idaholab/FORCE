@@ -137,13 +137,13 @@
         </CashFlow>
         <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <Function method='co2_supply_curve_comb'>functions</Function>
+            <fixed_value>1</fixed_value>
           </driver>
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <fixed_value>1</fixed_value>
+            <Function method='co2_supply_curve_comb'>functions</Function>
           </reference_price>
         </CashFlow>
         <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>

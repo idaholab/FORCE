@@ -5,7 +5,7 @@
     <mode>sweep</mode>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>10</num_arma_samples>
+    <num_arma_samples>5</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -135,13 +135,13 @@
         </CashFlow>
         <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <Function method='co2_supply_curve_comb'>functions</Function>
+            <fixed_value>1</fixed_value>
           </driver>
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <fixed_value>1</fixed_value>
+            <Function method='co2_supply_curve_comb'>functions</Function>
           </reference_price>
         </CashFlow>
         <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
@@ -266,7 +266,7 @@
   </Components>
 
 <DataGenerators>
-  <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood/arma.pk</ARMA>
+  <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood_periodic/arma.pk</ARMA>
   <Function name="functions">../functions.py</Function>
 </DataGenerators>
 

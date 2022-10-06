@@ -212,7 +212,7 @@
         <CashFlow name='naphtha_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>naphtha</activity>
-            <multiplier>-0.8</multiplier>
+            <multiplier>-1</multiplier>
           </driver>
           <reference_price>
             <Function method='naphtha_price'>functions</Function>
@@ -232,7 +232,7 @@
         <CashFlow name='jet_fuel_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>jet_fuel</activity>
-            <multiplier>-0.8</multiplier>
+            <multiplier>-1</multiplier>
           </driver>
           <reference_price>
             <Function method='jet_fuel_price'>functions</Function>
@@ -252,7 +252,7 @@
         <CashFlow name='diesel_sales' type='repeating' taxable='True' inflation='none' mult_target='False'>
           <driver>
             <activity>diesel</activity>
-            <multiplier>-0.8</multiplier>
+            <multiplier>-1</multiplier>
           </driver>
           <reference_price>
             <Function method='diesel_price'>functions</Function>
