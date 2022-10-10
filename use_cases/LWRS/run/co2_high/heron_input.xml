@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="elec_high">
+  <Case name="co2_high">
     <label name="scenario">ref</label> <!-- EIA fuel prices BAU -->
     <label name="location">braidwood</label>
     <mode>sweep</mode>
