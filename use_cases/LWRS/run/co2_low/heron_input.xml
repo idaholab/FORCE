@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="H2_PTC">
+  <Case name="co2_low">
     <label name="scenario">ref</label> <!-- EIA fuel prices BAU -->
     <label name="location">braidwood</label>
     <mode>sweep</mode>
@@ -135,13 +135,13 @@
         </CashFlow>
         <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <Function method='co2_cost_low'>functions</Function>
+            <fixed_value>1</fixed_value>
           </driver>
           <reference_driver>
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <fixed_value>1</fixed_value>
+            <Function method='co2_supply_curve_comb'>functions</Function>
           </reference_price>
         </CashFlow>
         <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
