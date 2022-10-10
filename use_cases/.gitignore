@@ -1,0 +1,11 @@
+*.png
+*inner.xml
+*outer.xml
+**.DS_Store
+*write_inner.py
+*cash.xml
+**__pycache__/
+*heron.lib
+*log_raven.out
+**.vscode/
+**_o/
