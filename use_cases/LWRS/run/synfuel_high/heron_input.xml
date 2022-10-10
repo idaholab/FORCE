@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="H2_PTC">
+  <Case name="synfuel_high">
     <label name="scenario">ref</label> <!-- EIA fuel prices BAU -->
     <label name="location">braidwood</label>
     <mode>sweep</mode>
