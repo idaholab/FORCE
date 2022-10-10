@@ -64,7 +64,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood_periodic/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 
