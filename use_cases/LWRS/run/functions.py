@@ -200,6 +200,7 @@ def co2_supply_curve_comb(data,meta):
   comp_cap = meta['HERON']['RAVEN_vars']['htse_ft_capacity'] #MWe (negative value)
   elec_to_h2_rate = 25.13 #kg-H2/MWe
   h2_to_co2_rate = 6.58/1.06 #kg-Co2/kg-h2
+  comp_cap = np.abs(comp_cap)
   co2_demand_year = 365*24*comp_cap*elec_to_h2_rate*h2_to_co2_rate #(kg-CO2/year) neg
   # Get the data for the Braidwood plant
   df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/braidwood.csv'))
@@ -208,7 +209,7 @@ def co2_supply_curve_comb(data,meta):
   diff = np.absolute(co2_demand_data-co2_demand_year)
   idx = np.argmin(diff)
   co2_cost = cost_data[idx]
-  data = {'driver': -co2_cost}
+  data = {'reference_price': -co2_cost}
   return data, meta
 
 def co2_cost_low(data, meta):
