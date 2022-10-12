@@ -4,6 +4,7 @@
     <label name="location">braidwood</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
     <time_discretization>
@@ -173,7 +174,7 @@
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <Function method='co2_supply_curve_comb'>functions</Function>
+            <Function method='co2_supply_curve'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
