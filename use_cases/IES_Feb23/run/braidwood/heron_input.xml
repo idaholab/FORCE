@@ -4,7 +4,14 @@
     <label name="location">braidwood</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
-    <debug></debug>
+    <parallel>
+      <runinfo>
+        <expectedTime>72:0:0</expectedTime>
+        <clusterParameters>-P re_gen</clusterParameters>
+        <memory>1gb</memory>
+      </runinfo>
+    </parallel>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
     <time_discretization>
