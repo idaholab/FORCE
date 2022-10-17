@@ -1,0 +1,71 @@
+<HERON>
+  <Case name="cooper_baseline">
+    <label name="location">cooper</label>
+	  <mode>sweep</mode>
+    <verbosity>debug</verbosity>
+    <num_arma_samples>25</num_arma_samples>
+    <time_discretization>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>20</ProjectTime>
+      <DiscountRate>0.1</DiscountRate>
+      <tax>0.2717</tax>
+      <inflation>0.0218</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <pyomo></pyomo>
+    </dispatcher> 
+  </Case>
+
+  <Components>
+  
+    <Component name="npp">
+      <produces resource="electricity" dispatch="fixed">
+        <capacity resource="electricity">
+          <sweep_values>769, 1538</sweep_values>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>60</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="elec_market">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity>
+          <fixed_value>-1e200</fixed_value> 
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="e_sales" type="repeating" taxable="True" inflation="none" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <ARMA variable="price">price</ARMA>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+
+  </Components>
+
+  <DataGenerators>
+    <ARMA name='price' variable="price">TODO</ARMA>
+    <Function name="functions">../functions.py</Function>
+  </DataGenerators>
+
+</HERON>
