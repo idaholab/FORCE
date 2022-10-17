@@ -1,7 +1,7 @@
 <HERON>
-  <Case name="braidwood">
+  <Case name="prairie_island">
     <label name="scenario">ref</label>
-    <label name="location">braidwood</label>
+    <label name="location">prairie_island</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
     <parallel>
