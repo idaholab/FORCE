@@ -6,7 +6,7 @@
   </RunInfo>
 
   <Files>
-    <Input name="input">../ARMA_pointer_Braidwood_2011_2021_DA_periodic.csv</Input>
+    <Input name="input">../ARMA_pointer_Braidwood_2012_2021_DA_periodic.csv</Input>
     <Input name="pk">arma.pk</Input>
   </Files>
 
