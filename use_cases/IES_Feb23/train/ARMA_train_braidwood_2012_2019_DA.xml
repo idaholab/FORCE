@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <Simulation verbosity="debug">
   <RunInfo>
-    <WorkingDir>Output_Braidwood_2012_2019_DA</WorkingDir>
+    <WorkingDir>Output_braidwood_2012_2019_DA</WorkingDir>
     <Sequence>load, train, meta, serialize, sample, plotting</Sequence>
   </RunInfo>
 
   <Files>
-    <Input name="input">../ARMA_pointer_Braidwood_2012_2019_DA.csv</Input>
+    <Input name="input">../ARMA_pointer_braidwood_2012_2019_DA.csv</Input>
     <Input name="pk">arma.pk</Input>
   </Files>
 
