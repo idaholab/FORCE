@@ -11,7 +11,7 @@
         <memory>2gb</memory>
       </runinfo>
     </parallel>
-    <!--<debug></debug>-->
+    <debug></debug>
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
     <time_discretization>
@@ -326,7 +326,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood_periodic/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_braidwood_2012_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 </HERON>
