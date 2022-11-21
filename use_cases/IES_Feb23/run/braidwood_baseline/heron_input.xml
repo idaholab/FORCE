@@ -3,6 +3,13 @@
 	  <mode>sweep</mode>
     <label name="location">braidwood</label>
     <verbosity>debug</verbosity>
+    <parallel>
+      <runinfo>
+        <expectedTime>72:0:0</expectedTime>
+        <clusterParameters>-P re_gen</clusterParameters>
+        <memory>2gb</memory>
+      </runinfo>
+    </parallel>
     <num_arma_samples>25</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
@@ -64,7 +71,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood_periodic/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_braidwood_2012_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 
