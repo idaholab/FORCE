@@ -2,6 +2,13 @@
   <Case name="cooper_baseline">
     <label name="location">cooper</label>
 	  <mode>sweep</mode>
+    <parallel>
+      <runinfo>
+        <expectedTime>72:0:0</expectedTime>
+        <clusterParameters>-P re_gen</clusterParameters>
+        <memory>1gb</memory>
+      </runinfo>
+    </parallel>
     <verbosity>debug</verbosity>
     <num_arma_samples>25</num_arma_samples>
     <time_discretization>
@@ -64,7 +71,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">TODO</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_cooper_2012_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 
