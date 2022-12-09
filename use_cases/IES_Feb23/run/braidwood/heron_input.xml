@@ -11,7 +11,7 @@
         <memory>4gb</memory>
       </runinfo>
     </parallel>
-    <debug></debug>
+    <!--<debug></debug>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
     <time_discretization>
