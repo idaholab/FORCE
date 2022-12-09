@@ -1,0 +1,3 @@
+npp_capacity,elec_market_capacity,location_label,mean_NPV,std_NPV,med_NPV,max_NPV,min_NPV,perc_5_NPV,perc_95_NPV,samp_NPV,var_NPV,PointProbability,ProbabilityWeight,prefix,ProbabilityWeight-npp_capacity
+769.0,-1e+200,cooper,1080996406.41,nan,1080996406.41,1080996406.41,1080996406.41,1080996406.41,1080996406.41,1.0,nan,0.00130039011704,0.5,1,0.5
+1538.0,-1e+200,cooper,2050121481.92,nan,2050121481.92,2050121481.92,2050121481.92,2050121481.92,2050121481.92,1.0,nan,0.00130039011704,0.5,2,0.5
