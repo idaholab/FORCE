@@ -7,7 +7,7 @@
       <runinfo>
         <expectedTime>72:0:0</expectedTime>
         <clusterParameters>-P re_gen</clusterParameters>
-        <memory>1gb</memory>
+        <memory>2gb</memory>
       </runinfo>
     </parallel>
     <num_arma_samples>25</num_arma_samples>
