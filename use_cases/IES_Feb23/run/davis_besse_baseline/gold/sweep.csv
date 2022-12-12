@@ -1,0 +1,3 @@
+turbine_capacity,elec_market_capacity,mean_NPV,std_NPV,med_NPV,max_NPV,min_NPV,perc_5_NPV,perc_95_NPV,samp_NPV,var_NPV,prefix,ProbabilityWeight,PointProbability,ProbabilityWeight-turbine_capacity
+1788.0,-1e+200,3529102991.55,nan,3529102991.55,3529102991.55,3529102991.55,3529102991.55,3529102991.55,1.0,nan,2,0.5,0.00111856823266,0.5
+894.0,-1e+200,1765764570.6,nan,1765764570.6,1765764570.6,1765764570.6,1765764570.6,1765764570.6,1.0,nan,1,0.5,0.00111856823266,0.5
