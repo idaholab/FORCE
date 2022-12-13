@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="braidwood">
+  <Case name="houston">
     <label name="scenario">ref</label>
     <label name="location">houston</label>
     <label name="elec_data">covid</label>
@@ -326,7 +326,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_braidwood_2012_2021_DA/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_houston_2012_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 </HERON>
