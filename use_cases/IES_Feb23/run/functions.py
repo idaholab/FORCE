@@ -267,13 +267,15 @@ def jet_fuel_price(data, meta):
     @ Out, meta, dict, state information
   """
   # Get the data about jet fuel prices
-  path = os.path.join(os.path.dirname(__file__), '../data/ENC_JF.csv')
-  print(path)
-  df = pd.read_csv(path, skiprows=6)
-  year = meta['HERON']['active_index']['year'] + 2020
+  path = os.path.join(os.path.dirname(__file__), '../data/regional_fuel_prices.csv')
+  df = pd.read_csv(path, header=0)
+  year = str(meta['HERON']['active_index']['year'] + 2020)
   # Get the price 
-  scenario = meta['HERON']['Case'].get_labels()['scenario']
-  priceGal = float(df.loc[(df['Year']==year)][scenario].values) # in $/gal
+  labels = meta['HERON']['Case'].get_labels()
+  region = str(labels['fuel_region'])
+  scenario = str(labels['scenario'])
+  #in $/gal
+  priceGal = float(df.loc[((df['Product']=='jet_fuel') & (df['Location'] == region) & (df['Case'] == scenario))][year].values)
   price = priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['jet_fuel']) #in $/kg
   data = {'reference_price': price}
   return data, meta 
@@ -290,14 +292,19 @@ def naphtha_price(data, meta):
   """
   # Get the data about jet fuel prices
   # Using gasoline price projection and assuming naphtha prices are proportional
-  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_MG.csv'), skiprows=6)
-  year = meta['HERON']['active_index']['year'] + 2020
+  # Get the data about jet fuel prices
+  path = os.path.join(os.path.dirname(__file__), '../data/regional_fuel_prices.csv')
+  df = pd.read_csv(path, header=0)
+  year = str(meta['HERON']['active_index']['year'] + 2020)
   # Get the price 
-  scenario = meta['HERON']['Case'].get_labels()['scenario']
-  priceGal = float(df.loc[(df['Year']==year)][scenario].values) # in $/gal
-  price = MG_to_N*priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['naphtha']) # in $/kg
+  labels = meta['HERON']['Case'].get_labels()
+  region = str(labels['fuel_region'])
+  scenario = str(labels['scenario'])
+  #in $/gal
+  priceGal = float(df.loc[((df['Product']=='naphtha') & (df['Location'] == region) & (df['Case'] == scenario))][year].values)
+  price = priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['naphtha']) #in $/kg
   data = {'reference_price': price}
-  return data, meta 
+  return data, meta  
 
 def diesel_price(data, meta):
   """
@@ -308,13 +315,17 @@ def diesel_price(data, meta):
     @ Out, data, dict, filled data
     @ Out, meta, dict, state information
   """
-  # Get the data about diesel prices
-  df = pd.read_csv(os.path.join(os.path.dirname(__file__), '../data/ENC_DF.csv'), skiprows=6)
-  year = meta['HERON']['active_index']['year'] + 2020
+  # Get the data about jet fuel prices
+  path = os.path.join(os.path.dirname(__file__), '../data/regional_fuel_prices.csv')
+  df = pd.read_csv(path, header=0)
+  year = str(meta['HERON']['active_index']['year'] + 2020)
   # Get the price 
-  scenario = meta['HERON']['Case'].get_labels()['scenario']
-  priceGal = float(df.loc[(df['Year']==year)][scenario].values) # in $/gal
-  price = priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel']) # in $/kg
+  labels = meta['HERON']['Case'].get_labels()
+  region = str(labels['fuel_region'])
+  scenario = str(labels['scenario'])
+  #in $/gal
+  priceGal = float(df.loc[((df['Product']=='diesel') & (df['Location'] == region) & (df['Case'] == scenario))][year].values)
+  price = priceGal*(1/GAL_to_L)*(1/FUEL_DENSITY['diesel']) #in $/kg
   data = {'reference_price': price}
   return data, meta 
 
@@ -333,7 +344,7 @@ def test_co2_supply_curve():
 if __name__ == "__main__":
   #test_co2_supply_curve()# Works!
   # Test jet fuel get price with reference EIA AEO
-  meta = {'HERON':{'active_index':{'year':23}}}
+  meta = {'HERON':{'active_index':{'year':23}, 'Case':{''}}}
   data = {}
   data, meta = jet_fuel_price(data, meta)
   print(data['driver'])
