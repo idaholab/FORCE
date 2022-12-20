@@ -2,6 +2,7 @@
   <Case name="davis_besse">
     <label name="scenario">ref</label>
     <label name="location">davis_besse</label>
+    <label name="fuel_region">ohio</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
     <parallel>

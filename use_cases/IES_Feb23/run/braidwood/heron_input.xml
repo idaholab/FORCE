@@ -2,6 +2,7 @@
   <Case name="braidwood">
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
+    <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
     <parallel>

@@ -2,6 +2,7 @@
   <Case name="houston">
     <label name="scenario">ref</label>
     <label name="location">south_texas_project</label>
+    <label name="fuel_region">west_south_central</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
     <parallel>

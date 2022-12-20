@@ -2,6 +2,7 @@
   <Case name="cooper">
     <label name="scenario">ref</label>
     <label name="location">cooper</label>
+    <label name="fuel_region">nebraska</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
     <parallel>
