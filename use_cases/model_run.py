@@ -1,5 +1,6 @@
 
 import os
+import sys
 
 model_lines = open("MODELS_INDEX.md", "r").readlines()
 
@@ -20,3 +21,5 @@ for line in model_lines[2:]:
       finished.append(path)
 print("missing", missing)
 print("failed", failed)
+print("finished", finished)
+sys.exit(len(missing) + len(failed))
