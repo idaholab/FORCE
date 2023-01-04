@@ -14,6 +14,7 @@ for line in model_lines[2:]:
   if not os.path.exists(path):
     missing.append(path)
   else:
+    os.system("echo Running "+path)
     ret = os.system("raven_framework "+path)
     if ret != 0:
       failed.append(path)
