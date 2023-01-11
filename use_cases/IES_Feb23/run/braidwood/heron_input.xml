@@ -59,6 +59,11 @@
         <capacity resource="electricity">
           <opt_bounds>-1175,-400</opt_bounds> <!-- MWe -->
         </capacity>
+        <minimum resource="electricity">
+          <!-- To model hot standby mode, 0.85% of electrical capacity-->
+          <variable>htse_capacity</variable>
+          <multiplier>0.0085</multiplier>
+        </minimum>
         <transfer>
           <linear>
             <rate resource="electricity">-1</rate>
