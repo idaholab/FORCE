@@ -70,7 +70,7 @@ def compute_cashflows(final_out):
 
 
 
-plants = ['braidwood', 'cooper', 'houston', 'prairie_island', 'stp', 'davis_besse']
+plants = ['braidwood', 'cooper', 'prairie_island', 'stp', 'davis_besse'] # Add houston when converged
 CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales','e_sales','elec_cap_market','co2_shipping'\
   'ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #add rest later
 df = pd.DataFrame(columns=['plant']+CASHFLOWS)
@@ -83,7 +83,7 @@ for plant in plants:
     dic['plant'] = plant 
     temp_df = pd.DataFrame.from_dict(dic)
     df = pd.concat([df,temp_df], axis=0)
-df.to_csv("./cashlow_breakdown.csv")
+df.to_csv("./cashflow_breakdown.csv",index=False)
 
 
 
