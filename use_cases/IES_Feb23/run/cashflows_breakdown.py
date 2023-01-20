@@ -119,9 +119,9 @@ def create_cashflow_csv():
   df.to_csv("./cashflow_breakdown.csv",index=False)
 
 if __name__=="__main__":
-  #create_cashflow_csv()
-  dir = os.path.dirname(os.path.abspath(__file__))
-  plot_cashflows_2(dir+"/cashflow_breakdown.csv")
+  create_cashflow_csv()
+  #dir = os.path.dirname(os.path.abspath(__file__))
+  #plot_cashflows_2(dir+"/cashflow_breakdown.csv")
 
 
 
