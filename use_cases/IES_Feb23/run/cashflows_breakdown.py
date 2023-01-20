@@ -67,16 +67,16 @@ def compute_cashflows(final_out):
         dic[c] = [sum(values)]
   return dic
 
-def plot_cashflows_2(csv_file):
+def plot_cashflows_2(dir, csv_file):
   result_df = pd.read_csv(csv_file)
   result_df = result_df.rename(columns={'elec_cap_market':'ft_elec_cap_market'})
   # Divide by 1e6 for results in M$
   for c in list(result_df.columns):
     if 'plant' not in str(c):
-      result_df[c] /=1e6
+      result_df[c] /=1e9
   color_mapping ={
     'jet_fuel_sales':'#FFD700',
-    'diesel_sales':'#8B3E2F',
+    'diesel_sales':'#FFAEB9',
     'naphtha_sales':'#FF6103',
     'h2_ptc':'#B8860B',#darkgoldenrod',
     'e_sales':'#B22222',#firebrick',
@@ -91,18 +91,21 @@ def plot_cashflows_2(csv_file):
     'ft_elec_cap_market':'#8B8B83'#ivory4'
   }
 
-  fig, ax = plt.subplots(1, figsize=(16, 8))
+  fig = plt.figure(figsize=(80, 50))
+  ax = fig.add_subplot(111)
   ax = result_df.plot.bar(stacked=True,\
     color=[color_mapping.get(x, '#333333') for x in result_df.columns])
   legend_labels = [" ".join(l.split("_")).upper() for l in list(result_df.columns)]
   # x ticks
   plants_names = [" ".join(p.split('_')).upper() for p in plants]
   ax.set_axisbelow(True)
-  ax.set_ylabel('Revenues and cost M$(2020)')
+  ax.set_ylabel('Revenues and cost bn$(2020)')
   ax.yaxis.grid(color='gray', linestyle='dashed', alpha=0.7)
-  plt.xticks(ticks = result_df.index,labels = plants_names, rotation=0)
-  plt.legend(legend_labels, ncol = 1, bbox_to_anchor=([1, 1.05, 0, 0]), frameon = False)
-  plt.show()
+  ax.set_xticklabels(labels = plants_names, rotation=0)
+  plt.legend(legend_labels, ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
+  plt.gcf().set_size_inches(10, 6)
+  plt.tight_layout()
+  plt.savefig(dir+'/cashflow_breakdown.png')
 
 
 def create_cashflow_csv():
@@ -119,9 +122,9 @@ def create_cashflow_csv():
   df.to_csv("./cashflow_breakdown.csv",index=False)
 
 if __name__=="__main__":
-  create_cashflow_csv()
-  #dir = os.path.dirname(os.path.abspath(__file__))
-  #plot_cashflows_2(dir+"/cashflow_breakdown.csv")
+  #create_cashflow_csv()
+  dir = os.path.dirname(os.path.abspath(__file__))
+  plot_cashflows_2(dir,dir+"/cashflow_breakdown.csv")
 
 
 
