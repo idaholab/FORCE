@@ -62,7 +62,7 @@ def compute_cashflows(final_out):
         ind = lines.index(l)
         values = []
         # Get value for each year and sum it up
-        for i in range(3,23):
+        for i in range(2,23):
           values.append(float(lines[ind+i].split(" ")[-1]))
         dic[c] = [sum(values)]
   return dic
