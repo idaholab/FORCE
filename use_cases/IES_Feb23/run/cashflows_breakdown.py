@@ -52,7 +52,8 @@ def find_final_out(plant):
   return final_out
 
 
-def compute_cashflows(final_out):
+def compute_cashflows(dir, plant, final_out):
+  # Compute cashflows in optimization out file
   with open(final_out) as fp:
     lines = fp.readlines()
   dic = {}
@@ -65,6 +66,11 @@ def compute_cashflows(final_out):
         for i in range(2,23):
           values.append(float(lines[ind+i].split(" ")[-1]))
         dic[c] = [sum(values)]
+  # Add the baseline npv to the dictionary
+  base_sweep = pd.read_csv(os.path.join(dir,plant+'_baseline', 'gold', 'sweep.csv'))
+  npvs = list(base_sweep['mean_NPV'])
+  baseline_npv = min(npvs)
+  dic['baseline_npv'] = baseline_npv
   return dic
 
 def plot_cashflows_2(dir, csv_file):
@@ -108,23 +114,23 @@ def plot_cashflows_2(dir, csv_file):
   plt.savefig(dir+'/cashflow_breakdown.png')
 
 
-def create_cashflow_csv():
+def create_cashflow_csv(dir):
   df = pd.DataFrame(columns=['plant']+CASHFLOWS)
   df.set_index('plant')
 
   for plant in plants:
     final_out = find_final_out(plant)
     if final_out:
-      dic = compute_cashflows(final_out)
+      dic = compute_cashflows(dir, plant, final_out)
       dic['plant'] = plant 
       temp_df = pd.DataFrame.from_dict(dic)
       df = pd.concat([df,temp_df], axis=0)
   df.to_csv("./cashflow_breakdown.csv",index=False)
 
 if __name__=="__main__":
-  #create_cashflow_csv()
   dir = os.path.dirname(os.path.abspath(__file__))
-  plot_cashflows_2(dir,dir+"/cashflow_breakdown.csv")
+  create_cashflow_csv(dir)
+  #plot_cashflows_2(dir,dir+"/cashflow_breakdown.csv")
 
 
 
