@@ -7,18 +7,18 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter # type:ignore
 
 # Matplotlib Global Settings
-plt.rc("figure", figsize=(25,15), titleweight='bold')
+plt.rc("figure", figsize=(27,17), titleweight='bold')
 plt.rc(
     "axes",
 #     titlesize=25,
     titleweight="bold",
-    labelsize=12,
+    labelsize=18,
     axisbelow=True,
     grid=True
 )
 plt.rc("savefig", bbox="tight")
-plt.rc("legend", fontsize=12)
-plt.rc(["xtick", "ytick"], labelsize=10)
+plt.rc("legend", fontsize=18)
+plt.rc(["xtick", "ytick"], labelsize=16)
 
 def hydrogen(df, ax):
   var_cols_1 = [

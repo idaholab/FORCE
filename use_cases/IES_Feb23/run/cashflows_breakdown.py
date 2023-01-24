@@ -70,7 +70,7 @@ def compute_cashflows(dir, plant, final_out):
   base_sweep = pd.read_csv(os.path.join(dir,plant+'_baseline', 'gold', 'sweep.csv'))
   npvs = list(base_sweep['mean_NPV'])
   baseline_npv = min(npvs)
-  dic['baseline_npv'] = baseline_npv
+  dic['baseline_npv'] = -1*baseline_npv
   return dic
 
 def plot_cashflows_3(dir, csv_file):
@@ -133,9 +133,9 @@ def plot_cashflows_2(dir, csv_file):
   for c in list(result_df.columns):
     if 'plant' not in str(c):
       result_df[c] /=1e9
-    if 'baseline' in str(c):
-      result_df[c] *=-1
-  
+    #if 'baseline' in str(c):
+     # result_df[c] *=-1
+  print(result_df)
   #Compute delta npv
   color_mapping ={
     'baseline_npv':'#104E8B',#CDC673
@@ -193,7 +193,7 @@ def create_cashflow_csv(dir):
 
 if __name__=="__main__":
   dir = os.path.dirname(os.path.abspath(__file__))
-  #create_cashflow_csv(dir)
+  create_cashflow_csv(dir)
   plot_cashflows_2(dir,dir+"/cashflow_breakdown.csv")
 
 
