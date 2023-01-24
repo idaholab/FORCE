@@ -65,7 +65,8 @@
       <Target>TOTALLOAD, HOUR</Target>
       <P>0</P>
       <Q>1</Q>
-      <Fourier>8760, 4380, 2190, 1251.42, 973, 515.29411, 438, 172, 168, 33.6, 23.93442623, 12, 8, 6</Fourier>
+      <!-- was <Fourier>8760, 4380, 2190, 1251.42, 973, 515.29411, 438, 172, 168, 33.6, 23.93442623, 12, 8, 6</Fourier> -->
+      <Fourier>8760, 4380, 2190, 1251, 973, 515, 438, 172, 168, 34, 24, 12, 8, 6</Fourier>
       <nyquistScalar>8</nyquistScalar>
       <Segment grouping='interpolate'>
         <macroParameter>YEAR</macroParameter>
