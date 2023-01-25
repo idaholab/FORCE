@@ -65,7 +65,7 @@ def compute_cashflows(dir, plant, final_out):
   with open(final_out) as fp:
     lines = fp.readlines()
   dic = {}
-  to_tax = 0
+  npv = 0
   for c in CASHFLOWS:
     for l in lines:
       if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l) and ("amortize" not in l) and ("depreciate" not in l):
@@ -75,7 +75,8 @@ def compute_cashflows(dir, plant, final_out):
         for i in range(2,23):
           values.append(float(lines[ind+i].split(" ")[-1]))
         dic[c] = [sum(values)]
-        to_tax += sum(values)
+  for k,v in dic.items():
+    npv += v
   # Add the baseline npv to the dictionary
   base_sweep = pd.read_csv(os.path.join(dir,plant+'_baseline', 'gold', 'sweep.csv'))
   npvs = list(base_sweep['mean_NPV'])
@@ -84,7 +85,10 @@ def compute_cashflows(dir, plant, final_out):
   # Add taxes to the dictionary
   state_t = STATE_TAX[plant]
   eff_tax = FEDERAL_TAX+state_t*(1-FEDERAL_TAX)
-  tax_cost = -1*eff_tax*to_tax
+  print(plant)
+  print(eff_tax)
+  tax_cost = -1*eff_tax*npv
+  print(tax_cost)
   dic['taxes'] = tax_cost
   return dic
 
