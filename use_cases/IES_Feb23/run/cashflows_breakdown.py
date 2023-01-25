@@ -93,47 +93,54 @@ def compute_cashflows(dir, plant, final_out, final_npv):
 def plot_cashflows_2(dir, csv_file):
   result_df = pd.read_csv(csv_file)
   result_df = result_df.rename(columns={'elec_cap_market':'ft_elec_cap_market'})
+  # Combine columns for better visibility
+  result_df['ft_om']=result_df['ft_vom']+result_df['ft_fom']
+  result_df['htse_om']=result_df['htse_vom']+result_df['htse_fom']
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom'], inplace=True)
+  result_df['ft_htse_elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
+  result_df.drop(columns=['ft_elec_cap_market', 'htse_elec_cap_market'], inplace=True)
+  print(result_df.head())
   # Divide by 1e9 for results in bn$ and count baseline npv as cost
   for c in list(result_df.columns):
     if 'plant' not in str(c):
       result_df[c] /=1e9
   #Compute delta npv
   color_mapping ={
-    'baseline_npv':'#104E8B',#CDC673
-    'jet_fuel_sales':'#FFD700',
-    'diesel_sales':'#FFAEB9',
-    'naphtha_sales':'#FF6103',
-    'h2_ptc':'#B8860B',#darkgoldenrod',
-    'e_sales':'#B22222',#firebrick',
-    'h2_storage_capex':'#98F5FF',#cadetblue1',
-    'htse_capex':'#CDC673',#cadetblue2',
-    'ft_capex':'#7AC5CD',#cadetblue3',
-    'htse_fom':'#7FFF00',#chartreuse1',
-    'htse_vom':'#458B00',#chartreuse4',
-    'ft_fom':'#BF3EFF',#chartreuse3',
-    'ft_vom':'#68228B',#chartreuse4',
-    'htse_elec_cap_market':'#EEEEE0',#ivory2',
-    'ft_elec_cap_market':'#8B8B83',
-    'taxes': '#FF69B4'
+    'BASELINE NPV':'brown',#CDC673
+    'JET FUEL SALES':'blue',
+    'DIESEL SALES':'green',
+    'NAPHTHA SALES':'yellow',
+    'H2 PTC':'pink',#darkgoldenrod',
+    'E SALES':'black',#firebrick',
+    'H2 STORAGE CAPEX':'grey',#cadetblue1',
+    'HTSE CAPEX':'orange',#cadetblue2',
+    'FT CAPEX':'brown3',#cadetblue3',
+    'HTSE OM':'cadetblue1',#chartreuse1',
+    'FT OM':'cornsilk1',
+    'CO2 SHIPPING':'chartreuse1',
+    'FT HTSE ELEC CAP MARKET':'gold3',
+    'TAXES': 'firebrick'
   }
-
+  result_df.set_index('plant', inplace=True)
+  result_df.rename(lambda x: " ".join(x.split("_")).upper(), axis='columns', inplace=True)
+  print(result_df.head())
   fig, ax = plt.subplots()
   # Stacked bars for cashflows
-  ax = result_df.plot.bar(y=color_mapping.keys(),stacked=True,color=color_mapping)
-  legend_labels = [" ".join(l.split("_")).upper() for l in list(result_df.columns)]
+  ax = result_df.plot.bar(y=color_mapping.keys(),stacked=True)#,color=color_mapping)
+  #legend_labels = [" ".join(l.split("_")).upper() for l in list(result_df.columns)]
   # x ticks
-  plants_names = [" ".join(p.split('_')).upper() for p in plants]
-  ax.set_axisbelow(True)
+  plants_names = [" ".join(p.split('_')).upper() for p in result_df.index]
+  #ax.set_axisbelow(True)
   ax.set_ylabel('Revenues and cost bn$(2020)')
   ax.yaxis.grid(color='gray', linestyle='dashed', alpha=0.7)
   ax.set_xticklabels(labels = plants_names, rotation=0)
   # Add table below to indicate delta npv
-  delta_npvs = list(result_df.sum(axis=1)) 
-  delta_npvs = [str(round(d,3)) for d in delta_npvs]
-  delta_npvs = [delta_npvs]
-  col_labels =[' ' for p in plants_names]
-  plt.table(cellText=delta_npvs,cellLoc='center', loc ='bottom',rowLabels=[r'$\Delta$ NPV (bn\$(2020))'], colLabels=col_labels)
-  plt.legend(legend_labels, ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
+  #delta_npvs = list(result_df.sum(axis=1)) 
+  #delta_npvs = [str(round(d,3)) for d in delta_npvs]
+  #delta_npvs = [delta_npvs]
+  #col_labels =[' ' for p in plants_names]
+  #plt.table(cellText=delta_npvs,cellLoc='center', loc ='bottom',rowLabels=[r'$\Delta$ NPV (bn\$(2020))'], colLabels=col_labels)
+  plt.legend(ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
   plt.gcf().set_size_inches(11, 6)
   plt.tight_layout()
   plt.subplots_adjust(bottom=0.1)
