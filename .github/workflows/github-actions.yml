@@ -21,12 +21,13 @@ jobs:
       - run: cd raven && ./build_raven
       - run: raven/run_tests --library-report
       - run: source raven/scripts/establish_conda_env.sh --load && cd use_cases && ./model_prep.sh
-      - run: PATH="$PATH:`pwd`/raven" && cd use_cases && python3 model_run.py 2>&1 | tee model_run_out.txt | tail
+      - run: PATH="$PATH:`pwd`/raven" && cd use_cases && python3 model_run.py
       - run: find . -name model_run_out.txt
       - name: Archive
         uses: actions/upload-artifact@v3
         with:
           name: model_out
+          when: always
           path: |
             model_run_out.txt
             use_cases/model_run_out.txt
