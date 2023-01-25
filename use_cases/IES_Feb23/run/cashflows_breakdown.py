@@ -60,12 +60,12 @@ def find_final_out(plant):
   return final_out
 
 
-def compute_cashflows(dir, plant, final_out):
+def compute_cashflows(dir, plant, final_out, final_npv):
   # Compute cashflows in optimization out file
   with open(final_out) as fp:
     lines = fp.readlines()
   dic = {}
-  npv = 0
+  npv = 0.0
   for c in CASHFLOWS:
     for l in lines:
       if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l) and ("amortize" not in l) and ("depreciate" not in l):
@@ -76,18 +76,15 @@ def compute_cashflows(dir, plant, final_out):
           values.append(float(lines[ind+i].split(" ")[-1]))
         dic[c] = [sum(values)]
   for k,v in dic.items():
-    npv += v
+    npv += v[0]
   # Add the baseline npv to the dictionary
   base_sweep = pd.read_csv(os.path.join(dir,plant+'_baseline', 'gold', 'sweep.csv'))
   npvs = list(base_sweep['mean_NPV'])
   baseline_npv = min(npvs)
   dic['baseline_npv'] = -1*baseline_npv
   # Add taxes to the dictionary
-  state_t = STATE_TAX[plant]
-  eff_tax = FEDERAL_TAX+state_t*(1-FEDERAL_TAX)
+  tax_cost = final_npv-npv
   print(plant)
-  print(eff_tax)
-  tax_cost = -1*eff_tax*npv
   print(tax_cost)
   dic['taxes'] = tax_cost
   return dic
@@ -149,8 +146,9 @@ def create_cashflow_csv(dir):
 
   for plant in plants:
     final_out = find_final_out(plant)
+    final_npv = get_final_npv(plant)[0]
     if final_out:
-      dic = compute_cashflows(dir, plant, final_out)
+      dic = compute_cashflows(dir, plant, final_out, final_npv)
       dic['plant'] = plant 
       temp_df = pd.DataFrame.from_dict(dic)
       df = pd.concat([df,temp_df], axis=0)
