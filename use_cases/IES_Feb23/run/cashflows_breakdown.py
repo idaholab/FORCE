@@ -119,8 +119,7 @@ def plot_cashflows_2(dir, csv_file):
 
   fig, ax = plt.subplots()
   # Stacked bars for cashflows
-  ax = result_df.plot.bar(stacked=True,\
-    color=[color_mapping.get(x, '#333333') for x in result_df.columns])
+  ax = result_df.plot.bar(y=color_mapping.keys(),stacked=True,color=color_mapping)
   legend_labels = [" ".join(l.split("_")).upper() for l in list(result_df.columns)]
   # x ticks
   plants_names = [" ".join(p.split('_')).upper() for p in plants]
