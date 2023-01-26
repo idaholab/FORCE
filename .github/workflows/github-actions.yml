@@ -25,9 +25,9 @@ jobs:
       - run: find . -name model_run_out.txt
       - name: Archive
         uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: model_out
-          when: always
           path: |
             model_run_out.txt
             use_cases/model_run_out.txt
