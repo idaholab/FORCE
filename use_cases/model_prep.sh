@@ -11,7 +11,7 @@ SCRIPT_DIR=`(cd $SCRIPT_DIRNAME; pwd)`
 
 
 #Note, conda should be in path
-conda install -y xlrd=1
+conda install -y xlrd=1 openpyxl
 cd $SCRIPT_DIR/2020_12
 
 ./scripts/raw_data_proc.py data/from_EPRI/Carbontax.xlsx
@@ -31,3 +31,12 @@ cd $SCRIPT_DIR/2020_12
 
 ./scripts/raw_data_proc.py data/from_EPRI/rps_LNHR.xlsx
 (cd train/rps_lnhr/OH  && for I in Data_*.csv; do mv $I ${I}.orig; head -n -23 ${I}.orig > $I; done)
+
+#Done with 2020_12
+
+cd ..
+cd 2021_12
+./scripts/raw_data_proc.py data/from_EPRI/NY_Default_Load.xlsx
+./scripts/raw_data_proc.py data/from_EPRI/NY_CES_Load.xlsx
+
+#Done with 2021_12
