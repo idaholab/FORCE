@@ -27,3 +27,7 @@ cd $SCRIPT_DIR/2020_12
 (cd train/default_lnhr/OH && for I in Data_*.csv; do mv $I ${I}.orig; head -n -23 ${I}.orig > $I; done)
 
 ./scripts/raw_data_proc.py data/from_EPRI/Carbontax_LNHR.xlsx
+(cd train/carbontax_lnhr/OH  && for I in Data_*.csv; do mv $I ${I}.orig; head -n -23 ${I}.orig > $I; done)
+
+./scripts/raw_data_proc.py data/from_EPRI/rps_LNHR.xlsx
+(cd train/rps_lnhr/OH  && for I in Data_*.csv; do mv $I ${I}.orig; head -n -23 ${I}.orig > $I; done)
