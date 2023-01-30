@@ -94,10 +94,11 @@ def plot_cashflows_2(dir, csv_file):
   result_df = pd.read_csv(csv_file)
   result_df = result_df.rename(columns={'elec_cap_market':'ft_elec_cap_market'})
   # Combine columns for better visibility
-  result_df['ft_om']=result_df['ft_vom']+result_df['ft_fom']
-  result_df['htse_om']=result_df['htse_vom']+result_df['htse_fom']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom'], inplace=True)
-  result_df['ft_htse_elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
+  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
+  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex', 'co2_shipping',\
+    'h2_storage_capex'], inplace=True)
+  result_df['elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
   result_df.drop(columns=['ft_elec_cap_market', 'htse_elec_cap_market'], inplace=True)
   print(result_df.head())
   # Divide by 1e9 for results in bn$ and count baseline npv as cost
@@ -112,18 +113,17 @@ def plot_cashflows_2(dir, csv_file):
     'NAPHTHA SALES':'yellow',
     'H2 PTC':'pink',#darkgoldenrod',
     'E SALES':'black',#firebrick',
-    'H2 STORAGE CAPEX':'grey',#cadetblue1',
-    'HTSE CAPEX':'orange',#cadetblue2',
-    'FT CAPEX':'brown3',#cadetblue3',
-    'HTSE OM':'cadetblue1',#chartreuse1',
-    'FT OM':'cornsilk1',
-    'CO2 SHIPPING':'chartreuse1',
-    'FT HTSE ELEC CAP MARKET':'gold3',
+    #'H2 STORAGE CAPEX':'grey',#cadetblue1',
+    'CAPEX':'orange',#cadetblue2',
+    #'FT CAPEX':'brown3',#cadetblue3',
+    #'HTSE OM':'cadetblue1',#chartreuse1',
+    'OM':'cornsilk1',
+    #'CO2 SHIPPING':'chartreuse1',
+    'ELEC CAP MARKET':'gold3',
     'TAXES': 'firebrick'
   }
   result_df.set_index('plant', inplace=True)
   result_df.rename(lambda x: " ".join(x.split("_")).upper(), axis='columns', inplace=True)
-  print(result_df.head())
   fig, ax = plt.subplots()
   # Stacked bars for cashflows
   ax = result_df.plot.bar(y=color_mapping.keys(),stacked=True)#,color=color_mapping)
