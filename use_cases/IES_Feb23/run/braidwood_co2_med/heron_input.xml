@@ -192,7 +192,7 @@
         </CashFlow>
         <CashFlow name='co2_cost' type='repeating' taxable='True' inflation='None' mult_target='False'>
           <driver>
-            <activity>hydrogen</activity>
+            <activity>h2</activity>
           </driver>
           <reference_price>
             <fixed_value>0.186</fixed_value>
