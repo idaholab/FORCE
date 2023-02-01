@@ -78,14 +78,14 @@ def compute_cashflows(dir, plant, final_out, final_npv):
   for k,v in dic.items():
     npv += v[0]
   # Add the baseline npv to the dictionary
-  base_sweep = pd.read_csv(os.path.join(dir,plant+'_baseline', 'gold', 'sweep.csv'))
-  npvs = list(base_sweep['mean_NPV'])
-  baseline_npv = min(npvs)
-  dic['baseline_npv'] = -1*baseline_npv
+  #base_sweep = pd.read_csv(os.path.join(dir,plant+'_baseline', 'gold', 'sweep.csv'))
+  #npvs = list(base_sweep['mean_NPV'])
+  #baseline_npv = min(npvs)
+  #dic['baseline_npv'] = -1*baseline_npv
   # Add taxes to the dictionary
   tax_cost = final_npv-npv
-  print(plant)
-  print(tax_cost)
+  #print(plant)
+  #print(tax_cost)
   dic['taxes'] = tax_cost
   return dic
 
@@ -100,14 +100,14 @@ def plot_cashflows_2(dir, csv_file):
     'h2_storage_capex'], inplace=True)
   result_df['elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
   result_df.drop(columns=['ft_elec_cap_market', 'htse_elec_cap_market'], inplace=True)
-  print(result_df.head())
+  #print(result_df.head())
   # Divide by 1e9 for results in bn$ and count baseline npv as cost
   for c in list(result_df.columns):
     if 'plant' not in str(c):
       result_df[c] /=1e9
   #Compute delta npv
   color_mapping ={
-    'BASELINE NPV':'brown',#CDC673
+    #'BASELINE NPV':'brown',#CDC673
     'JET FUEL SALES':'blue',
     'DIESEL SALES':'green',
     'NAPHTHA SALES':'yellow',
@@ -132,7 +132,7 @@ def plot_cashflows_2(dir, csv_file):
   plants_names = [" ".join(p.split('_')).upper() for p in result_df.index]
   #ax.set_axisbelow(True)
   ax.set_ylabel('Revenues and cost bn$(2020)')
-  ax.yaxis.grid(color='gray', linestyle='dashed', alpha=0.7)
+  ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   ax.set_xticklabels(labels = plants_names, rotation=0)
   # Add table below to indicate delta npv
   #delta_npvs = list(result_df.sum(axis=1)) 
