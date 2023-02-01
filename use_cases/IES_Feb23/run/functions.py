@@ -188,6 +188,33 @@ def co2_supply_curve(data, meta):
   data = {'reference_price': -co2_cost}
   return data, meta 
 
+def co2_suppy_curve_test(data, meta):
+  """
+    Determines the cost of CO2 as a function of the quantity asked for, 
+    Based on data from D. Wendt analysis on CO2 feedstock
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ In, meta, dict, state information
+  """
+  co2_cost = 0
+  ft_cap = meta['HERON']['RAVEN_vars']['ft_capacity'] #kg-H2
+  h2_rate = 1.06
+  co2_rate = 6.58
+  co2_demand_year = 365*24*np.abs(ft_cap)*co2_rate/h2_rate #(kg/year)
+  # Get the data for the NPP
+  labels = meta['HERON']['Case'].get_labels()
+  location = labels['location']
+  location_path = '../data/'+str(location)+'_co2.csv'
+  df = pd.read_csv(os.path.join(os.path.dirname(__file__), location_path))
+  cost_data = df.iloc[:,-1].to_numpy()
+  co2_demand_data = df.iloc[:,-2].to_numpy()
+  diff = np.absolute(co2_demand_data-co2_demand_year)
+  idx = np.argmin(diff)
+  co2_cost = cost_data[idx]
+  data = {'reference_price': -co2_cost*co2_demand_year}
+  return data, meta 
+
 def co2_supply_curve_comb(data,meta):
   """
     Determines the cost of CO2 as a function of the quantity asked for, 
