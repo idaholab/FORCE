@@ -73,7 +73,8 @@
         <subspace pivotLength='168' shift='zero'>HOUR</subspace>
         <evaluationClusterChoice>random</evaluationClusterChoice>
       </Segment>
-      <clusterEvalMode>clustered</clusterEvalMode>
+      <!-- clusterEvalMode no longer supported for ARMA -->
+      <!-- <clusterEvalMode>clustered</clusterEvalMode> -->
       <reseedCopies>True</reseedCopies>
       <preserveInputCDF>False</preserveInputCDF>
       <seed>42</seed>
