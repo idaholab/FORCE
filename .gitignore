@@ -1,4 +1,5 @@
 *.png
+.DS_Store
 
 # Allow these files
 !FORCE_logo-bw.png
