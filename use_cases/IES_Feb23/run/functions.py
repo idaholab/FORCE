@@ -188,7 +188,7 @@ def co2_supply_curve(data, meta):
   data = {'reference_price': -co2_cost*co2_demand_year}
   return data, meta 
 
-def co2_suppy_curve_test(data, meta):
+def co2_supply_curve_test(data, meta):
   """
     Determines the cost of CO2 as a function of the quantity asked for, 
     Based on data from D. Wendt analysis on CO2 feedstock
