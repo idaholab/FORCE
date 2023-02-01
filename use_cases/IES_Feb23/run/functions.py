@@ -185,7 +185,7 @@ def co2_supply_curve(data, meta):
   diff = np.absolute(co2_demand_data-co2_demand_year)
   idx = np.argmin(diff)
   co2_cost = cost_data[idx]
-  data = {'reference_price': -co2_cost}
+  data = {'reference_price': -co2_cost*co2_demand_year}
   return data, meta 
 
 def co2_suppy_curve_test(data, meta):
