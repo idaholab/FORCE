@@ -57,7 +57,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <opt_bounds>-1175,-400</opt_bounds> <!-- MWe -->
+          <opt_bounds>-1175,-100</opt_bounds> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -146,7 +146,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-29528,-10052</opt_bounds>
+          <opt_bounds>-29528,-2513</opt_bounds>
         </capacity>
         <transfer>
           <linear>
