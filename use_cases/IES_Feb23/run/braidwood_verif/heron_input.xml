@@ -4,26 +4,26 @@
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
-    <mode>opt</mode>
-    <debug>
+    <mode>sweep</mode>
+    <!--<debug>
       <inner_samples>1</inner_samples>
       <macro_steps>1</macro_steps>
       <dispatch_plot>False</dispatch_plot>
-    </debug>
-    <!--<parallel>
+    </debug>-->
+    <parallel>
       <runinfo>
         <expectedTime>72:0:0</expectedTime>
         <clusterParameters>-P re_gen</clusterParameters>
         <memory>4gb</memory>
       </runinfo>
-    </parallel>-->
+    </parallel>
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
-      <end_time>119</end_time>
-      <num_steps>120</num_steps>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
     </time_discretization>
     <economics>
       <ProjectTime>20</ProjectTime>
@@ -61,7 +61,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <opt_bounds debug_value="-1175">-1175,-400</opt_bounds> <!-- MWe -->
+          <sweep_value debug_value="-1175">-1175,-400</sweep_value> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -78,18 +78,6 @@
       </produces>
       <economics>
         <lifetime>30</lifetime>
-        <!--<CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
-          <driver>
-            <Function method="htse_noak_capex">functions</Function>
-          </driver>
-          <reference_price>
-            <fixed_value>1</fixed_value>
-          </reference_price>
-          <reference_driver>
-            <fixed_value>1</fixed_value>
-          </reference_driver>
-          <depreciate>15</depreciate>
-        </CashFlow>-->
         <CashFlow name="htse_capex_scalable" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
@@ -162,7 +150,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds debug_value="-29528">-29528,-10052</opt_bounds>
+          <sweep_value debug_value="-29528">-29528,-10052</sweep_value>
         </capacity>
         <transfer>
           <linear>
@@ -334,7 +322,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds debug_value="39153">39153,118111</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <sweep_value debug_value="39153">39153,118111</sweep_value> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
           <fixed_value>100</fixed_value>
