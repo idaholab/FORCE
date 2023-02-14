@@ -1,6 +1,17 @@
 *.png
 .DS_Store
 
+# Ignore HERON Intermediary Files
+cash.xml
+heron.lib
+inner.xml
+outer.xml
+write_inner.py
+
+# Ignore certain RAVEN files
+.ravenStatus
+romMeta.xml
+
 # Allow these files
 !FORCE_logo-bw.png
 !FORCE_logo-color.png
