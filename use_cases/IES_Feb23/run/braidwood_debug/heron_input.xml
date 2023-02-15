@@ -5,18 +5,18 @@
     <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
     <mode>opt</mode>
-    <!--<debug>
+    <debug>
       <inner_samples>1</inner_samples>
       <macro_steps>1</macro_steps>
       <dispatch_plot>False</dispatch_plot>
-    </debug>-->
-    <parallel>
+    </debug>
+    <!--<parallel>
       <runinfo>
         <expectedTime>72:0:0</expectedTime>
         <clusterParameters>-P re_gen</clusterParameters>
         <memory>4gb</memory>
       </runinfo>
-    </parallel>
+    </parallel>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>3</num_arma_samples>
     <time_discretization>
@@ -80,15 +80,16 @@
         <lifetime>30</lifetime>
         <CashFlow name="htse_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <Function method="htse_noak_capex">functions</Function>
+            <fixed_value>1</fixed_value>
+            <variable>htse_capacity</variable>
             <!-- DC to AC ratio in the function -->
-            <!--<variable>htse_capacity</variable>-->
           </driver>
           <reference_price>
-            <fixed_value>1</fixed_value>
+            <Function method="htse_noak_capex">functions</Function>
+            <!--<fixed_value>1</fixed_value>-->
           </reference_price>
           <reference_driver>
-            <fixed_value>1</fixed_value>
+            <fixed_value>-1</fixed_value>
           </reference_driver>
           <depreciate>15</depreciate>
         </CashFlow>
@@ -336,7 +337,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_2018_2021_Braidwood_periodic/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_braidwood_2012_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 </HERON>
