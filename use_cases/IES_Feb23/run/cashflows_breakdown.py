@@ -55,7 +55,7 @@ def find_final_out(plant):
         out_to_npv[out_file] = avg_npv
   final_out = False
   for out_file, npv in out_to_npv.items():
-    if round(npv,2) == round(final_npv,2):
+    if round(npv,1) == round(final_npv,1):
       final_out = out_file
   return final_out
 
@@ -96,7 +96,7 @@ def plot_cashflows_2(dir, csv_file):
   # Combine columns for better visibility
   result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
   result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex', 'co2_shipping',\
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex',\
     'h2_storage_capex'], inplace=True)
   result_df['elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
   result_df.drop(columns=['ft_elec_cap_market', 'htse_elec_cap_market'], inplace=True)
@@ -118,7 +118,7 @@ def plot_cashflows_2(dir, csv_file):
     #'FT CAPEX':'brown3',#cadetblue3',
     #'HTSE OM':'cadetblue1',#chartreuse1',
     'OM':'cornsilk1',
-    #'CO2 SHIPPING':'chartreuse1',
+    'CO2 SHIPPING':'chartreuse1',
     'ELEC CAP MARKET':'gold3',
     'TAXES': 'firebrick'
   }
