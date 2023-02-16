@@ -1,7 +1,7 @@
+<?xml version="1.0" ?>
 <Simulation verbosity="debug">
-
   <RunInfo>
-    <WorkingDir>IL</WorkingDir>
+    <WorkingDir>Output</WorkingDir>
     <Sequence>load, train, meta, serialize, sample</Sequence>
   </RunInfo>
 
@@ -43,53 +43,46 @@
       <Output>OutputPlaceHolder</Output>
     </PointSet>
     <HistorySet name="input">
-      <Input>scaling</Input>
-      <Output>TOTALLOAD, HOUR, YEAR</Output>
-      <options>
-        <pivotParameter>HOUR</pivotParameter>
+      <Input>scaling,Year</Input>
+      <Output>price,hour</Output>
+      <options>	
+        <pivotParameter>hour</pivotParameter>
       </options>
     </HistorySet>
     <DataSet name="synthetic">
       <Input>scaling</Input>
-      <Output>TOTALLOAD</Output>
-      <Index var="HOUR">TOTALLOAD</Index>
-      <Index var="YEAR">TOTALLOAD</Index>
+      <Output>price</Output>
+      <Index var="hour">price</Index>
+	  <Index var="Year">price</Index>
     </DataSet>
-  <DataSet name="meta"/>
+    <DataSet name="meta"/>
   </DataObjects>
 
   <Models>
     <ROM name="arma" subType="ARMA">
-      <pivotParameter>HOUR</pivotParameter>
+      <pivotParameter>hour</pivotParameter>
       <Features>scaling</Features>
-      <Target>TOTALLOAD, HOUR</Target>
+      <Target>price,hour</Target>
       <P>0</P>
       <Q>1</Q>
-      <!-- was <Fourier>8760, 4380, 2190, 1251.42, 973, 515.29411, 438, 172, 168, 33.6, 23.93442623, 12, 8, 6</Fourier> -->
-      <Fourier>8760, 4380, 2190, 1251, 973, 515, 438, 172, 168, 34, 24, 12, 8, 6</Fourier>
-      <nyquistScalar>8</nyquistScalar>
-      <Segment grouping='interpolate'>
-        <macroParameter>YEAR</macroParameter>
-        <Classifier class='Models' type='PostProcessor'>classifier</Classifier>
-        <evalMode>full</evalMode>
-        <subspace pivotLength='24' shift='zero'>HOUR</subspace>
-        <evaluationClusterChoice>random</evaluationClusterChoice>
+      <Fourier>8760,4380,2190,1095,168,24,12</Fourier>
+      <Segment grouping="interpolate">
+	  <macroParameter>Year</macroParameter>
+        <subspace pivotLength="24" shift="zero">hour</subspace>
+		<evalMode>full</evalMode>
+		<Classifier class="Models" type="PostProcessor">classifier</Classifier>
       </Segment>
       <reseedCopies>True</reseedCopies>
-      <preserveInputCDF>False</preserveInputCDF>
+      <preserveInputCDF>True</preserveInputCDF>
       <seed>42</seed>
     </ROM>
-    <PostProcessor name="classifier" subType="DataMining">
-      <KDD labelFeature="labels" lib="SciKitLearn">
-        <Features>TOTALLOAD</Features>
-        <SKLtype>cluster|KMeans</SKLtype>
-        <n_clusters>30</n_clusters>
-        <tol>1E-13</tol>
-        <init>k-means++</init>
-        <random_state>2</random_state>
-        <precompute_distances>True</precompute_distances>
-      </KDD>
-    </PostProcessor>
+	<PostProcessor name="classifier" subType="DataMining">
+		<KDD labelFeature="labels" lib="SciKitLearn">
+		<Features>price</Features>
+		<SKLtype>cluster|KMeans</SKLtype>
+		<n_clusters>20</n_clusters>
+		</KDD>
+	</PostProcessor>
   </Models>
 
   <OutStreams>
@@ -106,10 +99,11 @@
   <Samplers>
     <MonteCarlo name="mc">
       <samplerInit>
-        <limit>5</limit>
+        <limit>1</limit>
         <initialSeed>42</initialSeed>
       </samplerInit>
-      <constant name="scaling">1.0</constant>
+      <constant name="scaling">1</constant>
     </MonteCarlo>
   </Samplers>
+
 </Simulation>

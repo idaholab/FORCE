@@ -71,8 +71,8 @@
         <transfer>
           <linear>
             <rate resource="electricity">-1</rate>
-            <rate resource="h2">25.13</rate>
-            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh -->
+            <rate resource="h2">90468</rate>
+            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh so 3600x25.13=90468 kg-H2/h -->
           </linear>
         </transfer>
       </produces>
@@ -133,7 +133,7 @@
             <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
           </reference_price>
         </CashFlow>
-        <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='h2_ptc' type='repeating' taxable='False' inflation='None' mult_target='False'>
           <driver>
             <activity>electricity</activity>
           </driver>
