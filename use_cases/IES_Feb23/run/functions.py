@@ -40,6 +40,23 @@ def h2_ptc(data, meta):
   # driver is electricity: 25.13 kg-H2/MWe
   return data, meta
 
+def h2_ptc_ft(data, meta):
+  """
+    Determines the PTC (Production Tax Credit) for hydrogen production when calculated for FT component: 
+    PTC applicable only for the first 10 years of the simulation $3/kg-H2
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  year = meta['HERON']['active_index']['year'] # 0 to 29
+  ptc = 0
+  if year<10:
+    ptc = -3 #$/kg-H2
+  # Negative number since hydrogen used by  FT so final cashflow is positive
+  data = {'reference_price':ptc}
+  return data, meta
+
 def find_lower_nearest_idx(array, value): 
   idx = 0
   for i,a in enumerate(array):
