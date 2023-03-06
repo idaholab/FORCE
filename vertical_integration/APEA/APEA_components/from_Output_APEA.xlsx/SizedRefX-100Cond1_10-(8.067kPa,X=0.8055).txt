@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "Sized Ref X-100 Cond 1/10 - (8.067kPa, X=0.8055)",
-  "APEA Source": "../APEA/APEA_outputs//Output_APEA.xlsx",
-  "APEA Equipment Cost [USD]": 269100,
-  "APEA Installed Cost [USD]": 456800,
-  "APEA Equipment Weight [LBS]": 52000,
-  "APEA Total Installed Weight [LBS]": 89058
-}

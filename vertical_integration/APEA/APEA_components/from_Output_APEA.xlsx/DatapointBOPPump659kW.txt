@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "Data point BOP Pump 659 kW",
-  "APEA Source": "../APEA/APEA_outputs//Output_APEA.xlsx",
-  "APEA Equipment Cost [USD]": 643700,
-  "APEA Installed Cost [USD]": 814000,
-  "APEA Equipment Weight [LBS]": 31800,
-  "APEA Total Installed Weight [LBS]": 60832
-}

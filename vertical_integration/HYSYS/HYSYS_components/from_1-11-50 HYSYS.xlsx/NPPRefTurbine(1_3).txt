@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "NPP Ref Turbine (1/3)",
-  "HYSYS Category": "Expanders",
-  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
-  "HYSYS Power": 16691.4944908838,
-  "HYSYS Power Units": "kW"
-}

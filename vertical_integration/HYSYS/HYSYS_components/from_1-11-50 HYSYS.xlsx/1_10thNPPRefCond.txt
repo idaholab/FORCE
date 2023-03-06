@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "1/10th NPP Ref Cond",
-  "HYSYS Category": "Heat Exchangers",
-  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
-  "HYSYS Power": 1.10050602281939,
-  "HYSYS Power Units": "MW"
-}

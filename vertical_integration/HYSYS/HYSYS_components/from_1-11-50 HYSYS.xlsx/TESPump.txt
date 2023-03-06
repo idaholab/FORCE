@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "TES Pump",
-  "HYSYS Category": "Pumps",
-  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
-  "HYSYS Power": 0.313303149579045,
-  "HYSYS Power Units": "kW"
-}

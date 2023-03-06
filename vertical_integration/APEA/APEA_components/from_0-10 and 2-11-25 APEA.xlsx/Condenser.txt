@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "Condenser",
-  "APEA Source": "../APEA/APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 2296800,
-  "APEA Installed Cost [USD]": 3853700,
-  "APEA Equipment Weight [LBS]": 664800,
-  "APEA Total Installed Weight [LBS]": 953405
-}

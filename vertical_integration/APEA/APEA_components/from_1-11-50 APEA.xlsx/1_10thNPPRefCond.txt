@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "1/10th NPP Ref Cond",
-  "APEA Source": "../APEA/APEA_outputs//1-11-50 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 43700,
-  "APEA Installed Cost [USD]": 129500,
-  "APEA Equipment Weight [LBS]": 9000,
-  "APEA Total Installed Weight [LBS]": 23742
-}

@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "IHX",
-  "APEA Source": "../APEA/APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 978700,
-  "APEA Installed Cost [USD]": 1424900,
-  "APEA Equipment Weight [LBS]": 276900,
-  "APEA Total Installed Weight [LBS]": 401232
-}
