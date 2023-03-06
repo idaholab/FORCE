@@ -1,0 +1,12 @@
+{
+  "Component Name": "FWH Mix",
+  "HYSYS Category": "Mixers",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": "unknown",
+  "HYSYS Power Units": "unknown",
+  "APEA Source": "../APEA/APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 0,
+  "APEA Installed Cost [USD]": 0,
+  "APEA Equipment Weight [LBS]": 0,
+  "APEA Total Installed Weight [LBS]": 0
+}

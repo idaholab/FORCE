@@ -1,0 +1,12 @@
+{
+  "Component Name": "D-IHX",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 72.5849031270258,
+  "HYSYS Power Units": "MW",
+  "APEA Source": "../APEA/APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 600200,
+  "APEA Installed Cost [USD]": 929000,
+  "APEA Equipment Weight [LBS]": 164400,
+  "APEA Total Installed Weight [LBS]": 248308
+}

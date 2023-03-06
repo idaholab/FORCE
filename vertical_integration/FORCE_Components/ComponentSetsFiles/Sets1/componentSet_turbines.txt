@@ -1,0 +1,24 @@
+{
+  "Component Set Name": "turbines set",
+  "Component Set file": "../FORCE_Components/ComponentSetsFiles/Sets1/Setfile_turbines.txt",
+  "Included components": [
+    "2ndTurbine-2",
+    "Turbine",
+    "Sized Turbine (1/5) @96.97%",
+    "Turbine-charge (sized 1/2)",
+    "2ndTurbine",
+    "Turbine-charge (sized 1/2)",
+    "NPP Ref Turbine (1/3)",
+    "Turbine-discharge (sized 1/3)",
+    "2ndTurbine",
+    "Sized Turbine (1/5) @90%",
+    "2ndTurbine-2",
+    "Turbine-discharge (sized 1/3)",
+    "NPP Ref Turbine (1/3)"
+  ],
+  "Reference Driver": 26422.2377835452,
+  "Reference Driver Power Units": "kW",
+  "Reference Price (USD)": 4421246.130514638,
+  "Scaling Factor": 0.7474134800697975,
+  "Fitting Average Error (%)": 3.22
+}

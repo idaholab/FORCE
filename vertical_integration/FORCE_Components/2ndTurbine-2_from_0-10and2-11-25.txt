@@ -1,0 +1,12 @@
+{
+  "Component Name": "2ndTurbine-2",
+  "HYSYS Category": "Expanders",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 96.0170346982874,
+  "HYSYS Power Units": "kW",
+  "APEA Source": "../APEA/APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 46600,
+  "APEA Installed Cost [USD]": 90000,
+  "APEA Equipment Weight [LBS]": 2100,
+  "APEA Total Installed Weight [LBS]": 7641
+}

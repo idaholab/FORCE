@@ -1,0 +1,12 @@
+{
+  "Component Name": "D-IHX hot standby",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 0.741654335462684,
+  "HYSYS Power Units": "MW",
+  "APEA Source": "../APEA/APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 20900,
+  "APEA Installed Cost [USD]": 115200,
+  "APEA Equipment Weight [LBS]": 4100,
+  "APEA Total Installed Weight [LBS]": 23547
+}

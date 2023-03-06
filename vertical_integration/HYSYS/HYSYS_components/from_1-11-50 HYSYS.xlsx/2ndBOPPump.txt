@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "2ndBOPPump",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 35.8313867114637,
+  "HYSYS Power Units": "kW"
+}

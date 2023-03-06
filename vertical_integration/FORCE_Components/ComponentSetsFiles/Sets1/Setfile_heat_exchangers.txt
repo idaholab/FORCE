@@ -1,0 +1,5 @@
+{
+  "Set Name": "HX set",
+  "Included Components": ["Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)", "NuScale Ref 1/10 at 7 kPa", "NuScale Ref 1/10 at 9 kPa", "Sized Ref X-100 Cond 1/10 -  (8.067kPa, X=0.7809)"]
+}
+

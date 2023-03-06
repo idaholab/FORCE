@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "SG",
+  "HYSYS Category": "Heaters",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 158.844445623597,
+  "HYSYS Power Units": "MW"
+}

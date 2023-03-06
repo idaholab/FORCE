@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "TES Loop cond pump (sized 1/10)",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 9.57261669807236,
+  "HYSYS Power Units": "kW"
+}

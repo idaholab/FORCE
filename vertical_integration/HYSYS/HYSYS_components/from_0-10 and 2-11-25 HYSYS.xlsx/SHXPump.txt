@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "SHX Pump",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 0.133491424491664,
+  "HYSYS Power Units": "kW"
+}

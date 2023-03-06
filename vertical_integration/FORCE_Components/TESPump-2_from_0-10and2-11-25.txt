@@ -1,0 +1,12 @@
+{
+  "Component Name": "TES Pump-2",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "../HYSYS/HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 0,
+  "HYSYS Power Units": "kW",
+  "APEA Source": "../APEA/APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 8000,
+  "APEA Installed Cost [USD]": 54400,
+  "APEA Equipment Weight [LBS]": 660,
+  "APEA Total Installed Weight [LBS]": 7266
+}
