@@ -1,7 +1,25 @@
-## Under work
+"""
+A script that creates/updates the component sets in HERON from a set of Aspen HYSYS and APEA output xlsx files. The script also creates the components cost functions
+
+This script combines the functionality of the following scripts:
+(create_apea_components.py, create_hysys_components.py, create_all_forceComponents_from_aspen_apea, create_force_componentSets, force_component_sets_to_heron.py)
+
+It takes the following arguments:
+1- The folder containing the HYSYS output XLSX files
+2- The folder containing the APEA output XLSX files
+3- A folder that contains the user-defined files that idntify which components to group together
+4- The initial HERON XML file that needs to be updated
+
+Example:
+python aspen_to_heron.py ../HYSYS/HYSYS_outputs/ ../APEA/APEA_outputs/ ../FORCE_Components/ComponentSetsFiles/Sets1/ ../HERON/HERON_input_XML_files/heron_input.xml
+"""
+
+
+# Importing libraries and modules
 from main import *
 import convert_utils as xm
 import argparse
+
 
 # Specifying user inputs and output file
 if __name__ == "__main__":
@@ -13,7 +31,6 @@ if __name__ == "__main__":
   parser.add_argument("apea_xlsx_outputs_folder_path", help="apea_xlsx_outputs_folder_path")
   parser.add_argument("componentSets_folder", help="The paths of folders that contain the setfiles. Setfiles are files that list the components that the user wants to group together as one list")
   parser.add_argument("HERON_Input_XML", help="The original HERON input XML file to which the new component data are transferred")
-
   args = parser.parse_args()
 
 
@@ -47,6 +64,3 @@ with open(output_file, "w", encoding="utf8") as out:
 
 print (f" \n The new HERON file is updated/created at: '{output_file}' ")
 print("\n",'\033[95m',"Step4 (Component Sets are loaded to the HERON input XMl file) is complete", '\033[0m', "\n")
-
-# Example:
-# python aspen_to_heron.py ../HYSYS/HYSYS_outputs/ ../APEA/APEA_outputs/ ../FORCE_Components/ComponentSetsFiles/Sets1/ ../HERON/HERON_input_XML_files/heron_input.xml

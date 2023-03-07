@@ -1,3 +1,13 @@
+"""
+Creating the Aspen APEA components from the HYSYS output files.
+
+It takes the following argument:
+1 - A folder that contains the Aspen APEA xlxs output files
+
+Example
+python create_apea_components.py ../APEA/APEA_outputs/
+"""
+
 import argparse
 from main import extract_all_apea_components
 
@@ -11,6 +21,3 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
 extract_all_apea_components(args.apea_xlsx_outputs_folder_path)
-
-# Example
-# python create_apea_components.py ../APEA/APEA_outputs/

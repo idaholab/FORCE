@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# This script is imported from: /raven/scripts/conversionScripts/convert_utils.py. It can be also imported from RAVEN
+
 from __future__ import print_function, unicode_literals
 import xml.dom.minidom as pxml
 import xml.etree.ElementTree as ET

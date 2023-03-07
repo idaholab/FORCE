@@ -13,6 +13,7 @@ The objective of this code is the vertical integration (auomated data transfer) 
 # Importing libraries and modules
 
 import pandas as pd
+import sys
 import os
 import json
 import numpy as np

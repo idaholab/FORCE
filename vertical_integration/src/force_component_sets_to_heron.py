@@ -1,3 +1,14 @@
+"""
+A script that creates/updates the component sets in HERON from the componentSets text files. This script to be used after the FORCE components are already created.
+
+It takes the following arguments:
+1 - A folder that contains the user-defined files that idntify which components to group together
+2 - The initial HERON XML file that needs to be updated
+
+Example:
+python force_component_sets_to_heron.py ../FORCE_Components/ComponentSetsFiles/Sets1/ ../HERON/HERON_input_XML_files/heron_input.xml
+"""
+
 import os
 import sys
 import json
@@ -30,6 +41,3 @@ with open(output_file, "w", encoding="utf8") as out:
   print((xm.prettify(new_HERON_tree )), file=out)
 
 print (f" \n The new HERON file is updated/created at: '{output_file}' ")
-
-## Example:
-# python force_component_sets_to_heron.py ../FORCE_Components/ComponentSetsFiles/Sets1/ ../HERON/HERON_input_XML_files/heron_input.xml

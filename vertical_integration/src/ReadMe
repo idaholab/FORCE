@@ -1,0 +1,7 @@
+# In this folder, the script "main.py" includes the main classes and methods that are used to create other scripts
+
+# For the user, the script that will be more useful is "aspen_to_heron.py".
+
+# other scripts are either intermediate steps (from the Aspen outputs to the HERON XML file). These intermediate steps can be helpful if the user wants to verify that the code works properly of if a code developed wants to integrate Aspen HYSYS or Aspen APEA codes with other codes. 
+
+# Inside each script are examples (commented) to help the user understand how the code works.

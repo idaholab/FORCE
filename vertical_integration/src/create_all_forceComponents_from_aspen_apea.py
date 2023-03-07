@@ -1,3 +1,14 @@
+"""
+Creating ALL the "FORCE" components by looking into folders that contains output files from Aspen HYSYS and Aspen APEA
+
+It takes the following arguments.
+1-  The folder containing the HYSYS output XLSX files
+2- The folder containing the APEA output XLSX files
+
+Example:
+python create_all_forceComponents_from_aspen_apea.py ../APEA/APEA_components ../HYSYS/HYSYS_components
+"""
+
 import argparse
 from main import create_all_force_components_from_hysys_apea
 
@@ -12,6 +23,3 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
 create_all_force_components_from_hysys_apea(args.folder1_HYSES_or_APEA, args.folder2_HYSES_or_APEA)
-
-
-# Example : python create_all_forceComponents_from_aspen_apea.py ../APEA/APEA_components ../HYSYS/HYSYS_components

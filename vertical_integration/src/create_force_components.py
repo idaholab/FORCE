@@ -1,3 +1,13 @@
+"""
+This script creates the "FORCE" components. "FORCE" components are components that merges info from two (or more) codes (e.g. Aspen HYSYS ans Aspen APEA)
+
+It can take ANY number of arguments as it merges information of components from several codes.
+1- A folder that continas the components text files. Each text file is loaded with a component info (a dictionary). All the files are created from one code (e.g. Aspeh HYSYS)
+2- A folder that continas the components text files. Each text file is loaded with a component info (a dictionary). All the files are created from ANOTHER code (e.g. Aspeh APEA)
+
+Example
+python create_force_components.py ../APEA/APEA_components/from_Output_APEA.xlsx/ ../HYSYS/HYSYS_components/from_Output_HYSYS.xlsx/
+"""
 import argparse
 from main import extract_all_force_components
 
@@ -11,5 +21,4 @@ if __name__ == "__main__":
 
 extract_all_force_components(args.codes_outputs_folders_paths)
 
-#Example
-# python create_force_components.py ../APEA/APEA_components/from_Output_APEA.xlsx/ ../HYSYS/HYSYS_components/from_Output_HYSYS.xlsx/
+
