@@ -53,7 +53,7 @@ def h2_ptc_ft(data, meta):
   ptc = 0
   if year<10:
     ptc = -3 #$/kg-H2
-  # Negative number since hydrogen used by  FT so final cashflow is positive
+  # Negative number since hydrogen consumed by FT so final cashflow is positive
   data = {'reference_price':ptc}
   return data, meta
 

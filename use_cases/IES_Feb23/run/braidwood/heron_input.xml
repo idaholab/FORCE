@@ -129,14 +129,6 @@
             <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
           </reference_price>
         </CashFlow>
-        <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
-          <driver>
-            <activity>electricity</activity>
-          </driver>
-          <reference_price>
-            <Function method='h2_ptc'>functions</Function>
-          </reference_price>
-        </CashFlow>
       </economics>
     </Component>
 
@@ -201,6 +193,14 @@
           </reference_driver>
           <reference_price>
             <Function method='co2_supply_curve'>functions</Function>
+          </reference_price>
+        </CashFlow>
+        <CashFlow name='h2_ptc' type='repeating' taxable='False' inflation='None' mult_target='False'>
+          <driver>
+            <activity>h2</activity>
+          </driver>
+          <reference_price>
+            <Function method='h2_ptc_ft'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
