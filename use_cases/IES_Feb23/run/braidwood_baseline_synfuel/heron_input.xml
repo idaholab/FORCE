@@ -203,7 +203,29 @@
 
 
   <!-- MARKETS Components -->
-
+    <Component name='electricity_market'>
+      <demands resource='electricity' dispatch='dependent'>
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name='e_sales' type='repeating' period='hour' taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <ARMA variable='price'>price</ARMA> <!-- $/MWh-->
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+    
     <Component name='naphtha_market'>
       <demands resource='naphtha' dispatch='dependent'>
         <capacity>
