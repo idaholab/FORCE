@@ -318,7 +318,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>2513,118111</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <opt_bounds>100,118111</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
           <fixed_value>100</fixed_value>
