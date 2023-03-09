@@ -72,7 +72,7 @@
         <lifetime>30</lifetime>
         <CashFlow name="htse_capex_scalable" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <variable>htse_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_price>
             <fixed_value>-1543130</fixed_value> <!--$/MWe-->
@@ -87,7 +87,7 @@
         </CashFlow>
         <CashFlow name="htse_capex_modular" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <variable>htse_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_price>
             <fixed_value>-653805</fixed_value><!--$/MWe-->
@@ -99,7 +99,7 @@
         </CashFlow>
         <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <variable>htse_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_price>
             <fixed_value>30320</fixed_value>
@@ -118,7 +118,7 @@
         <CashFlow name="htse_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
-            <variable>htse_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_price>
             <fixed_value>27933.45</fixed_value>
