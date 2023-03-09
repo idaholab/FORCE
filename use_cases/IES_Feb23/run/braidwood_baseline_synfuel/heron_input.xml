@@ -4,7 +4,7 @@
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
-    <mode>opt</mode>
+    <mode>sweep</mode>
     <parallel>
       <runinfo>
         <expectedTime>24:0:0</expectedTime>
@@ -53,22 +53,18 @@
     </Component>
 
 
-    <Component name="htse">
-      <produces resource="h2" dispatch="independent">
+    <Component name="htse_ft">
+      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>electricity</consumes>
-        <capacity resource="electricity">
-          <opt_bounds>-1175,-100</opt_bounds> <!-- MWe -->
+        <capacity resource='electricity'>
+          <sweep_values>-1175,-1000,-750,-500,-250</sweep_values> <!-- MWe -->
         </capacity>
-        <minimum resource="electricity">
-          <!-- To model hot standby mode, 0.85% of electrical capacity-->
-          <variable>htse_capacity</variable>
-          <multiplier>0.0085</multiplier>
-        </minimum>
         <transfer>
           <linear>
-            <rate resource="electricity">-1</rate>
-            <rate resource="h2">25.13</rate>
-            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh -->
+            <rate resource='electricity'>-1</rate>
+            <rate resource='naphtha'>17.38</rate>
+            <rate resource='jet_fuel'>21.05</rate>
+            <rate resource='diesel'>11.66</rate>
           </linear>
         </transfer>
       </produces>
@@ -129,7 +125,7 @@
             <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
           </reference_price>
         </CashFlow>
-        <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
+        <CashFlow name='h2_ptc' type='repeating' taxable='False' inflation='None' mult_target='False'>
           <driver>
             <activity>electricity</activity>
           </driver>
@@ -137,44 +133,21 @@
             <Function method='h2_ptc'>functions</Function>
           </reference_price>
         </CashFlow>
-      </economics>
-    </Component>
-
-
-    <Component name='ft'>
-      <!-- Component for FT, RWGS and refinery -->
-      <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
-        <consumes>h2</consumes>
-        <capacity resource='h2'>
-          <opt_bounds>-29528,-2513</opt_bounds>
-        </capacity>
-        <transfer>
-          <linear>
-            <!-- kg/h units for mass flows -->
-            <rate resource='h2'>-1.06</rate>
-            <rate resource='naphtha'>0.733</rate>
-            <rate resource='jet_fuel'>0.888</rate>
-            <rate resource='diesel'>0.492</rate>
-          </linear>
-        </transfer>
-      </produces>
-      <economics>
-        <lifetime>30</lifetime>
         <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
-            <variable>ft_capacity</variable>
+            <variable>htse_ft_capacity</variable>
           </driver>
           <reference_driver>
-            <fixed_value>-10625</fixed_value> <!-- kg-H2/h, corresponds to 400MW data-->
+            <fixed_value>-400</fixed_value> <!-- MW -->
           </reference_driver>
           <reference_price>
             <fixed_value>-158102945</fixed_value> <!-- $2020 -->
           </reference_price>
           <scaling_factor_x>
             <fixed_value>0.626</fixed_value>
-            <!-- From logarithmic regression in HERON_data-->
+            <!-- From logarithmic regression -->
           </scaling_factor_x>
-          <depreciate>15</depreciate>
+          <depreciate>15</depreciate>>
         </CashFlow>
         <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
@@ -200,12 +173,11 @@
             <fixed_value>1</fixed_value>
           </reference_driver>
           <reference_price>
-            <Function method='co2_supply_curve'>functions</Function>
+            <Function method='co2_supply_curve_comb'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
     </Component>
-
 
     <Component name='ft_elec_consumption'>
       <demands resource='electricity' dispatch='fixed'>
@@ -288,34 +260,6 @@
           <reference_price>
             <Function method='diesel_price'>functions</Function>
           </reference_price>
-        </CashFlow>
-      </economics>
-    </Component>
-
-  <!-- STORAGE Components -->
-    <Component name='h2_storage'>
-      <stores resource="h2" dispatch="independent">
-        <capacity resource='h2'>
-          <opt_bounds>0,118111</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
-        </capacity>
-        <initial_stored>
-          <fixed_value>0</fixed_value>
-          <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
-        </initial_stored>
-        <RTE>0.9</RTE>
-        <!-- Assumption -->
-      </stores>
-      <economics>
-        <lifetime>30</lifetime>
-        <CashFlow name='h2_storage_capex' inflation="none" mult_target="False" taxable="True" type="one-time">
-          <driver>
-            <variable>h2_storage_capacity</variable>
-          </driver>
-          <reference_price>
-            <fixed_value>-500</fixed_value>
-            <!-- Capex cost of $500/kg-H2: Assumption -->
-          </reference_price>
-          <depreciate>15</depreciate>
         </CashFlow>
       </economics>
     </Component>
