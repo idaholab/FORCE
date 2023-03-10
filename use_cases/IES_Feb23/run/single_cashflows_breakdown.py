@@ -7,18 +7,22 @@ from cashflows_breakdown import get_final_npv, find_final_out
 """ The goal of this script is to produce a csv and png files showing the yearly and total 
     cashflows breakdown for a given NPP"""
 
-CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales','e_sales','elec_cap_market','co2_shipping',\
-  'ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #add rest later
+CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales','e_sales'\
+            ,'co2_shipping','ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #cahnge elec_cap_market to ft_elec_cap_market and add it TODO
 
 plant = "cooper"
 
 def compute_yearly_cashflows(plant, final_out):
   with open(final_out) as fp:
     lines = fp.readlines()
-  df = pd.DataFrame(columns=['plant', 'year', 'cashflow', 'value'])
   npv = 0.0
   base_year = 2020
-  for c in CASHFLOWS:
+  df = pd.DataFrame(columns=['plant', 'year'])
+  df['year'] = [2020+i for i in range(21)]
+  df['plant'] = 'cooper'
+  df.set_index(['plant', 'year'], inplace=True)
+  for c in CASHFLOWS: 
+    list_rows =[]
     for l in lines:
       if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l) and ("amortize" not in l) and ("depreciate" not in l):
         ind = lines.index(l)
@@ -29,13 +33,16 @@ def compute_yearly_cashflows(plant, final_out):
           new_row = pd.DataFrame.from_dict({'plant':[plant], 
                                             'year':[year], 
                                             c:[value]})
-          df = pd.merge(left =df,right=new_row, how='outer')
+          list_rows.append(new_row)
+    df_c = pd.concat(list_rows, ignore_index=True)
+    df_c.drop_duplicates(inplace=True)
+    df_c.set_index(['plant', 'year'], inplace=True)
+    df = df.join(df_c, how='left')
   return df
 
 def get_yearly_fcff(plant, final_out):
   with open(final_out) as fp:
     lines = fp.readlines()
-  df = pd.DataFrame(columns=['plant','year'])
   list_rows = []
   for l in lines: 
     if ("CashFlow INFO (FCFF): FCFF yearly (not discounted):" in l):
@@ -59,11 +66,12 @@ def get_yearly_fcff(plant, final_out):
 def compute_taxes(yearly_df, plant):
   min_year = min(yearly_df['year'])
   max_year = max(yearly_df['year'])
-  df = pd.DataFrame(columns=['year', 'cashflow','plant','value'])
+  list_rows = []
   for year in range(min_year, max_year+1):
     # Compute taxes as fcff - (revenues+costs)
     rc = 0
     for c in CASHFLOWS:
+      # TODO update
       c_df = yearly_df[(yearly_df['cashflow']==c) & (yearly_df['year']==year)]['value'].mean()# # values = # arma samples
       rc+= c_df
     fcff = yearly_df[(yearly_df['year']==year)& (yearly_df['cashflow']=='fcff')]['value']
@@ -73,7 +81,8 @@ def compute_taxes(yearly_df, plant):
                 "year":[year],
                 "tax":[taxes]
                 })
-    df = pd.merge(left =df,right=new_row, how='outer')
+    list_rows.append(new_row)
+  df = pd.concat(list_rows, ignore_index=True)
   return df
 
 def plot_yearly_cashflow(yearly_df, plant_dir, plant): 
@@ -146,8 +155,11 @@ if __name__ == "__main__":
   if final_out:
     print("Final out was found here: {}".format(final_out))
     fcff = get_yearly_fcff(plant,final_out)
+    print(fcff.head())
     yearly = compute_yearly_cashflows(plant, final_out)
-    yearly_df = pd.concat([fcff, yearly], ignore_index=True)
+    print(yearly.head())
+    yearly_df = pd.merge(fcff, yearly,left_on=['plant', 'year'], right_on=['plant', 'year'])
+    #yearly_df.drop_duplicates(inplace=True)
     #taxes_df = compute_taxes(yearly_df, plant)
     #yearly_df = pd.concat([yearly_df,taxes_df],ignore_index=True)
     #yearly_df = yearly_df.groupby(['plant','year','cashflow']).mean()
