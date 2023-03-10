@@ -17,10 +17,9 @@ def compute_yearly_cashflows(plant, final_out):
     lines = fp.readlines()
   npv = 0.0
   base_year = 2020
-  df = pd.DataFrame(columns=['plant', 'year'])
+  df = pd.DataFrame(columns=['year'])
   df['year'] = [2020+i for i in range(21)]
-  df['plant'] = 'cooper'
-  df.set_index(['plant', 'year'], inplace=True)
+  df.set_index(['year'], inplace=True)
   for c in CASHFLOWS: 
     list_rows =[]
     for l in lines:
@@ -30,13 +29,11 @@ def compute_yearly_cashflows(plant, final_out):
           year = base_year+i-2
           value = float(lines[ind+i].split(" ")[-1])
           #print("Computing Cashflow {} for year {}: {}.".format(c,year, value))
-          new_row = pd.DataFrame.from_dict({'plant':[plant], 
-                                            'year':[year], 
-                                            c:[value]})
+          new_row = pd.DataFrame.from_dict({ 'year':[year], c:[value]})
           list_rows.append(new_row)
     df_c = pd.concat(list_rows, ignore_index=True)
     df_c.drop_duplicates(inplace=True)
-    df_c.set_index(['plant', 'year'], inplace=True)
+    df_c.set_index(['year'], inplace=True)
     df = df.join(df_c, how='left')
   return df
 
@@ -56,71 +53,47 @@ def get_yearly_fcff(plant, final_out):
       fcff_list = to_split.split("   ")
       fcff_list = [float(f) for f in fcff_list]
   for i in range(len(fcff_list)):
-    new_row = pd.DataFrame.from_dict({"plant":[plant],
-              "year":[2020+i],
-              "fcff":[fcff_list[i]]})
+    new_row = pd.DataFrame.from_dict({"year":[2020+i],"fcff":[fcff_list[i]]})
     list_rows.append(new_row)
   df = pd.concat(list_rows, ignore_index=True)
+  df.set_index(['year'], inplace=True)
   return df
 
 def compute_taxes(yearly_df, plant):
-  min_year = min(yearly_df['year'])
-  max_year = max(yearly_df['year'])
+  min_year = min(yearly_df.index)
+  max_year = max(yearly_df.index)
   list_rows = []
-  yearly_df = yearly_df.copy()
-  yearly_df.set_index(['year'], inplace=True)
-  print(yearly_df)
   for year in range(min_year, max_year+1):
     # Compute taxes as fcff - (revenues+costs)
     rc = 0
     for c in CASHFLOWS:
-      c_value = yearly_df.loc[year, c]
+      c_value = yearly_df.at[year, c]
       rc += c_value
-    fcff = yearly_df.loc[year,'fcff']
+    fcff = yearly_df.at[year,'fcff']
     taxes = fcff -rc
-    new_row = pd.DataFrame.from_dict({"plant":[plant],
-                "year":[year],
-                "tax":[taxes]
-                })
+    new_row = pd.DataFrame.from_dict({"year":[year],"tax":[taxes]})
     list_rows.append(new_row)
   df = pd.concat(list_rows, ignore_index=True)
+  df.set_index(['year'], inplace=True)
   return df
 
 def plot_yearly_cashflow(yearly_df, plant_dir, plant): 
-  result_df = yearly_df[['year', 'cashflow','value']]
+  result_df = yearly_df.copy()
   # Combine for better visibility
-  years = result_df['year'].unique()
+  years = result_df.index
   # Compute total capex, o&m, elec cap market from more detailed costs
-  capex_list = ['ft_capex', 'htse_capex', 'h2_storage_capex']
-  om_list = ['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom']
-  elec_cap_market_list = ['ft_elec_cap_market', 'htse_elec_cap_market']
-  final_list =['om', 'capex', 'elec_cap_market', 'co2_shipping', 'diesel_sales', 'jet_fuel_sales', 'e_sales',\
-              'h2_ptc', 'naphtha_sales', 'tax']
-  for year in years: 
-    year_df = result_df[result_df['year']==year]
-    # CAPEX
-    capex = year_df[year_df['cashflow'].isin(capex_list)].sum()['value']
-    capex_df = pd.DataFrame.from_dict({'year':[year],
-                                        'cashflow':['capex'],
-                                        'value':[capex]})
-    # OM 
-    om = year_df[year_df['cashflow'].isin(om_list)].sum()['value']
-    om_df = pd.DataFrame.from_dict({'year':[year],
-                                    'cashflow':['om'],
-                                    'value':[om]})
-    # Elec cap market
-    elec_cap_market = year_df[year_df['cashflow'].isin(elec_cap_market_list)].sum()['value']
-    elec_cap_market_df = pd.DataFrame.from_dict({'year':[year],
-                                    'cashflow':['elec_cap_market'],
-                                    'value':[elec_cap_market]})
-    # Add new data to results
-    result_df = pd.concat([result_df, capex_df, om_df, elec_cap_market_df], ignore_index=True)
-  # Get rid of some entries
-  result_df = result_df[result_df['cashflow'].isin(final_list)]
+  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
+  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
+  #result_df['elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
+  #result_df.drop(columns=['ft_elec_cap_market', 'htse_elec_cap_market'], inplace=True)
+  # TODO: take care of elec cap market later
   # Divide by 1e6 for results in M$ 
-  result_df['value'] /=1e6
+  for c in list(result_df.columns):
+    if 'year' not in str(c):
+      result_df[c] /=1e6
   # Rename columns 
-  result_df['cashflow'].apply(lambda x: " ".join(x.split("_")).upper())
+  result_df.rename(lambda x: " ".join(x.split("_")).upper(), axis='columns', inplace=True)
   # Colors
   color_mapping ={
     'JET FUEL SALES':'blue',
@@ -131,11 +104,12 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
     'CAPEX':'orange',
     'OM':'cornsilk1',
     'CO2 SHIPPING':'chartreuse1',
-    'ELEC CAP MARKET':'gold3',
-    'TAXES': 'firebrick', 
+    'HTSE ELEC CAP MARKET':'gold3',
+    'TAX': 'firebrick', 
   }
   fig, ax = plt.subplots()
-  result_df.plot.bar(ax=ax, x='year', y=color_mapping.keys(), stacked=True)
+  #result_df.set_index(['year'], inplace=True)
+  result_df.plot.bar(ax=ax, y=color_mapping.keys(), stacked=True)
   ax.set_ylabel('Cashflows (M$)')
   ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   plt.legend(ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
@@ -157,13 +131,15 @@ if __name__ == "__main__":
     print("Final out was found here: {}".format(final_out))
     fcff = get_yearly_fcff(plant,final_out)
     yearly = compute_yearly_cashflows(plant, final_out)
-    yearly_df = pd.merge(fcff, yearly,left_on=['plant', 'year'], right_on=['plant', 'year'])
+    yearly_df = fcff.join(yearly, how='left')
     #yearly_df.drop_duplicates(inplace=True)
-    taxes_df = compute_taxes(yearly_df, plant).reset_index()
-    yearly_df = pd.merge(taxes_df, yearly_df, left_on=['plant', 'year'], right_on=['plant', 'year'])
+    taxes_df = compute_taxes(yearly_df, plant)
+    yearly_df = yearly_df.join(taxes_df, how='left')
+    print(yearly_df.columns)
+    #yearly_df = pd.merge(taxes_df, yearly_df, left_on=['plant', 'year'], right_on=['plant', 'year'])
     yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
     print(yearly_df)
-    #plot_yearly_cashflow(yearly_df.reset_index(), plant_dir=plant_dir, plant=plant)
+    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
   else:
     print("Final out was not found!!")
   #print("Current Directory: {}".format(os.getcwd()))
