@@ -67,15 +67,16 @@ def compute_taxes(yearly_df, plant):
   min_year = min(yearly_df['year'])
   max_year = max(yearly_df['year'])
   list_rows = []
+  yearly_df = yearly_df.copy()
+  yearly_df.set_index(['year'], inplace=True)
+  print(yearly_df)
   for year in range(min_year, max_year+1):
     # Compute taxes as fcff - (revenues+costs)
     rc = 0
     for c in CASHFLOWS:
-      # TODO update
-      c_df = yearly_df[(yearly_df['cashflow']==c) & (yearly_df['year']==year)]['value'].mean()# # values = # arma samples
-      rc+= c_df
-    fcff = yearly_df[(yearly_df['year']==year)& (yearly_df['cashflow']=='fcff')]['value']
-    fcff = float(fcff)
+      c_value = yearly_df.loc[year, c]
+      rc += c_value
+    fcff = yearly_df.loc[year,'fcff']
     taxes = fcff -rc
     new_row = pd.DataFrame.from_dict({"plant":[plant],
                 "year":[year],
@@ -155,15 +156,12 @@ if __name__ == "__main__":
   if final_out:
     print("Final out was found here: {}".format(final_out))
     fcff = get_yearly_fcff(plant,final_out)
-    print(fcff.head())
     yearly = compute_yearly_cashflows(plant, final_out)
-    print(yearly.head())
     yearly_df = pd.merge(fcff, yearly,left_on=['plant', 'year'], right_on=['plant', 'year'])
     #yearly_df.drop_duplicates(inplace=True)
-    #taxes_df = compute_taxes(yearly_df, plant)
-    #yearly_df = pd.concat([yearly_df,taxes_df],ignore_index=True)
-    #yearly_df = yearly_df.groupby(['plant','year','cashflow']).mean()
-    #yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
+    taxes_df = compute_taxes(yearly_df, plant).reset_index()
+    yearly_df = pd.merge(taxes_df, yearly_df, left_on=['plant', 'year'], right_on=['plant', 'year'])
+    yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
     print(yearly_df)
     #plot_yearly_cashflow(yearly_df.reset_index(), plant_dir=plant_dir, plant=plant)
   else:
