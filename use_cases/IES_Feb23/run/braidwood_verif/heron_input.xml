@@ -18,7 +18,7 @@
       </runinfo>
     </parallel>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>5</num_arma_samples>
+    <num_arma_samples>3</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -38,7 +38,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>3</persistence>
+      <persistence>2</persistence>
     </optimization_settings>
   </Case>
 
@@ -61,7 +61,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <sweep_values debug_value="-1175">-1175,-400</sweep_values> <!-- MWe -->
+          <sweep_values debug_value="-1175">-1175,-500,-100</sweep_values> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -150,7 +150,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <sweep_values debug_value="-29528">-29528,-10052</sweep_values>
+          <sweep_values debug_value="-29528">-29528,-15000,-2513,-200</sweep_values>
         </capacity>
         <transfer>
           <linear>
@@ -322,7 +322,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <sweep_values debug_value="39153">0,39153,118111</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <sweep_values debug_value="39153">50,5000,10000,25000,50000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
           <fixed_value>0</fixed_value>
