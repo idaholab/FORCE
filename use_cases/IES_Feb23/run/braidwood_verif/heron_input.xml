@@ -5,18 +5,18 @@
     <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
     <mode>sweep</mode>
-    <!--<debug>
+    <debug>
       <inner_samples>1</inner_samples>
       <macro_steps>1</macro_steps>
-      <dispatch_plot>False</dispatch_plot>
-    </debug>-->
-    <parallel>
+      <dispatch_plot>True</dispatch_plot>
+    </debug>
+    <!--<parallel>
       <runinfo>
         <expectedTime>72:0:0</expectedTime>
         <clusterParameters>-P re_gen</clusterParameters>
         <memory>4gb</memory>
       </runinfo>
-    </parallel>
+    </parallel>-->
     <verbosity>debug</verbosity>
     <num_arma_samples>5</num_arma_samples>
     <time_discretization>
@@ -71,8 +71,8 @@
         <transfer>
           <linear>
             <rate resource="electricity">-1</rate>
-            <rate resource="h2">90468</rate>
-            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh so 3600x25.13=90468 kg-H2/h -->
+            <rate resource="h2">25.13</rate>
+            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh so 3600x25.13=90468 kg-H2/h ? NO don't think so-->
           </linear>
         </transfer>
       </produces>
