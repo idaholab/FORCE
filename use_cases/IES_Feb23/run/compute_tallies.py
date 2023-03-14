@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+import argparse
+import xml.etree.cElementTree as ET
+from pathlib import Path
+import json
+import pandas as pd
+import os, shutil
+
+def parse_meta(xml_file):
+  """ Parse the ROM meta xml file to get the cluster multiplicity information
+  Returns a dictionary cluster_number:multiplicity"""
+  root = ET.parse(xml_file).getroot()
+  meta = {}
+  for year_rom in root.findall("arma/MacroStepROM"):
+      meta[int(year_rom.get('YEAR', '0'))] = {}
+      for cluster in year_rom.findall("ClusterROM"):
+          cluster_num = int(cluster.get('cluster', '999'))
+          segments = tuple([int(i) for i in cluster.findtext('segments_represented').split(", ")])
+          meta[int(year_rom.get('YEAR', '0'))][cluster_num] = [len(segments)]
+  multiplicity_dic = dict(sorted(meta.items()))[0]
+  return multiplicity_dic
+
+def calculate_tallies(dispatch_file, rom_meta_xml, project_lifetime):
+  """ Compute the yearly tally for each dispatch variable 
+    @ In, dispatch_file, str, path to the dispatch_print.csv file with the results of the debug dispatch run for a day
+    @ In, mult_dic, dic, dictionary with cluster numbers as keys and corresponding multiplicity
+    @ Out, ?
+  """
+  mult_dic = parse_meta(rom_meta_xml)
+  dispatch = pd.read_csv(dispatch_file)
+  # Clean up 
+  toclean = ['RAVEN_sample_ID', 'Year', 'scaling', 'price', 'prefix', 'hour']
+  dispatch.drop(columns=toclean, inplace=True)
+  for c in dispatch.columns:
+    if "Probability" in str(c):
+      dispatch.drop(columns=[c], inplace=True)
+  # Sum over clusters
+  dispatch = dispatch.groupby(['_ROM_Cluster']).sum()
+  # Multiplicity and project lifetime
+  mult = pd.DataFrame.from_dict(mult_dic).transpose()
+  mult.rename({0:"multiplicity"}, axis=1, inplace=True)
+  new_dispatch = dispatch.join(mult, how="left")
+  for c in new_dispatch.columns:
+    if "Dispatch" in str(c):
+      new_dispatch[c] = new_dispatch[c].multiply(new_dispatch['multiplicity']).multiply(project_lifetime)
+  new_dispatch.drop(columns=['multiplicity'], inplace=True)
+  # Rename columns 
+  new_dispatch.rename(lambda x: " ".join(x.split("__")[1:]).upper(), axis='columns', inplace=True)
+  lifetime_tallies = new_dispatch.sum()
+  #lifetime_tallies.to_csv("test_tallies.csv", header=None)
+  return lifetime_tallies
+
+def get_arma_path(heron_input_xml):
+  """ Parse the heron input file xml for the path to the ARMA file
+    In, heron_input_xml, str, path to the heron input for the case
+    Out, arma_xml, str, path to the ARMA file for the case"""
+  root = ET.parse(heron_input_xml).getroot()
+  arma_xml = ''
+
+  arma = root.find("DataGenerators/ARMA")
+  path_arma_pk = arma.text
+  output = path_arma_pk.split('/')[-2]
+  arma_xml = os.path.join("train",output,"romMeta.xml")
+  return arma_xml
+
+
+def check_dispatch_run(case_folder, case_name):
+  """ Checks for the existence of a dispatch run results file in the gold or optimization folder
+    @ In, case_folder, str, path to the case folder
+    @ Out, dispatch_file, str, path to dispatch file or None if not there"""
+  if not os.path.isdir(case_folder):
+    raise FileNotFoundError("The {} folder does not exist".format(case_folder))
+  dispatch_file = None
+  gold_file = os.path.join(case_folder, "gold", "dispatch_print.csv")
+  o_file = os.path.join(case_folder, case_name+"_o", "dispatch_print.csv")
+  if os.path.isfile(gold_file):
+    dispatch_file = gold_file
+  elif os.path.isfile(o_file):
+    shutil.copy(o_file, gold_file)
+    dispatch_file = gold_file
+  return dispatch_file
+
+def get_project_lifetime(heron_input_xml):
+  """ Parse the heron input file xml for project lifetime 
+    In, heron_input_xml, str, path to the heron input for the case
+    Out, project_lifetime, float, project lifetime value"""
+  root = ET.parse(heron_input_xml).getroot()
+  project_lifetime = float(root.find("Case/economics/ProjectTime").text)
+  return project_lifetime
+
+def plot_lifetime_tallies(path_to_csv):
+  # plot pie with electricity consumption ft, market, htse
+  # plot bar chart for synfuel
+  pass
+
+def main():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("location", type=str, help="Name of folder with case")
+  args = parser.parse_args()
+  
+  #Check dispatch result file
+  d = check_dispatch_run(os.path.join("./run", args.location), args.location)
+  if d: 
+    print("Dispatch results file found: {}".format(d))
+  else: 
+    print("Dispatch results file not found, exiting")
+    exit()
+  # Get ARMA location
+  heron_input_xml = os.path.join("./run", args.location, "heron_input.xml")
+  if not os.path.isfile(heron_input_xml):
+    exit("Not heron input")
+  else: 
+    print("HERON input file found here: {}".format(heron_input_xml))
+  rom_meta_xml = get_arma_path(heron_input_xml=heron_input_xml)
+  # Get project lifetime
+  project_lifetime = get_project_lifetime(heron_input_xml=heron_input_xml)
+  # Compute tallies for the duration of the project
+  print("Lifetime tallies: \n")
+  lifetime_tallies = calculate_tallies(dispatch_file=d, rom_meta_xml=rom_meta_xml, project_lifetime=project_lifetime)
+  print(lifetime_tallies)
+  lifetime_tallies.to_csv(os.path.join('./run', args.location, args.location+"_lifetime_tallies.csv"), header=None)
+  
+
+if __name__ == '__main__':
+  main()
