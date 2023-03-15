@@ -5,6 +5,14 @@ from pathlib import Path
 import json
 import pandas as pd
 import os, shutil
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Average densities for fuel products, from Wikipedia (kg/L)
+FUEL_DENSITY = {'jet_fuel':0.8, 
+                'diesel':0.85,
+                'naphtha':0.77} # kg/L
+GAL_to_L = 3.785 # L/gal
 
 def parse_meta(xml_file):
   """ Parse the ROM meta xml file to get the cluster multiplicity information
@@ -88,10 +96,44 @@ def get_project_lifetime(heron_input_xml):
   project_lifetime = float(root.find("Case/economics/ProjectTime").text)
   return project_lifetime
 
-def plot_lifetime_tallies(path_to_csv):
+def plot_lifetime_tallies(path_to_csv, save_path):
   # plot pie with electricity consumption ft, market, htse
   # plot bar chart for synfuel
-  pass
+  """ Plot lifetime tallies, electricity and synthetic fuel products
+    @ In, path_to_csv, str, path to the csv file with the lifetime tallies
+    @ Out, None 
+  """
+  df = path_to_csv.to_frame()
+  elec_names =[]
+  elec_values =[]
+  synfuels_names =[]
+  synfuels_values = []
+  for c in df.index:
+    if 'ELECTRICITY' in c and not('NPP' in c): 
+      elec_names.append(c.split(' ')[0])
+      elec_values.append(abs(df.loc[c][0]))
+    if 'MARKET' in c and (('NAPHTHA' in c) or ('JET_FUEL' in c) or ('DIESEL' in c)):
+      synfuels_names.append(c.split(' ')[-1])
+      # kg to gal
+      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/1e6)
+  fig, ax = plt.subplots(1,2, figsize=(10,6))
+  def create_elec_labels(e_prod):
+    labels = []
+    for p in e_prod:
+      l = str(int(np.round(p*100./np.sum(e_prod))))+' % \n'+str(np.round(p/1e6))+' TWh'
+      labels.append(l)
+    return labels
+  labels = create_elec_labels(elec_values)
+  wedges, texts = ax[1].pie(list(elec_values), labels = labels)
+                                    #textprops=dict(color="w"))
+  ax[1].legend(wedges, elec_names,bbox_to_anchor =(0.5,-0.2), loc='lower center')
+  #ax[0].pie(elec.values(), labels=elec.keys())
+  ax[0].bar(synfuels_names, synfuels_values)
+  ax[0].set_ylabel("Production (Mgal)")
+  ax[0].grid(axis='y')
+  fig.tight_layout()
+  fig.savefig(save_path)
+  return None
 
 def main():
   parser = argparse.ArgumentParser()
@@ -118,7 +160,10 @@ def main():
   print("Lifetime tallies: \n")
   lifetime_tallies = calculate_tallies(dispatch_file=d, rom_meta_xml=rom_meta_xml, project_lifetime=project_lifetime)
   print(lifetime_tallies)
-  lifetime_tallies.to_csv(os.path.join('./run', args.location, args.location+"_lifetime_tallies.csv"), header=None)
+  csv_path = os.path.join('./run', args.location, args.location+"_lifetime_tallies.csv")
+  lifetime_tallies.to_csv(csv_path, header=None)
+  fig_path = os.path.join('./run', args.location, args.location+"_lifetime_tallies_elec_synfuels.png")
+  plot_lifetime_tallies(lifetime_tallies, fig_path)
   
 
 if __name__ == '__main__':
