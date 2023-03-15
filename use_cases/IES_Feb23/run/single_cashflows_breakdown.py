@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from cashflows_breakdown import get_final_npv, find_final_out
+from cashflows_breakdown import get_final_npv, find_final_out, compute_cashflows
 
 """ The goal of this script is to produce a csv and png files showing the yearly and total 
     cashflows breakdown for a given NPP"""
@@ -118,6 +118,33 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
   plt.subplots_adjust(bottom=0.1)
   plt.savefig(os.path.join(plant_dir, plant+"yearly_cashflow_breakdown.png"))
 
+def plot_lifetime_cashflow(plant, final_out):
+  final_npv, std_npv = get_final_npv(plant)
+  final_dic = compute_cashflows(final_out, final_npv)
+  result_df = pd.DataFrame.from_dict(final_dic)
+  #result_df['npv'] = final_npv
+  print(result_df)
+
+  #result_df = yearly_df.sum().to_frame().transpose()
+  #npv = total_df.iloc[1:,0].sum()
+  # Compute total capex, o&m, elec cap market from more detailed costs
+  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
+  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
+  for c in list(result_df.columns):
+      result_df[c] /=1e9
+  result_df.rename(lambda x: " ".join(x.split("_")).upper(), axis='columns', inplace=True)
+  fig, ax = plt.subplots()
+  result_df.plot(ax=ax, kind="bar", bottom=final_npv/1e9,width=30)
+  ax.set_ylabel('Revenues and cost bn$(2020)')
+  ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
+  #ax.set_ylim(-3,3)
+  print(result_df)
+  plt.xticks([])
+  plt.tight_layout()
+  plt.show()
+  plt.close()
+  pass
 
 if __name__ == "__main__":
   dir = os.path.dirname(os.path.abspath(__file__))
@@ -132,13 +159,10 @@ if __name__ == "__main__":
     fcff = get_yearly_fcff(plant,final_out)
     yearly = compute_yearly_cashflows(plant, final_out)
     yearly_df = fcff.join(yearly, how='left')
-    #yearly_df.drop_duplicates(inplace=True)
     taxes_df = compute_taxes(yearly_df, plant)
     yearly_df = yearly_df.join(taxes_df, how='left')
-    print(yearly_df.columns)
-    #yearly_df = pd.merge(taxes_df, yearly_df, left_on=['plant', 'year'], right_on=['plant', 'year'])
     yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
-    print(yearly_df)
+    plot_lifetime_cashflow(plant,final_out)
     plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
   else:
     print("Final out was not found!!")
