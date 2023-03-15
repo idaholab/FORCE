@@ -122,11 +122,9 @@ def plot_lifetime_cashflow(plant, final_out):
   final_npv, std_npv = get_final_npv(plant)
   final_dic = compute_cashflows(final_out, final_npv)
   result_df = pd.DataFrame.from_dict(final_dic)
-  #result_df['npv'] = final_npv
-  print(result_df)
-
-  #result_df = yearly_df.sum().to_frame().transpose()
-  #npv = total_df.iloc[1:,0].sum()
+  df = pd.DataFrame()
+  df['category']
+  print(result_df.transpose)
   # Compute total capex, o&m, elec cap market from more detailed costs
   result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
   result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
@@ -138,13 +136,57 @@ def plot_lifetime_cashflow(plant, final_out):
   result_df.plot(ax=ax, kind="bar", bottom=final_npv/1e9,width=30)
   ax.set_ylabel('Revenues and cost bn$(2020)')
   ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
-  #ax.set_ylim(-3,3)
-  print(result_df)
   plt.xticks([])
   plt.tight_layout()
   plt.show()
   plt.close()
   pass
+
+def plot_lifetime_cashflow_2(plant, final_out):
+  final_npv, std_npv = get_final_npv(plant)
+  final_dic = compute_cashflows(final_out, final_npv)
+  result_df = pd.DataFrame.from_dict(final_dic)
+  # Compute total capex, o&m, elec cap market from more detailed costs
+  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
+  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
+  # TRanspose for plotting
+  df = result_df.transpose()
+  df.reset_index(inplace=True)
+  df.rename(columns={'index':'category', 0:'value'}, inplace=True)
+  df['value'] = df['value'].div(1e6)
+  # TODO rename categories with lambda x: " ".join(x.split("_")).upper()
+  df['category'] = df['category'].apply(lambda x: " ".join(x.split("_")).upper())
+  # calculate running totals
+  y='value'
+  x='category'
+  df['tot'] = df[y].cumsum()
+  df['tot1']=df['tot'].shift(1).fillna(0)
+  # lower and upper points for the bar charts
+  lower = df[['tot','tot1']].min(axis=1)
+  upper = df[['tot','tot1']].max(axis=1)
+  # mid-point for label position
+  mid = (lower + upper)/2
+  # positive number shows green, negative number shows red
+  df.loc[df[y] >= 0, 'color'] = 'green'
+  df.loc[df[y] < 0, 'color'] = 'red'
+  # calculate connection points
+  connect= df['tot1'].repeat(3).shift(-1)
+  connect[1::3] = np.nan
+  fig,ax = plt.subplots()
+  # plot first bar with colors
+  bars = ax.bar(x=df[x],height=upper, color =df['color'])
+  # plot second bar - invisible
+  plt.bar(x=df[x], height=lower,color='white')
+  plt.ylabel('M$(USD)')
+  # plot connectors
+  plt.plot(connect.index,connect.values, 'k' )
+  # plot bar labels
+  for i, v in enumerate(upper):
+      plt.text(i-.15, mid[i], f"{df[y][i]:,.0f}")
+  # TODO rotate x ticks by45 degrees for better visibility
+  plt.show()
+  return None
 
 if __name__ == "__main__":
   dir = os.path.dirname(os.path.abspath(__file__))
@@ -162,7 +204,7 @@ if __name__ == "__main__":
     taxes_df = compute_taxes(yearly_df, plant)
     yearly_df = yearly_df.join(taxes_df, how='left')
     yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
-    plot_lifetime_cashflow(plant,final_out)
+    plot_lifetime_cashflow_2(plant,final_out)
     plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
   else:
     print("Final out was not found!!")
