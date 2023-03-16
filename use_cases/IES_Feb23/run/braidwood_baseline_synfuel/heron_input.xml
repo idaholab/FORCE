@@ -57,7 +57,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>electricity</consumes>
         <capacity resource='electricity'>
-          <sweep_values>-1175,-1000,-750,-500,-250</sweep_values> <!-- MWe -->
+          <sweep_values>-1178,-1000,-750,-500,-250</sweep_values> <!-- MWe -->
         </capacity>
         <transfer>
           <linear>
