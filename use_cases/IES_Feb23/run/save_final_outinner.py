@@ -72,7 +72,10 @@ def main():
   case_folder = os.path.join(dir, args.case_name)
   final_out = find_final_out(args.case_name)
   if final_out: 
+    print("Final out~inner found here: {}, \n and copied to gold, commit it!".format(final_out))
     shutil.copy(final_out, os.path.join(case_folder, "gold", "out~inner"))
+  else: 
+    print("Final out~inner file was not found, maybe the case has been re-run and the gold folder not updated?")
 
 
 
