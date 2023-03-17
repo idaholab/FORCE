@@ -10,9 +10,9 @@ from cashflows_breakdown import get_final_npv, find_final_out, compute_cashflows
 CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales','e_sales'\
             ,'co2_shipping','ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #cahnge elec_cap_market to ft_elec_cap_market and add it TODO
 
-plant = "cooper"
+plant = "braidwood_baseline_synfuel"
 
-def compute_yearly_cashflows(plant, final_out):
+def get_yearly_cashflows(plant, final_out):
   with open(final_out) as fp:
     lines = fp.readlines()
   npv = 0.0
@@ -118,38 +118,19 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
   plt.subplots_adjust(bottom=0.1)
   plt.savefig(os.path.join(plant_dir, plant+"yearly_cashflow_breakdown.png"))
 
-def plot_lifetime_cashflow(plant, final_out):
-  final_npv, std_npv = get_final_npv(plant)
-  final_dic = compute_cashflows(final_out, final_npv)
-  result_df = pd.DataFrame.from_dict(final_dic)
-  df = pd.DataFrame()
-  df['category']
-  print(result_df.transpose)
-  # Compute total capex, o&m, elec cap market from more detailed costs
-  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
-  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
-  for c in list(result_df.columns):
-      result_df[c] /=1e9
-  result_df.rename(lambda x: " ".join(x.split("_")).upper(), axis='columns', inplace=True)
-  fig, ax = plt.subplots()
-  result_df.plot(ax=ax, kind="bar", bottom=final_npv/1e9,width=30)
-  ax.set_ylabel('Revenues and cost bn$(2020)')
-  ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
-  plt.xticks([])
-  plt.tight_layout()
-  plt.show()
-  plt.close()
-  pass
-
-def plot_lifetime_cashflow_2(plant, final_out):
+def plot_lifetime_cashflow(plant, plant_dir, final_out):
   final_npv, std_npv = get_final_npv(plant)
   final_dic = compute_cashflows(final_out, final_npv)
   result_df = pd.DataFrame.from_dict(final_dic)
   # Compute total capex, o&m, elec cap market from more detailed costs
-  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
+  try: 
+    result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
+    result_df.drop(columns=['htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
+  except KeyError: 
+    result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']
+    result_df.drop(columns=['htse_capex', 'ft_capex'], inplace=True)
   result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
+  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom'], inplace=True)
   # TRanspose for plotting
   df = result_df.transpose()
   df.reset_index(inplace=True)
@@ -185,8 +166,21 @@ def plot_lifetime_cashflow_2(plant, final_out):
   for i, v in enumerate(upper):
       plt.text(i-.15, mid[i], f"{df[y][i]:,.0f}")
   # TODO rotate x ticks by45 degrees for better visibility
-  plt.show()
+  plt.savefig(os.path.join(plant_dir, plant+"_total_cashflow_breakdown.png"))
   return None
+
+def main(plant, final_out, plant_dir, total=True):
+  if total: 
+    plot_lifetime_cashflow(plant,plant_dir,final_out)
+  else:
+    fcff = get_yearly_fcff(plant,final_out)
+    yearly = get_yearly_cashflows(plant, final_out)
+    yearly_df = fcff.join(yearly, how='left')
+    taxes_df = compute_taxes(yearly_df, plant)
+    yearly_df = yearly_df.join(taxes_df, how='left')
+    yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
+    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
+
 
 if __name__ == "__main__":
   dir = os.path.dirname(os.path.abspath(__file__))
@@ -195,17 +189,9 @@ if __name__ == "__main__":
   plant_dir = os.path.join(dir,plant)
   #final_out = find_final_out(plant)
   # For now until results are updated TODO update
-  final_out = "cooper/cooper_o/optimize/1/out~inner"
+  final_out = "braidwood_baseline_synfuel/gold/out~inner"
   if final_out:
     print("Final out was found here: {}".format(final_out))
-    fcff = get_yearly_fcff(plant,final_out)
-    yearly = compute_yearly_cashflows(plant, final_out)
-    yearly_df = fcff.join(yearly, how='left')
-    taxes_df = compute_taxes(yearly_df, plant)
-    yearly_df = yearly_df.join(taxes_df, how='left')
-    yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
-    plot_lifetime_cashflow_2(plant,final_out)
-    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
+    main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
   else:
     print("Final out was not found!!")
-  #print("Current Directory: {}".format(os.getcwd()))
