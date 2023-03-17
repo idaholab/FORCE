@@ -11,6 +11,7 @@ CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales'
             ,'co2_shipping','ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #cahnge elec_cap_market to ft_elec_cap_market and add it TODO
 
 plant = "braidwood_baseline_synfuel"
+DISCOUNT_RATE = 0.1 #10% used 
 
 def get_yearly_cashflows(plant, final_out):
   with open(final_out) as fp:
@@ -169,6 +170,30 @@ def plot_lifetime_cashflow(plant, plant_dir, final_out):
   plt.savefig(os.path.join(plant_dir, plant+"_total_cashflow_breakdown.png"))
   return None
 
+def discount_yearly_cashflow(yearly_df, discount_rate):
+  """ Discount the values for the yearly cashflows i.e. divide by (1+r)^y
+    @ In, yearly_df, pd.DataFrame, dataframe with cashflow (columns) values per year (rows)
+    @ Out, new_df, pd.DataFrame, dataframe with discounted cashflow (columns) values per year (rows)
+  """
+  yearly_df.reset_index(inplace=True)
+  base_year = yearly_df['year'].min()
+  print(yearly_df)
+  new_df = pd.DataFrame()
+  new_df['year'] = yearly_df['year']
+  for c in yearly_df.columns: 
+    if 'year' not in c:
+      new_df[c] = yearly_df[c]/(np.power(1+discount_rate,yearly_df.index))
+  print(new_df)
+  return new_df
+
+def test(plant, final_out, plant_dir, total=True): 
+  fcff = get_yearly_fcff(plant,final_out)
+  yearly = get_yearly_cashflows(plant, final_out)
+  yearly_df = fcff.join(yearly, how='left')
+  yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
+  yearly_df.to_csv(os.path.join(plant_dir, plant+"_yearly_cashflow.csv"))
+  #plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
+
 def main(plant, final_out, plant_dir, total=True):
   if total: 
     plot_lifetime_cashflow(plant,plant_dir,final_out)
@@ -176,8 +201,6 @@ def main(plant, final_out, plant_dir, total=True):
     fcff = get_yearly_fcff(plant,final_out)
     yearly = get_yearly_cashflows(plant, final_out)
     yearly_df = fcff.join(yearly, how='left')
-    taxes_df = compute_taxes(yearly_df, plant)
-    yearly_df = yearly_df.join(taxes_df, how='left')
     yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
     plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
 
@@ -190,8 +213,10 @@ if __name__ == "__main__":
   #final_out = find_final_out(plant)
   # For now until results are updated TODO update
   final_out = "braidwood_baseline_synfuel/gold/out~inner"
+  final_out = "cooper/gold/out~inner"
   if final_out:
     print("Final out was found here: {}".format(final_out))
-    main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
+    #main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
+    test(plant, final_out, plant_dir)
   else:
     print("Final out was not found!!")
