@@ -47,7 +47,7 @@ def find_final_out(plant):
   # Map each out~inner to corresponding NPV
   out_to_npv = {}
   for out_file in out_files:
-      with open(out_file) as fp:
+      with open(out_file, 'rb') as fp:
         lines = fp.readlines()
       npvs = []
       for l in lines:
