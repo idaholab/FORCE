@@ -105,7 +105,6 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
     'OM':'cornsilk1',
     'CO2 SHIPPING':'chartreuse1',
     'HTSE ELEC CAP MARKET':'gold3',
-    #'TAX': 'firebrick', 
   }
   fig, ax = plt.subplots()
   #result_df.set_index(['year'], inplace=True)
@@ -118,10 +117,11 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
   plt.subplots_adjust(bottom=0.1)
   plt.savefig(os.path.join(plant_dir, plant+"_yearly_cashflow_breakdown.png"))
 
-def plot_lifetime_cashflow(plant, plant_dir, final_out):
-  final_npv, std_npv = get_final_npv(plant)
-  final_dic = compute_cashflows(final_out, final_npv)
-  result_df = pd.DataFrame.from_dict(final_dic)
+def plot_lifetime_cashflow(plant, plant_dir, lifetime_df):
+  result_df = lifetime_df.copy()
+  npv = result_df['npv']
+  result_df.drop(columns={'npv'}, inplace=True)
+  print(npv.to_numpy())
   # Compute total capex, o&m, elec cap market from more detailed costs
   try: 
     result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
@@ -157,15 +157,18 @@ def plot_lifetime_cashflow(plant, plant_dir, final_out):
   fig,ax = plt.subplots()
   # plot first bar with colors
   bars = ax.bar(x=df[x],height=upper, color =df['color'])
+  ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   # plot second bar - invisible
   plt.bar(x=df[x], height=lower,color='white')
-  plt.ylabel('M$(USD)')
+  plt.ylabel('M$(2020(USD))')
   # plot connectors
   plt.plot(connect.index,connect.values, 'k' )
   # plot bar labels
   for i, v in enumerate(upper):
       plt.text(i-.15, mid[i], f"{df[y][i]:,.0f}")
-  # TODO rotate x ticks by45 degrees for better visibility
+  plt.xticks(rotation=90)
+  plt.gcf().set_size_inches(11, 6)
+  plt.tight_layout()
   plt.savefig(os.path.join(plant_dir, plant+"_total_cashflow_breakdown.png"))
   return None
 
@@ -203,6 +206,7 @@ def test(plant, final_out, plant_dir, total=True):
   lifetime_df = create_final_cashflows(yearly_df)
   lifetime_df.to_csv(os.path.join(plant_dir, plant+"_total_cashflows.csv"))
   plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
+  plot_lifetime_cashflow(plant, plant_dir,lifetime_df)
 
 def main(plant, final_out, plant_dir, total=True):
   if total: 
