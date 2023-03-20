@@ -105,18 +105,18 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
     'OM':'cornsilk1',
     'CO2 SHIPPING':'chartreuse1',
     'HTSE ELEC CAP MARKET':'gold3',
-    'TAX': 'firebrick', 
+    #'TAX': 'firebrick', 
   }
   fig, ax = plt.subplots()
   #result_df.set_index(['year'], inplace=True)
   result_df.plot.bar(ax=ax, y=color_mapping.keys(), stacked=True)
-  ax.set_ylabel('Cashflows (M$)')
+  ax.set_ylabel('Cashflows (M$(2020))')
   ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   plt.legend(ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
   plt.gcf().set_size_inches(11, 6)
   plt.tight_layout()
   plt.subplots_adjust(bottom=0.1)
-  plt.savefig(os.path.join(plant_dir, plant+"yearly_cashflow_breakdown.png"))
+  plt.savefig(os.path.join(plant_dir, plant+"_yearly_cashflow_breakdown.png"))
 
 def plot_lifetime_cashflow(plant, plant_dir, final_out):
   final_npv, std_npv = get_final_npv(plant)
@@ -202,7 +202,7 @@ def test(plant, final_out, plant_dir, total=True):
   yearly_df.to_csv(os.path.join(plant_dir, plant+"_yearly_cashflow.csv"))
   lifetime_df = create_final_cashflows(yearly_df)
   lifetime_df.to_csv(os.path.join(plant_dir, plant+"_total_cashflows.csv"))
-  #plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
+  plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
 
 def main(plant, final_out, plant_dir, total=True):
   if total: 
