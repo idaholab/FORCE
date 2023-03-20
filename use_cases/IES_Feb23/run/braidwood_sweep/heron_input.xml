@@ -204,7 +204,7 @@
       </demands>
       <economics>
         <lifetime>1</lifetime>
-        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="ft_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
             <variable>ft_elec_consumption_capacity</variable>
