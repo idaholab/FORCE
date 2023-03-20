@@ -10,7 +10,6 @@ from cashflows_breakdown import get_final_npv, find_final_out, compute_cashflows
 CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales','e_sales'\
             ,'co2_shipping','ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #cahnge elec_cap_market to ft_elec_cap_market and add it TODO
 
-plant = "braidwood_baseline_synfuel"
 DISCOUNT_RATE = 0.1 #10% used 
 
 def get_yearly_cashflows(plant, final_out):
@@ -177,14 +176,23 @@ def discount_yearly_cashflow(yearly_df, discount_rate):
   """
   yearly_df.reset_index(inplace=True)
   base_year = yearly_df['year'].min()
-  print(yearly_df)
   new_df = pd.DataFrame()
   new_df['year'] = yearly_df['year']
   for c in yearly_df.columns: 
     if 'year' not in c:
       new_df[c] = yearly_df[c]/(np.power(1+discount_rate,yearly_df.index))
-  print(new_df)
   return new_df
+
+def create_final_cashflows(yearly_df):
+  """
+  From the discounted yearly cashflows create the lifetime total cashflow dataframe
+    @ In, yearly_df, pd.DataFrame, dataframe containing the yearly discounted cashflows
+    @ Out, lifetime_df, pd.DataFrame, dataframe with the total lifetime cashflows
+  """
+  new = yearly_df.drop(columns={'year'}).rename(columns={'fcff':'npv'})
+  lifetime_df = new.sum().to_frame().transpose()
+  return lifetime_df
+
 
 def test(plant, final_out, plant_dir, total=True): 
   fcff = get_yearly_fcff(plant,final_out)
@@ -192,6 +200,8 @@ def test(plant, final_out, plant_dir, total=True):
   yearly_df = fcff.join(yearly, how='left')
   yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
   yearly_df.to_csv(os.path.join(plant_dir, plant+"_yearly_cashflow.csv"))
+  lifetime_df = create_final_cashflows(yearly_df)
+  lifetime_df.to_csv(os.path.join(plant_dir, plant+"_total_cashflows.csv"))
   #plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
 
 def main(plant, final_out, plant_dir, total=True):
@@ -199,7 +209,7 @@ def main(plant, final_out, plant_dir, total=True):
     plot_lifetime_cashflow(plant,plant_dir,final_out)
   else:
     fcff = get_yearly_fcff(plant,final_out)
-    yearly = get_yearly_cashflows(plant, final_out)
+    yearly = get_yearly_cashflows(plant, final_out) 
     yearly_df = fcff.join(yearly, how='left')
     yearly_df.to_csv(os.path.join(plant_dir, "yearly_cashflow.csv"))
     plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
@@ -209,6 +219,7 @@ if __name__ == "__main__":
   dir = os.path.dirname(os.path.abspath(__file__))
   os.chdir(dir)
   print("Current Directory: {}".format(os.getcwd()))
+  plant = "cooper"
   plant_dir = os.path.join(dir,plant)
   #final_out = find_final_out(plant)
   # For now until results are updated TODO update
