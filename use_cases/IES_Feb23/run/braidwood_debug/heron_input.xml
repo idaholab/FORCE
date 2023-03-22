@@ -7,7 +7,7 @@
     <mode>opt</mode>
     <parallel>
       <runinfo>
-        <expectedTime>72:0:0</expectedTime>
+        <expectedTime>1:0:0</expectedTime>
         <clusterParameters>-P re_gen</clusterParameters>
         <memory>4gb</memory>
       </runinfo>
