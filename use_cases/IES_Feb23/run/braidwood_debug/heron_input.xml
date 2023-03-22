@@ -4,7 +4,7 @@
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
-    <mode>sweep</mode>
+    <mode>opt</mode>
     <parallel>
       <runinfo>
         <expectedTime>72:0:0</expectedTime>
@@ -34,7 +34,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>3</persistence>
+      <persistence>1</persistence>
     </optimization_settings>
   </Case>
 
@@ -57,7 +57,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <sweep_values>-1178,-1000</sweep_values> <!-- MWe -->
+          <opt_bounds>-1178,-1000</opt_bounds> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -98,7 +98,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <sweep_values>-29603.14,-25000</sweep_values>
+          <opt_bounds>-29603.14,-25000</opt_bounds>
         </capacity>
         <transfer>
           <linear>
@@ -227,7 +227,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <sweep_values>10,10000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <opt_bounds>10,100</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
           <fixed_value>0.1</fixed_value>
