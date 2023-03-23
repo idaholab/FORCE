@@ -13,8 +13,9 @@ def get_final_npv(plant):
   elif os.path.isfile(sweep_file):
     df = pd.read_csv(sweep_file)
     # ASSUME first line is the one to plot
-    final_npv = float(df.iloc[0].loc['mean_NPV'])
-    std_npv = float(df.iloc[0].loc['std_NPV'])
+    df_max = df.query('mean_NPV == mean_NPV.max()')
+    final_npv = float(df_max['mean_NPV'])
+    std_npv = float(df_max['std_NPV'])
     opt_tag = False
   else: 
     raise FileNotFoundError("No sweep or optimization results in the gold folder of {} case".format(plant))
@@ -77,8 +78,13 @@ def main():
   else: 
     print("Final out~inner file was not found, maybe the case has been re-run and the gold folder not updated?")
 
-
+def test(): 
+  plant = 'braidwood_sweep'
+  dir = os.path.dirname(os.path.abspath(__file__))
+  case_folder = os.path.join(dir, plant)
+  print(get_final_npv(case_folder))
 
 if __name__=="__main__":
  main()
+ #test()
 
