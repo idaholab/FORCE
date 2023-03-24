@@ -23,13 +23,15 @@ def get_yearly_cashflows(plant, final_out):
     list_rows =[]
     for l in lines:
       if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l):
-        ind = lines.index(l)
-        for i in range(2,23):
-          year = base_year+i-2
-          value = float(lines[ind+i].split(" ")[-1])
-          #print("Computing Cashflow {} for year {}: {}.".format(c,year, value))
-          new_row = pd.DataFrame.from_dict({ 'year':[year], c:[value]})
-          list_rows.append(new_row)
+        cashflow_name = l.split(" ")[-1][1:-3]
+        if c == cashflow_name:
+          ind = lines.index(l)
+          for i in range(2,23):
+            year = base_year+i-2
+            value = float(lines[ind+i].split(" ")[-1])
+            #print("Computing Cashflow {} for year {}: {}.".format(c,year, value))
+            new_row = pd.DataFrame.from_dict({ 'year':[year], c:[value]})
+            list_rows.append(new_row)
     df_c = pd.concat(list_rows, ignore_index=True)
     df_c.drop_duplicates(inplace=True)
     df_c.set_index(['year'], inplace=True)
@@ -104,16 +106,15 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
     'JET FUEL SALES':'blue',
     'DIESEL SALES':'green',
     'NAPHTHA SALES':'yellow',
-    'H2 PTC':'pink',
+    'H2 PTC':'grey',
     'E SALES':'black',
     'CAPEX':'orange',
-    'OM':'cornsilk1',
-    'CO2 SHIPPING':'chartreuse1',
-    'ELEC CAP MARKET':'gold3',
+    'OM':'pink',
+    'CO2 SHIPPING':'red',
+    'ELEC CAP MARKET':'brown',
   }
   fig, ax = plt.subplots()
-  #result_df.set_index(['year'], inplace=True)
-  result_df.plot.bar(ax=ax, y=color_mapping.keys(), stacked=True)
+  result_df.plot.bar(ax=ax, y=color_mapping.keys(), stacked=True, color=color_mapping.values())
   ax.set_ylabel('Cashflows (M$(2020))')
   ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   plt.legend(ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
@@ -212,7 +213,11 @@ def create_final_cashflows(yearly_df):
 def test(plant, final_out, plant_dir, total=True): 
   fcff = get_yearly_fcff(plant,final_out)
   yearly = get_yearly_cashflows(plant, final_out)
+  print(fcff)
+  print(yearly)
+  print(yearly.columns)
   yearly_df = fcff.join(yearly, how='left')
+  print(yearly_df)
   yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
   yearly_df.to_csv(os.path.join(plant_dir, plant+"_yearly_cashflow.csv"))
   lifetime_df = create_final_cashflows(yearly_df)
