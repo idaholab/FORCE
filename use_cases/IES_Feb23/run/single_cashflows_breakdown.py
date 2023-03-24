@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os, argparse
 
-""" The goal of this script is to produce a csv and png files showing the yearly and total 
+""" The goal of this script is to produce csv and png files showing the yearly and total 
     cashflows breakdown for a given NPP"""
 
 CASHFLOWS = ['htseCAPEX', 'htseFOM', 'htseVOM','htseELEC_CAP_MARKET','htse_amortize_htseCAPEX', 'htse_depreciate_htseCAPEX',\
@@ -22,7 +22,7 @@ def get_yearly_cashflows(plant, final_out):
   for c in CASHFLOWS: 
     list_rows =[]
     for l in lines:
-      if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l) and ("amortize" not in l) and ("depreciate" not in l):
+      if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l):
         ind = lines.index(l)
         for i in range(2,23):
           year = base_year+i-2
