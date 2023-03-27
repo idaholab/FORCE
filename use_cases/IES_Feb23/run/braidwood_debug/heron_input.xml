@@ -74,7 +74,7 @@
       </produces>
       <economics>
         <lifetime>20</lifetime>
-        <CashFlow name="htse_capex" type="one-time" taxable="False" inflation="None" mult_target="False">
+        <CashFlow name="capexHTSE" type="one-time" taxable="False" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
           </driver>
