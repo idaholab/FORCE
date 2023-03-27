@@ -133,21 +133,27 @@ def plot_lifetime_cashflow(plant, plant_dir, lifetime_df):
   """
   result_df = lifetime_df.copy()
   npv = result_df['npv']
+  print('NPV {}'.format(npv))
   result_df.drop(columns={'npv'}, inplace=True)
-  print(npv.to_numpy())
   # Compute total capex, o&m, elec cap market from more detailed costs
-  try: 
-    result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
-    result_df.drop(columns=['htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
-  except KeyError: 
-    result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']
-    result_df.drop(columns=['htse_capex', 'ft_capex'], inplace=True)
-  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom'], inplace=True)
+  # capacity market
+  cap_cashflows = [c for c in CASHFLOWS if 'ELEC_CAP_MARKET' in c]
+  result_df['elec_cap_market'] = result_df[cap_cashflows].sum(axis=1)
+  result_df.drop(columns = cap_cashflows, inplace=True)
+  # capex
+  capex_cashflows = [c for c in CASHFLOWS if 'CAPEX' in c]
+  result_df['capex'] = result_df[capex_cashflows].sum(axis=1)
+  result_df.drop(columns = capex_cashflows, inplace = True)
+  # om
+  om_cashflows = [c for c in CASHFLOWS if ('OM' in c)]# or ('co2' in c)]
+  result_df['om'] = result_df[om_cashflows].sum(axis=1)
+  result_df.drop(columns = om_cashflows, inplace=True)
   # TRanspose for plotting
   df = result_df.transpose()
   df.reset_index(inplace=True)
   df.rename(columns={'index':'category', 0:'value'}, inplace=True)
+  df = df.sort_values(by=['value'], ascending=False)
+  df.reset_index(inplace=True)
   df['value'] = df['value'].div(1e6)
   # TODO rename categories with lambda x: " ".join(x.split("_")).upper()
   df['category'] = df['category'].apply(lambda x: " ".join(x.split("_")).upper())
@@ -213,11 +219,7 @@ def create_final_cashflows(yearly_df):
 def test(plant, final_out, plant_dir, total=True): 
   fcff = get_yearly_fcff(plant,final_out)
   yearly = get_yearly_cashflows(plant, final_out)
-  print(fcff)
-  print(yearly)
-  print(yearly.columns)
   yearly_df = fcff.join(yearly, how='left')
-  print(yearly_df)
   yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
   yearly_df.to_csv(os.path.join(plant_dir, plant+"_yearly_cashflow.csv"))
   lifetime_df = create_final_cashflows(yearly_df)
