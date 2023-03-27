@@ -14,7 +14,7 @@
     </parallel>
     <!--<debug></debug>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>5</num_arma_samples>
+    <num_arma_samples>4</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -34,7 +34,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>5</persistence>
+      <persistence>3</persistence>
     </optimization_settings>
   </Case>
 
@@ -74,34 +74,22 @@
       </produces>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name="htse_capex_scalable" type="one-time" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="htseCAPEX" type="one-time" taxable="False" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-1543130</fixed_value> <!--$/MWe-->
+            <fixed_value>-702600000</fixed_value> <!--New one term capex regression-->
           </reference_price>
           <reference_driver>
-            <fixed_value>-1</fixed_value>
+            <fixed_value>-1076</fixed_value>
           </reference_driver>
           <scaling_factor_x>
-            <fixed_value>0.501</fixed_value>
+            <fixed_value>0.908</fixed_value>
           </scaling_factor_x>
           <depreciate>15</depreciate>
         </CashFlow>
-        <CashFlow name="htse_capex_modular" type="one-time" taxable="True" inflation="None" mult_target="False">
-          <driver>
-            <variable>htse_capacity</variable>
-          </driver>
-          <reference_price>
-            <fixed_value>-653805</fixed_value><!--$/MWe-->
-          </reference_price>
-          <reference_driver>
-            <fixed_value>-1</fixed_value>
-          </reference_driver>
-          <depreciate>15</depreciate>
-        </CashFlow>
-        <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="htseFOM" type="repeating" period="year" taxable="False" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
           </driver>
@@ -110,7 +98,7 @@
             <!-- $32.64/kW-dc-year so $30.32/kW-ac-year so $30,320/Mw-ac-year -->
           </reference_price>
         </CashFlow>
-        <CashFlow name="htse_vom" type="repeating" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="htseVOM" type="repeating" taxable="True" inflation="None" mult_target="False">
           <driver>
             <activity>electricity</activity>
           </driver>
@@ -119,7 +107,7 @@
             <!-- $3.41/MWh-dc so $3.168/MWh-ac (excl. energy costs) -->
           </reference_price>
         </CashFlow>
-        <CashFlow name="htse_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="htseELEC_CAP_MARKET" period="year" type="repeating" taxable="False" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
             <variable>htse_capacity</variable>
@@ -127,14 +115,6 @@
           <reference_price>
             <fixed_value>27933.45</fixed_value>
             <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
-          </reference_price>
-        </CashFlow>
-        <CashFlow name='h2_ptc' type='repeating' taxable='True' inflation='None' mult_target='False'>
-          <driver>
-            <activity>electricity</activity>
-          </driver>
-          <reference_price>
-            <Function method='h2_ptc'>functions</Function>
           </reference_price>
         </CashFlow>
       </economics>
@@ -160,7 +140,7 @@
       </produces>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="ftCAPEX" type="one-time" taxable="False" inflation="None" mult_target="False">
           <driver>
             <variable>ft_capacity</variable>
           </driver>
@@ -176,7 +156,7 @@
           </scaling_factor_x>
           <depreciate>15</depreciate>
         </CashFlow>
-        <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="ftFOM" type="repeating" period="year" taxable="False" inflation="None" mult_target="False">
           <driver>
             <fixed_value>1</fixed_value>
           </driver>
@@ -184,7 +164,7 @@
             <fixed_value>-21732221</fixed_value>
           </reference_price>
         </CashFlow>
-        <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="ftVOM" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
           <driver>
             <fixed_value>1</fixed_value>
           </driver>
@@ -203,6 +183,14 @@
             <Function method='co2_supply_curve'>functions</Function>
           </reference_price>
         </CashFlow>
+	<CashFlow name="h2_ptc" period="hour" type="repeating" taxable="False" inflation="None" mult_target="False">
+	  <driver>
+	    <activity>h2</activity>
+	  </driver>
+	  <reference_price>
+	    <Function method="h2_ptc_ft">functions</Function>
+	  </reference_price>
+	</CashFlow>
       </economics>
     </Component>
 
@@ -216,7 +204,7 @@
       </demands>
       <economics>
         <lifetime>1</lifetime>
-        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+        <CashFlow name="ftELEC_CAP_MARKET" period="year" type="repeating" taxable="False" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
             <variable>ft_elec_consumption_capacity</variable>
@@ -318,7 +306,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>2513,75792</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <opt_bounds>10,75792</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
           <fixed_value>100</fixed_value>
@@ -329,7 +317,7 @@
       </stores>
       <economics>
         <lifetime>30</lifetime>
-        <CashFlow name='h2_storage_capex' inflation="none" mult_target="False" taxable="True" type="one-time">
+        <CashFlow name='storageCAPEX' inflation="none" mult_target="False" taxable="False" type="one-time">
           <driver>
             <variable>h2_storage_capacity</variable>
           </driver>
