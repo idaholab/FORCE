@@ -1,15 +1,14 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import os
-from cashflows_breakdown import get_final_npv, find_final_out, compute_cashflows
+import os, argparse
 
-""" The goal of this script is to produce a csv and png files showing the yearly and total 
+""" The goal of this script is to produce csv and png files showing the yearly and total 
     cashflows breakdown for a given NPP"""
 
-CASHFLOWS = ['h2_storage_capex', 'diesel_sales','jet_fuel_sales','naphtha_sales','e_sales'\
-            ,'co2_shipping','ft_vom','ft_fom','ft_capex','h2_ptc','htse_elec_cap_market','htse_vom','htse_fom','htse_capex'] #cahnge elec_cap_market to ft_elec_cap_market and add it TODO
-
+CASHFLOWS = ['htseCAPEX', 'htseFOM', 'htseVOM','htseELEC_CAP_MARKET','htse_amortize_htseCAPEX', 'htse_depreciate_htseCAPEX',\
+              'ftCAPEX', 'ftFOM', 'ftVOM', 'co2_shipping', 'h2_ptc', 'ft_amortize_ftCAPEX', 'ft_depreciate_ftCAPEX',\
+                'ftELEC_CAP_MARKET', 'e_sales', 'naphtha_sales','diesel_sales', 'jet_fuel_sales','storageCAPEX']
 DISCOUNT_RATE = 0.1 #10% used 
 
 def get_yearly_cashflows(plant, final_out):
@@ -23,14 +22,16 @@ def get_yearly_cashflows(plant, final_out):
   for c in CASHFLOWS: 
     list_rows =[]
     for l in lines:
-      if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l) and ("amortize" not in l) and ("depreciate" not in l):
-        ind = lines.index(l)
-        for i in range(2,23):
-          year = base_year+i-2
-          value = float(lines[ind+i].split(" ")[-1])
-          #print("Computing Cashflow {} for year {}: {}.".format(c,year, value))
-          new_row = pd.DataFrame.from_dict({ 'year':[year], c:[value]})
-          list_rows.append(new_row)
+      if ("CashFlow INFO (proj comp): Project Cashflow" in l) and (c in l):
+        cashflow_name = l.split(" ")[-1][1:-3]
+        if c == cashflow_name:
+          ind = lines.index(l)
+          for i in range(2,23):
+            year = base_year+i-2
+            value = float(lines[ind+i].split(" ")[-1])
+            #print("Computing Cashflow {} for year {}: {}.".format(c,year, value))
+            new_row = pd.DataFrame.from_dict({ 'year':[year], c:[value]})
+            list_rows.append(new_row)
     df_c = pd.concat(list_rows, ignore_index=True)
     df_c.drop_duplicates(inplace=True)
     df_c.set_index(['year'], inplace=True)
@@ -50,7 +51,7 @@ def get_yearly_fcff(plant, final_out):
         to_split+=lines[ind+i]
       # Remove first and last characters
       to_split = to_split[2:-2]
-      fcff_list = to_split.split("   ")
+      fcff_list = to_split.split("  ")
       fcff_list = [float(f) for f in fcff_list]
   for i in range(len(fcff_list)):
     new_row = pd.DataFrame.from_dict({"year":[2020+i],"fcff":[fcff_list[i]]})
@@ -82,12 +83,18 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
   # Combine for better visibility
   years = result_df.index
   # Compute total capex, o&m, elec cap market from more detailed costs
-  result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
-  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom', 'htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
-  #result_df['elec_cap_market']=result_df['ft_elec_cap_market']+result_df['htse_elec_cap_market']
-  #result_df.drop(columns=['ft_elec_cap_market', 'htse_elec_cap_market'], inplace=True)
-  # TODO: take care of elec cap market later
+  # capex
+  capex_cashflows = [c for c in CASHFLOWS if 'CAPEX' in c]
+  result_df['capex'] = result_df[capex_cashflows].sum(axis=1)
+  result_df.drop(columns = capex_cashflows, inplace = True)
+  # om
+  om_cashflows = [c for c in CASHFLOWS if ('OM' in c)]# or ('co2' in c)]
+  result_df['om'] = result_df[om_cashflows].sum(axis=1)
+  result_df.drop(columns = om_cashflows, inplace=True)
+  # capacity market
+  cap_cashflows = [c for c in CASHFLOWS if 'ELEC_CAP_MARKET' in c]
+  result_df['elec_cap_market'] = result_df[cap_cashflows].sum(axis=1)
+  result_df.drop(columns = cap_cashflows, inplace=True)
   # Divide by 1e6 for results in M$ 
   for c in list(result_df.columns):
     if 'year' not in str(c):
@@ -99,16 +106,15 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
     'JET FUEL SALES':'blue',
     'DIESEL SALES':'green',
     'NAPHTHA SALES':'yellow',
-    'H2 PTC':'pink',
+    'H2 PTC':'grey',
     'E SALES':'black',
     'CAPEX':'orange',
-    'OM':'cornsilk1',
-    'CO2 SHIPPING':'chartreuse1',
-    'HTSE ELEC CAP MARKET':'gold3',
+    'OM':'pink',
+    'CO2 SHIPPING':'red',
+    'ELEC CAP MARKET':'brown',
   }
   fig, ax = plt.subplots()
-  #result_df.set_index(['year'], inplace=True)
-  result_df.plot.bar(ax=ax, y=color_mapping.keys(), stacked=True)
+  result_df.plot.bar(ax=ax, y=color_mapping.keys(), stacked=True, color=color_mapping.values())
   ax.set_ylabel('Cashflows (M$(2020))')
   ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   plt.legend(ncol = 1, bbox_to_anchor=(1.05,1.0), frameon = False, loc="upper left")
@@ -118,23 +124,36 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
   plt.savefig(os.path.join(plant_dir, plant+"_yearly_cashflow_breakdown.png"))
 
 def plot_lifetime_cashflow(plant, plant_dir, lifetime_df):
+  """
+  Plot the lifetime cashflows from the aggregated discounted cashflows
+    @ In, plant, str, name of the case
+    @ In, plant_dir, str, path to the case directory
+    @ In, lifetime_df, pd.DataFrame, dataframe with the total discounted cashflows
+    @ Out, None
+  """
   result_df = lifetime_df.copy()
   npv = result_df['npv']
+  print('NPV {}'.format(npv))
   result_df.drop(columns={'npv'}, inplace=True)
-  print(npv.to_numpy())
   # Compute total capex, o&m, elec cap market from more detailed costs
-  try: 
-    result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']+result_df['h2_storage_capex']
-    result_df.drop(columns=['htse_capex', 'ft_capex','h2_storage_capex'], inplace=True)
-  except KeyError: 
-    result_df['capex'] = result_df['htse_capex']+result_df['ft_capex']
-    result_df.drop(columns=['htse_capex', 'ft_capex'], inplace=True)
-  result_df['om']=result_df['ft_vom']+result_df['ft_fom']+result_df['htse_vom']+result_df['htse_fom']+result_df['co2_shipping']
-  result_df.drop(columns=['ft_vom', 'ft_fom', 'htse_vom', 'htse_fom'], inplace=True)
+  # capacity market
+  cap_cashflows = [c for c in CASHFLOWS if 'ELEC_CAP_MARKET' in c]
+  result_df['elec_cap_market'] = result_df[cap_cashflows].sum(axis=1)
+  result_df.drop(columns = cap_cashflows, inplace=True)
+  # capex
+  capex_cashflows = [c for c in CASHFLOWS if 'CAPEX' in c]
+  result_df['capex'] = result_df[capex_cashflows].sum(axis=1)
+  result_df.drop(columns = capex_cashflows, inplace = True)
+  # om
+  om_cashflows = [c for c in CASHFLOWS if ('OM' in c)]# or ('co2' in c)]
+  result_df['om'] = result_df[om_cashflows].sum(axis=1)
+  result_df.drop(columns = om_cashflows, inplace=True)
   # TRanspose for plotting
   df = result_df.transpose()
   df.reset_index(inplace=True)
   df.rename(columns={'index':'category', 0:'value'}, inplace=True)
+  df = df.sort_values(by=['value'], ascending=False)
+  df.reset_index(inplace=True)
   df['value'] = df['value'].div(1e6)
   # TODO rename categories with lambda x: " ".join(x.split("_")).upper()
   df['category'] = df['category'].apply(lambda x: " ".join(x.split("_")).upper())
@@ -220,18 +239,17 @@ def main(plant, final_out, plant_dir, total=True):
 
 
 if __name__ == "__main__":
+  parser = argparse.ArgumentParser()
+  parser.add_argument('case_name', type=str, help="Case folder name in the run directory")
+  args = parser.parse_args()
   dir = os.path.dirname(os.path.abspath(__file__))
   os.chdir(dir)
   print("Current Directory: {}".format(os.getcwd()))
-  plant = "cooper"
-  plant_dir = os.path.join(dir,plant)
-  #final_out = find_final_out(plant)
-  # For now until results are updated TODO update
-  final_out = "braidwood_baseline_synfuel/gold/out~inner"
-  final_out = "cooper/gold/out~inner"
+  plant_dir = os.path.join(dir, args.case_name)
+  final_out = os.path.join(plant_dir, 'gold', 'out~inner')
   if final_out:
     print("Final out was found here: {}".format(final_out))
     #main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
-    test(plant, final_out, plant_dir)
+    test(args.case_name, final_out, plant_dir)
   else:
     print("Final out was not found!!")
