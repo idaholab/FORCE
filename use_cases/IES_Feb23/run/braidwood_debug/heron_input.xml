@@ -1,20 +1,24 @@
 <HERON>
-  <Case name="b_sweep">
+  <Case name="braidwood">
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
     <label name="elec_data">covid</label>
-    <mode>opt</mode>
-    <parallel>
+    <mode>sweep</mode>
+    <debug>
+      <inner_samples>1</inner_samples>
+      <macro_steps>20</macro_steps>
+      <dispatch_plot>True</dispatch_plot>
+    </debug>
+    <!--<parallel>
       <runinfo>
-        <expectedTime>1:0:0</expectedTime>
+        <expectedTime>72:0:0</expectedTime>
         <clusterParameters>-P re_gen</clusterParameters>
         <memory>4gb</memory>
       </runinfo>
-    </parallel>
-    <!--<debug></debug>-->
+    </parallel>-->
     <verbosity>debug</verbosity>
-    <num_arma_samples>1</num_arma_samples>
+    <num_arma_samples>3</num_arma_samples>
     <time_discretization>
       <time_variable>hour</time_variable>
       <year_variable>Year</year_variable>
@@ -34,7 +38,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>1</persistence>
+      <persistence>2</persistence>
     </optimization_settings>
   </Case>
 
@@ -48,7 +52,7 @@
         </capacity>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>60</lifetime>
       </economics>
     </Component>
 
@@ -57,7 +61,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <opt_bounds>-1178,-1000</opt_bounds> <!-- MWe -->
+          <sweep_values debug_value="-1178">-1175,-500,-100</sweep_values> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -68,26 +72,74 @@
           <linear>
             <rate resource="electricity">-1</rate>
             <rate resource="h2">25.13</rate>
-            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh -->
+            <!-- 39.8 kWh/kg-H2 -> 25.13 kg-H2/MWh so 3600x25.13=90468 kg-H2/h ? NO don't think so-->
           </linear>
         </transfer>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
-        <CashFlow name="capexHTSE" type="one-time" taxable="False" inflation="None" mult_target="False">
+        <lifetime>30</lifetime>
+        <CashFlow name="htse_capex_scalable" type="one-time" taxable="True" inflation="None" mult_target="False">
           <driver>
             <variable>htse_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-702600000</fixed_value> <!--New one term capex regression-->
+            <fixed_value>-1543130</fixed_value> <!--$/MWe-->
           </reference_price>
           <reference_driver>
-            <fixed_value>-1076</fixed_value>
+            <fixed_value>-1</fixed_value>
           </reference_driver>
           <scaling_factor_x>
-            <fixed_value>0.908</fixed_value>
+            <fixed_value>0.501</fixed_value>
           </scaling_factor_x>
           <depreciate>15</depreciate>
+        </CashFlow>
+        <CashFlow name="htse_capex_modular" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>htse_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-653805</fixed_value><!--$/MWe-->
+          </reference_price>
+          <reference_driver>
+            <fixed_value>-1</fixed_value>
+          </reference_driver>
+          <depreciate>15</depreciate>
+        </CashFlow>
+        <CashFlow name="htse_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>htse_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>30320</fixed_value>
+            <!-- $32.64/kW-dc-year so $30.32/kW-ac-year so $30,320/Mw-ac-year -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="htse_vom" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>3.168</fixed_value>
+            <!-- $3.41/MWh-dc so $3.168/MWh-ac (excl. energy costs) -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="htse_elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
+          <driver>
+            <variable>htse_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>27933.45</fixed_value>
+            <!-- $76.53/MWe-day for 2020/2021, so $27933.45/MWe-year, sweep values for SA later ?-->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name='h2_ptc' type='repeating' taxable='False' inflation='None' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+          </driver>
+          <reference_price>
+            <Function method='h2_ptc'>functions</Function>
+          </reference_price>
         </CashFlow>
       </economics>
     </Component>
@@ -98,7 +150,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-29603.14,-25000</opt_bounds>
+          <sweep_values debug_value="-29603.14">-29528,-15000,-2513,-200</sweep_values>
         </capacity>
         <transfer>
           <linear>
@@ -111,7 +163,50 @@
         </transfer>
       </produces>
       <economics>
-        <lifetime>20</lifetime>
+        <lifetime>30</lifetime>
+        <CashFlow name="ft_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>ft_capacity</variable>
+          </driver>
+          <reference_driver>
+            <fixed_value>-10625</fixed_value> <!-- kg-H2/h, corresponds to 400MW data-->
+          </reference_driver>
+          <reference_price>
+            <fixed_value>-158102945</fixed_value> <!-- $2020 -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.626</fixed_value>
+            <!-- From logarithmic regression in HERON_data-->
+          </scaling_factor_x>
+          <depreciate>15</depreciate>
+        </CashFlow>
+        <CashFlow name="ft_fom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-21732221</fixed_value>
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="ft_vom" type="repeating" period="year" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_price>
+            <fixed_value>-7640007</fixed_value>
+          </reference_price>
+        </CashFlow>
+        <CashFlow name='co2_shipping' period='year' type='repeating' taxable='True' inflation='None' mult_target='False'>
+          <driver>
+            <fixed_value>1</fixed_value>
+          </driver>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <reference_price>
+            <Function method='co2_supply_curve'>functions</Function>
+          </reference_price>
+        </CashFlow>
       </economics>
     </Component>
 
@@ -125,7 +220,7 @@
       </demands>
       <economics>
         <lifetime>1</lifetime>
-        <CashFlow name="ft_elec_cap_market" period="year" type="repeating" taxable="False" inflation="None" mult_target="False">
+        <CashFlow name="elec_cap_market" period="year" type="repeating" taxable="True" inflation="None" mult_target="False">
           <!-- Account for the lost in revenue from not selling to the electricity capacity market -->
           <driver>
             <variable>ft_elec_consumption_capacity</variable>
@@ -227,18 +322,18 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>10,100</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <sweep_values debug_value="100000">50,5000,10000,25000,50000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
-          <fixed_value>0.1</fixed_value>
+          <fixed_value>0</fixed_value>
           <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>
         <!-- Assumption -->
       </stores>
       <economics>
-        <lifetime>20</lifetime>
-        <CashFlow name='h2_storage_capex' inflation="none" mult_target="False" taxable="False" type="one-time">
+        <lifetime>30</lifetime>
+        <CashFlow name='h2_storage_capex' inflation="none" mult_target="False" taxable="True" type="one-time">
           <driver>
             <variable>h2_storage_capacity</variable>
           </driver>
