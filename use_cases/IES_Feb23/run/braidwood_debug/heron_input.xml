@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="braidwood">
+  <Case name="braidwood_debug">
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
