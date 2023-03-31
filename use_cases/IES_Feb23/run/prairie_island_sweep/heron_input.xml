@@ -1,8 +1,8 @@
 <HERON>
-  <Case name="b_sweep">
+  <Case name="prairie_island">
     <label name="scenario">ref</label>
-    <label name="location">braidwood</label>
-    <label name="fuel_region">illinois</label>
+    <label name="location">prairie_island</label>
+    <label name="fuel_region">minnesota</label>
     <label name="elec_data">covid</label>
     <mode>sweep</mode>
     <parallel>
@@ -24,7 +24,7 @@
     <economics>
       <ProjectTime>20</ProjectTime>
       <DiscountRate>0.1</DiscountRate>
-      <tax>0.2960</tax>
+      <tax>0.2874</tax>
       <inflation>0.0218</inflation>
       <verbosity>50</verbosity>
     </economics>
@@ -34,7 +34,7 @@
     <optimization_settings>
       <metric>expectedValue</metric>
       <type>max</type>
-      <persistence>3</persistence>
+      <persistence>5</persistence>
     </optimization_settings>
   </Case>
 
@@ -44,7 +44,7 @@
     <Component name="npp">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity">
-          <fixed_value>1193</fixed_value> <!-- MWe, 1 unit -->
+          <fixed_value>522</fixed_value> <!-- MWe, 1 unit -->
         </capacity>
       </produces>
       <economics>
@@ -57,7 +57,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <sweep_values>-1178,-750,-500</sweep_values> <!-- MWe -->
+          <sweep_values>-507,-250,-100</sweep_values> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -126,7 +126,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <sweep_values>-29603.14,-20000,-10000</sweep_values>
+          <sweep_values>-12741,-6000,-2513</sweep_values>
         </capacity>
         <transfer>
           <linear>
@@ -306,10 +306,10 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <sweep_values>10,10000,100000,200000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <sweep_values>10,35000,70000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
-          <fixed_value>0.1</fixed_value>
+          <fixed_value>100</fixed_value>
           <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>
@@ -333,7 +333,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_braidwood_2012_2021_DA/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_prairie_island_1_2013_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 </HERON>
