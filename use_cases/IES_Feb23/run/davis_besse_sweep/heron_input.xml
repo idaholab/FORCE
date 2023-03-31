@@ -1,10 +1,10 @@
 <HERON>
-  <Case name="braidwood">
+  <Case name="davis_besse">
     <label name="scenario">ref</label>
-    <label name="location">braidwood</label>
-    <label name="fuel_region">illinois</label>
+    <label name="location">davis_besse</label>
+    <label name="fuel_region">ohio</label>
     <label name="elec_data">covid</label>
-    <mode>opt</mode>
+    <mode>sweep</mode>
     <parallel>
       <runinfo>
         <expectedTime>72:0:0</expectedTime>
@@ -24,7 +24,7 @@
     <economics>
       <ProjectTime>20</ProjectTime>
       <DiscountRate>0.1</DiscountRate>
-      <tax>0.2960</tax>
+      <tax>0.2100</tax>
       <inflation>0.0218</inflation>
       <verbosity>50</verbosity>
     </economics>
@@ -44,7 +44,7 @@
     <Component name="npp">
       <produces resource="electricity" dispatch="fixed">
         <capacity resource="electricity">
-          <fixed_value>1193</fixed_value> <!-- MWe, 1 unit -->
+          <fixed_value>894</fixed_value> <!-- MWe, 1 unit -->
         </capacity>
       </produces>
       <economics>
@@ -57,7 +57,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <opt_bounds>-1178,-100</opt_bounds> <!-- MWe -->
+          <sweep_values>-879,-450,-100</sweep_values> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -126,7 +126,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <opt_bounds>-29603.14,-2513</opt_bounds>
+          <sweep_values>-22089,-10000,-2513</sweep_values>
         </capacity>
         <transfer>
           <linear>
@@ -306,10 +306,10 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <opt_bounds>10,200000</opt_bounds> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <sweep_values>10,45000,90000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
-          <fixed_value>0.1</fixed_value>
+          <fixed_value>100</fixed_value>
           <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>
@@ -333,7 +333,7 @@
   </Components>
 
   <DataGenerators>
-    <ARMA name='price' variable="price">../../train/Output_braidwood_2012_2021_DA/arma.pk</ARMA>
+    <ARMA name='price' variable="price">../../train/Output_davis_besse_2012_2021_DA/arma.pk</ARMA>
     <Function name="functions">../functions.py</Function>
   </DataGenerators>
 </HERON>
