@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="davis_besse">
+  <Case name="davis_besse_sweep">
     <label name="scenario">ref</label>
     <label name="location">davis_besse</label>
     <label name="fuel_region">ohio</label>

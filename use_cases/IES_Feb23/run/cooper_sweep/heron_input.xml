@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="cooper">
+  <Case name="cooper_sweep">
     <label name="scenario">ref</label>
     <label name="location">cooper</label>
     <label name="fuel_region">nebraska</label>
@@ -309,7 +309,7 @@
           <sweep_values>10,40000,75792</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
-          <fixed_value>100</fixed_value>
+          <fixed_value>0.1</fixed_value>
           <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>

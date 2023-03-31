@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="stp">
+  <Case name="stp_sweep">
     <label name="scenario">ref</label>
     <label name="location">south_texas_project</label>
     <label name="fuel_region">west_south_central</label>
@@ -309,7 +309,7 @@
           <sweep_values>10,100000,200000,400000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
-          <fixed_value>100</fixed_value>
+          <fixed_value>0.1</fixed_value>
           <!-- 10% of capacity to try and avoid crashing the optimization at the beginning of an inner run -->
         </initial_stored>
         <RTE>0.9</RTE>
