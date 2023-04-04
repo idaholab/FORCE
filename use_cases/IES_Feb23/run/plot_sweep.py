@@ -7,7 +7,7 @@ import numpy as np
   and cases expressed in terms of HTSE, FT and H2 storage capacities"""
 
 
-def plot_hist(sweep_df):
+def plot_hist(plant_dir, case, sweep_df):
   # Compute 2x STD in a new column
   # Create new column with label "HTSE (MW), FT (ton-H2/h), h2 storage (ton-H2)"
   rename_dico = {'npp_capacity':'NPP (MW)',
@@ -43,8 +43,9 @@ def plot_hist(sweep_df):
                     rowLabels=table_df.index,
                     loc='upper right')
   fig.tight_layout()
-  plt.show()
-  exit()
+  tosave = os.path.join(plant_dir,case+'_results.png' )
+  fig.savefig(tosave)
+  return None
 
 
 def pp_sweep_results(sweep_file, mean_NPV_baseline, std_NPV_baseline):
@@ -92,7 +93,7 @@ def main():
   if sweep_file:
     mean_baseline, std_baseline = get_baseline_NPV(case)
     sweep_df = pp_sweep_results(sweep_file, mean_baseline, std_baseline)
-    plot_hist(sweep_df)
+    plot_hist(plant_dir, case, sweep_df)
   else:
     raise FileNotFoundError("Sweep results not found")
 
