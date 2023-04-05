@@ -8,14 +8,17 @@ def get_final_npv(plant):
   opt_tag = True
   if os.path.isfile(opt_out_file):
     df = pd.read_csv(opt_out_file)
-    final_npv = float(df.iloc[-1].loc['mean_NPV'])
-    std_npv = float(df.iloc[-1].loc['std_NPV'])
+    final_npv = [float(df.iloc[-1].loc['mean_NPV'])]
+    std_npv = [float(df.iloc[-1].loc['std_NPV'])]
   elif os.path.isfile(sweep_file):
     df = pd.read_csv(sweep_file)
-    # ASSUME first line is the one to plot
-    df_max = df.query('mean_NPV == mean_NPV.max()')
-    final_npv = float(df_max['mean_NPV'])
-    std_npv = float(df_max['std_NPV'])
+    # get final npv for first 4 highest NPV
+    df.sort_values(by=['mean_NPV'], ascending=False, inplace=True)
+    df.reset_index(inplace=True)
+    df.to_csv(os.path.join('.', plant, 'gold', 'sorted_sweep.csv'))
+    df = df.iloc[:4,:]
+    final_npv = df.mean_NPV.to_list()
+    std_NPV = df.std_NPV.to_list()
     opt_tag = False
   else: 
     raise FileNotFoundError("No sweep or optimization results in the gold folder of {} case".format(plant))
@@ -60,10 +63,12 @@ def find_final_out(plant):
         avg_npv = sum(npvs)/len(npvs)
         out_to_npv[out_file] = avg_npv
   final_out = False
-  for out_file, npv in out_to_npv.items():
-    if round(npv,1) == round(final_npv,1):
-      final_out = out_file
-  return final_out
+  final_out_dic = {}
+  for idx, f_npv in enumerate(final_npv): 
+    for out_file, npv in out_to_npv.items():
+      if round(npv,1) == round(f_npv,1):
+        final_out_dic[idx] = out_file
+  return final_out_dic
 
 def main():
   parser = argparse.ArgumentParser()
@@ -72,11 +77,13 @@ def main():
   dir = os.path.dirname(os.path.abspath(__file__))
   case_folder = os.path.join(dir, args.case_name)
   final_out = find_final_out(args.case_name)
-  if final_out: 
-    print("Final out~inner found here: {}, \n and copied to gold, commit it!".format(final_out))
-    shutil.copy(final_out, os.path.join(case_folder, "gold", "out~inner"))
+  print(final_out)
+  if final_out:
+    for k,f in final_out.items():
+      print("Out~inner for case {} found here: {}, \n and copied to gold, commit it!".format(k,f))
+      shutil.copy(f, os.path.join(case_folder, "gold", "out~inner"+str(k)))
   else: 
-    print("Final out~inner file was not found, maybe the case has been re-run and the gold folder not updated?")
+    print("Final out~inner file(s) were not found, maybe the case has been re-run and the gold folder not updated?")
 
 def test(): 
   plant = 'braidwood_sweep'
