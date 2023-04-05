@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import os, argparse
+import os, argparse, glob
 
 """ The goal of this script is to produce csv and png files showing the yearly and total 
     cashflows breakdown for a given NPP"""
@@ -78,7 +78,15 @@ def compute_taxes(yearly_df, plant):
   df.set_index(['year'], inplace=True)
   return df
 
-def plot_yearly_cashflow(yearly_df, plant_dir, plant): 
+def plot_yearly_cashflow(yearly_df, plant_dir, plant, tag): 
+  """
+  Plot the yearly cashflows from the discounted cashflows
+    @ In, yearly_df, pd.DataFrame, dataframe with the discounted cashflows
+    @ In, plant_dir, str, path to the case directory
+    @ In, plant, str, name of the case
+    @ In, tag, str, indicates either the case number for a sweep run or "opt" for an optimization run
+    @ Out, None
+  """
   result_df = yearly_df.copy()
   # Combine for better visibility
   years = result_df.index
@@ -121,14 +129,15 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant):
   plt.gcf().set_size_inches(11, 6)
   plt.tight_layout()
   plt.subplots_adjust(bottom=0.1)
-  plt.savefig(os.path.join(plant_dir, plant+"_yearly_cashflow_breakdown.png"))
+  plt.savefig(os.path.join(plant_dir, plant++"_"+tag+"_yearly_cashflow_breakdown.png"))
 
-def plot_lifetime_cashflow(plant, plant_dir, lifetime_df):
+def plot_lifetime_cashflow(plant, plant_dir, lifetime_df, tag):
   """
   Plot the lifetime cashflows from the aggregated discounted cashflows
     @ In, plant, str, name of the case
     @ In, plant_dir, str, path to the case directory
     @ In, lifetime_df, pd.DataFrame, dataframe with the total discounted cashflows
+    @ In, tag, str, indicates either the case number for a sweep run or "opt" for an optimization run
     @ Out, None
   """
   result_df = lifetime_df.copy()
@@ -188,7 +197,7 @@ def plot_lifetime_cashflow(plant, plant_dir, lifetime_df):
   plt.xticks(rotation=90)
   plt.gcf().set_size_inches(11, 6)
   plt.tight_layout()
-  plt.savefig(os.path.join(plant_dir, plant+"_total_cashflow_breakdown.png"))
+  plt.savefig(os.path.join(plant_dir, plant+"_"+tag+"_total_cashflow_breakdown.png"))
   return None
 
 def discount_yearly_cashflow(yearly_df, discount_rate):
@@ -216,16 +225,24 @@ def create_final_cashflows(yearly_df):
   return lifetime_df
 
 
-def test(plant, final_out, plant_dir, total=True): 
+def test(plant, final_out, plant_dir, total=True, tag=None): 
   fcff = get_yearly_fcff(plant,final_out)
   yearly = get_yearly_cashflows(plant, final_out)
   yearly_df = fcff.join(yearly, how='left')
   yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
-  yearly_df.to_csv(os.path.join(plant_dir, plant+"_yearly_cashflow.csv"))
   lifetime_df = create_final_cashflows(yearly_df)
-  lifetime_df.to_csv(os.path.join(plant_dir, plant+"_total_cashflows.csv"))
-  plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant)
-  plot_lifetime_cashflow(plant, plant_dir,lifetime_df)
+  if tag: 
+    yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_yearly_cashflow.csv"))
+    lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_total_cashflows.csv"))
+    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=str(tag))
+    plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=str(tag))
+  else:
+    tag = "opt"
+    yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_yearly_cashflow.csv"))
+    lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_total_cashflows.csv"))
+    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=tag)
+    plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=tag)
+
 
 def main(plant, final_out, plant_dir, total=True):
   if total: 
@@ -246,7 +263,16 @@ if __name__ == "__main__":
   os.chdir(dir)
   print("Current Directory: {}".format(os.getcwd()))
   plant_dir = os.path.join(dir, args.case_name)
-  final_out = os.path.join(plant_dir, 'gold', 'out~inner')
+  for final_out in glob.glob(plant_dir+'/gold/out~inner*'):
+    print("Breaking down cashflows for {}".format(final_out))
+    if str(final_out).split("~")[-1] != "inner":
+      tag = str(final_out).split("~")[-1][-1]
+      print("Case # {} in sweep results ".format(tag))
+    else:
+      tag = None
+      print("Optimization results in {}".format(final_out))
+    test(args.case_name, final_out, plant_dir, tag=tag)
+  #final_out = os.path.join(plant_dir, 'gold', 'out~inner*')
   if final_out:
     print("Final out was found here: {}".format(final_out))
     #main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
