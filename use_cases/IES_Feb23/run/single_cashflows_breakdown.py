@@ -272,7 +272,7 @@ if __name__ == "__main__":
     if tag == "opt":
       print("Optimization case")
     elif tag == "sweep":
-      case_n = final_out.split("_")[0][-1]
+      case_n = final_out.split("/")[-1].split("_")[0][-1]
       print("Case # {} in sweep results ".format(case_n))
     elif tag == "baseline":
       print("Baseline case")
