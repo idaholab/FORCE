@@ -225,23 +225,24 @@ def create_final_cashflows(yearly_df):
   return lifetime_df
 
 
-def test(plant, final_out, plant_dir, total=True, tag=None): 
+def test(plant, final_out, plant_dir, total=True, tag=None, case_number = None): 
   fcff = get_yearly_fcff(plant,final_out)
   yearly = get_yearly_cashflows(plant, final_out)
   yearly_df = fcff.join(yearly, how='left')
   yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
   lifetime_df = create_final_cashflows(yearly_df)
-  if tag: 
+  if tag == "sweep": 
     yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_yearly_cashflow.csv"))
     lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_total_cashflows.csv"))
-    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=str(tag))
-    plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=str(tag))
-  else:
-    tag = "opt"
+    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=tag+str(case_number))
+    plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=tag+str(case_number))
+  elif tag == "opt" or tag=="baseline":
     yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_yearly_cashflow.csv"))
     lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_total_cashflows.csv"))
     plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=tag)
     plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=tag)
+  else: 
+    raise TypeError("Tag not recognized : {}".format(tag))
 
 
 def main(plant, final_out, plant_dir, total=True):
@@ -265,14 +266,16 @@ if __name__ == "__main__":
   plant_dir = os.path.join(dir, args.case_name)
   for final_out in glob.glob(plant_dir+'/gold/out~inner*'):
     print("Breaking down cashflows for {}".format(final_out))
-    if str(final_out).split("~")[-1] != "inner":
-      tag = str(final_out).split("~")[-1][-1]
-      print("Case # {} in sweep results ".format(tag))
-    else:
-      tag = None
-      print("Optimization results in {}".format(final_out))
-    test(args.case_name, final_out, plant_dir, tag=tag)
-  #final_out = os.path.join(plant_dir, 'gold', 'out~inner*')
+    tag = final_out.split("_")[-1]
+    case_n = None
+    if tag == "opt":
+      print("Optimization case")
+    elif tag == "sweep":
+      case_n = final_out.split("_")[0][-1]
+      print("Case # {} in sweep results ".format(case_n))
+    elif tag == "baseline":
+      print("Baseline case")
+    test(args.case_name, final_out, plant_dir, tag=tag, case_number=case_n)
   if final_out:
     print("Final out was found here: {}".format(final_out))
     #main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
