@@ -129,7 +129,7 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant, tag):
   plt.gcf().set_size_inches(11, 6)
   plt.tight_layout()
   plt.subplots_adjust(bottom=0.1)
-  plt.savefig(os.path.join(plant_dir, plant++"_"+tag+"_yearly_cashflow_breakdown.png"))
+  plt.savefig(os.path.join(plant_dir, plant+"_"+tag+"_yearly_cashflow_breakdown.png"))
 
 def plot_lifetime_cashflow(plant, plant_dir, lifetime_df, tag):
   """
@@ -232,13 +232,14 @@ def test(plant, final_out, plant_dir, total=True, tag=None, case_number = None):
   yearly_df = discount_yearly_cashflow(yearly_df, DISCOUNT_RATE)
   lifetime_df = create_final_cashflows(yearly_df)
   if tag == "sweep": 
-    yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_yearly_cashflow.csv"))
-    lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_total_cashflows.csv"))
-    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=tag+str(case_number))
-    plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=tag+str(case_number))
+    new_tag = tag+str(case_number)
+    yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+new_tag+"_yearly_cashflow.csv"))
+    lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+new_tag+"_total_cashflows.csv"))
+    plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=new_tag)
+    plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=new_tag)
   elif tag == "opt" or tag=="baseline":
-    yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_yearly_cashflow.csv"))
-    lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+str(tag)+"_total_cashflows.csv"))
+    yearly_df.to_csv(os.path.join(plant_dir, plant+"_"+tag+"_yearly_cashflow.csv"))
+    lifetime_df.to_csv(os.path.join(plant_dir, plant+"_"+tag+"_total_cashflows.csv"))
     plot_yearly_cashflow(yearly_df, plant_dir=plant_dir, plant=plant, tag=tag)
     plot_lifetime_cashflow(plant, plant_dir,lifetime_df, tag=tag)
   else: 
