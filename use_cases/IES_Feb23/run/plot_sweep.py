@@ -28,7 +28,7 @@ def plot_hist(plant_dir, case, sweep_df):
   sweep_df.plot(ax = ax[0], kind = "bar", y = 'Delta NPV ($M)', legend = False) 
   ax[0].errorbar(sweep_df.index, sweep_df['Delta NPV ($M)'],  yerr = sweep_df['2STD Delta NPV ($M)'], 
               linewidth = 1, color = "black", capsize = 2, fmt='none')
-  ax[0].set_ylim(1200,1400)
+  ax[0].set_ylim(100,900)
   ax[0].set_ylabel('Delta NPV ($M)')
   # Overall
   #for key, spine in ax[0].spines.items():
@@ -71,10 +71,14 @@ def pp_sweep_results(sweep_file, mean_NPV_baseline, std_NPV_baseline):
   return sweep_df
 
 def get_baseline_NPV(case):
-  baseline_case = case.split("_")[0]+"_baseline"
-  print(baseline_case)
+  case_list = case.split("_")
+  if len(case_list)>1:
+    baseline_case ="_".join(case_list[:-1])+"_baseline"
+  else:
+    baseline_case = case_list[0]+"_baseline"
+  print("Baseline case :{}".format(baseline_case))
   baseline_file = os.path.join(baseline_case, 'gold', 'sweep.csv')
-  if baseline_file:
+  if os.path.isfile(baseline_file):
     df = pd.read_csv(baseline_file)
     # Assume the right case is printed on the first line
     mean_NPV = float(df.iloc[0,:].mean_NPV)
@@ -84,13 +88,13 @@ def get_baseline_NPV(case):
   return mean_NPV, std_NPV
 
 def main():
-  case = "braidwood_sweep"
+  case = "cooper_sweep"
   dir = os.path.dirname(os.path.abspath(__file__))
   os.chdir(dir)
   print("Current Directory: {}".format(os.getcwd()))
   plant_dir = os.path.join(dir, case)
   sweep_file = os.path.join(plant_dir, 'gold', 'sweep.csv')
-  if sweep_file:
+  if os.path.isfile(sweep_file):
     mean_baseline, std_baseline = get_baseline_NPV(case)
     sweep_df = pp_sweep_results(sweep_file, mean_baseline, std_baseline)
     plot_hist(plant_dir, case, sweep_df)

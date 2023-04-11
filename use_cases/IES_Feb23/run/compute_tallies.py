@@ -38,27 +38,41 @@ def calculate_tallies(dispatch_file, rom_meta_xml, project_lifetime):
   mult_dic = parse_meta(rom_meta_xml)
   dispatch = pd.read_csv(dispatch_file)
   # Clean up 
-  toclean = ['RAVEN_sample_ID', 'scaling', 'price', 'prefix', 'hour']
+  toclean = ['RAVEN_sample_ID','scaling', 'price', 'prefix', 'hour']
   dispatch.drop(columns=toclean, inplace=True)
   for c in dispatch.columns:
     if "Probability" in str(c):
       dispatch.drop(columns=[c], inplace=True)
   # Sum over clusters and years
-  dispatch = dispatch.groupby(['_ROM_Cluster', 'Year']).sum()
+  dispatch = dispatch.groupby(['_ROM_Cluster', 'Year']).agg(['sum', np.std])
   # Multiplicity 
   mult = pd.DataFrame.from_dict(mult_dic).transpose()
   mult.rename({0:"multiplicity"}, axis=1, inplace=True)
   mult.index.names = ['_ROM_Cluster']
   new_dispatch = dispatch.join(mult, how="left")
   for c in new_dispatch.columns:
-    if "Dispatch" in str(c):
+    name = c[0]
+    tag = c[1]
+    if ("Dispatch" in name) and (tag=="sum"):
       new_dispatch[c] = new_dispatch[c].multiply(new_dispatch['multiplicity'])
   new_dispatch.drop(columns=['multiplicity'], inplace=True)
   # Rename columns 
-  new_dispatch.rename(lambda x: " ".join(x.split("__")[1:]).upper(), axis='columns', inplace=True)
-  lifetime_tallies = new_dispatch.sum()
-  #lifetime_tallies.to_csv("test_tallies.csv", header=None)
-  return lifetime_tallies
+  new_dispatch.rename(lambda x: " ".join(x[0].split("__")[1:]).upper()+' '+x[1].upper(), axis='columns', inplace=True)
+  new_d_std = new_dispatch.copy()
+  new_d_sum = new_dispatch.copy()
+  for c in new_d_std.columns: 
+    if 'SUM' in c: 
+      new_d_std.drop(columns=[c], inplace=True)
+    elif 'STD' in c:
+      new_d_sum.drop(columns=[c], inplace=True)
+  def uncert_prop(x):
+    sum = 0
+    for elem in x:
+      sum+= np.power(elem,2)
+    return np.sqrt(sum)
+  tot_std  = new_d_std.apply(uncert_prop, axis=0)
+  lifetime_tallies = new_d_sum.sum()
+  return lifetime_tallies, tot_std
 
 def get_arma_path(heron_input_xml):
   """ 
@@ -104,25 +118,33 @@ def get_project_lifetime(heron_input_xml):
   project_lifetime = float(root.find("Case/economics/ProjectTime").text)
   return project_lifetime
 
-def plot_lifetime_tallies(path_to_csv, save_path):
+def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
   """ 
   Plot lifetime tallies, electricity and synthetic fuel products
     @ In, path_to_csv, str, path to the csv file with the lifetime tallies
     @ Out, None 
   """
-  df = path_to_csv.to_frame()
+  df = lifetime_series.to_frame()
+  df.rename(columns={0:'sum'}, inplace=True)
+  df['std'] = lifetime_std[0]
+  print(df)
   elec_names =[]
   elec_values =[]
   synfuels_names =[]
   synfuels_values = []
+  synfuels_std = []
   for c in df.index:
     if 'ELECTRICITY' in c and not('NPP' in c): 
       elec_names.append(c.split(' ')[0])
       elec_values.append(abs(df.loc[c][0]))
     if 'MARKET' in c and (('NAPHTHA' in c) or ('JET_FUEL' in c) or ('DIESEL' in c)):
-      synfuels_names.append(c.split(' ')[-1])
+      synfuels_names.append(c.split(' ')[-2])
       # kg to gal
       synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/1e6)
+      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/1e6)
+  syn_df = pd.DataFrame(index=synfuels_names)
+  syn_df['sum'] = synfuels_values
+  syn_df['2std'] = [std*2 for std in synfuels_std]
   fig, ax = plt.subplots(1,2, figsize=(10,6))
   def create_elec_labels(e_prod):
     labels = []
@@ -135,7 +157,10 @@ def plot_lifetime_tallies(path_to_csv, save_path):
                                     #textprops=dict(color="w"))
   ax[1].legend(wedges, elec_names,bbox_to_anchor =(0.5,-0.2), loc='lower center')
   #ax[0].pie(elec.values(), labels=elec.keys())
-  ax[0].bar(synfuels_names, synfuels_values)
+  syn_df.plot(ax = ax[0], kind="bar", y='sum', legend=False)
+  #ax[0].bar(synfuels_names, synfuels_values)
+  ax[0].errorbar(syn_df.index, syn_df['sum'],  yerr = syn_df['2std'], 
+              linewidth = 1, color = "black", capsize = 2, fmt='none')
   ax[0].set_ylabel("Production (Mgal)")
   ax[0].grid(axis='y')
   fig.tight_layout()
@@ -165,12 +190,11 @@ def main():
   project_lifetime = get_project_lifetime(heron_input_xml=heron_input_xml)
   # Compute tallies for the duration of the project
   print("Lifetime tallies: \n")
-  lifetime_tallies = calculate_tallies(dispatch_file=d, rom_meta_xml=rom_meta_xml, project_lifetime=project_lifetime)
-  print(lifetime_tallies)
+  lifetime_tallies, lifetime_std = calculate_tallies(dispatch_file=d, rom_meta_xml=rom_meta_xml, project_lifetime=project_lifetime)
   csv_path = os.path.join('./run', args.location, args.location+"_lifetime_tallies.csv")
   lifetime_tallies.to_csv(csv_path, header=None)
   fig_path = os.path.join('./run', args.location, args.location+"_lifetime_tallies_elec_synfuels.png")
-  plot_lifetime_tallies(lifetime_tallies, fig_path)
+  plot_lifetime_tallies(lifetime_tallies, lifetime_std, fig_path)
   
 
 if __name__ == '__main__':
