@@ -148,7 +148,7 @@
             <fixed_value>-10625</fixed_value> <!-- kg-H2/h, corresponds to 400MW data-->
           </reference_driver>
           <reference_price>
-            <fixed_value>-118577209,-197628681</fixed_value> <!-- $2020 -->
+            <sweep_values>-118577209,-197628681</sweep_values> <!-- $2020 -->
           </reference_price>
           <scaling_factor_x>
             <fixed_value>0.626</fixed_value>
@@ -322,7 +322,7 @@
             <variable>h2_storage_capacity</variable>
           </driver>
           <reference_price>
-            <fixed_value>-500</fixed_value>
+            <sweep_values>-375,-625</sweep_values>
             <!-- Capex cost of $500/kg-H2: Assumption -->
           </reference_price>
           <depreciate>15</depreciate>
