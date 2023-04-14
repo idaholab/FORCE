@@ -80,7 +80,7 @@
           </driver>
           <reference_price>
             <fixed_value>-702600000</fixed_value> 
-            <multiplier>0.75</multiplier>
+            <multiplier>1.25</multiplier>
           </reference_price>
           <reference_driver>
             <fixed_value>-1076</fixed_value>
@@ -150,7 +150,7 @@
           </reference_driver>
           <reference_price>
             <fixed_value>-158102945</fixed_value> <!-- $2020 -->
-            <multiplier>0.75</multiplier>
+            <multiplier>1.25</multiplier>
           </reference_price>
           <scaling_factor_x>
             <fixed_value>0.626</fixed_value>
@@ -325,7 +325,7 @@
           </driver>
           <reference_price>
             <fixed_value>-500</fixed_value>
-            <multiplier>0.75</multiplier>
+            <multiplier>1.25</multiplier>
             <!-- Capex cost of $500/kg-H2: Assumption -->
           </reference_price>
           <depreciate>15</depreciate>
