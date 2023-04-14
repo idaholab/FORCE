@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="braidwoodSA_capex">
+  <Case name="braidwoodSA_capex1.25">
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
