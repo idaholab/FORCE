@@ -57,7 +57,7 @@ def h2_ptc_ft(data, meta):
   data = {'reference_price':ptc}
   return data, meta
 
-def h2_ptc_ft_low(data, meta):
+def h2_ptc_ft_270(data, meta):
   """
     Determines the PTC (Production Tax Credit) for hydrogen production when calculated for FT component: 
     PTC applicable only for the first 10 years of the simulation $2.70/kg-H2: simulates the case where the utility
@@ -71,6 +71,42 @@ def h2_ptc_ft_low(data, meta):
   ptc = 0
   if year<10:
     ptc = -2.70 #$/kg-H2
+  # Negative number since hydrogen consumed by FT so final cashflow is positive
+  data = {'reference_price':ptc}
+  return data, meta
+
+def h2_ptc_ft_100(data, meta):
+  """
+    Determines the PTC (Production Tax Credit) for hydrogen production when calculated for FT component: 
+    PTC applicable only for the first 10 years of the simulation $2.70/kg-H2: simulates the case where the utility
+    has to re-sell the tax credit for ~90% of its value
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  year = meta['HERON']['active_index']['year'] # 0 to 29
+  ptc = 0
+  if year<10:
+    ptc = -1.00 #$/kg-H2
+  # Negative number since hydrogen consumed by FT so final cashflow is positive
+  data = {'reference_price':ptc}
+  return data, meta
+
+def h2_ptc_ft_000(data, meta):
+  """
+    Determines the PTC (Production Tax Credit) for hydrogen production when calculated for FT component: 
+    PTC applicable only for the first 10 years of the simulation $2.70/kg-H2: simulates the case where the utility
+    has to re-sell the tax credit for ~90% of its value
+    @ In, data, dict, request for data
+    @ In, meta, dict, state information
+    @ Out, data, dict, filled data
+    @ Out, meta, dict, state information
+  """
+  year = meta['HERON']['active_index']['year'] # 0 to 29
+  ptc = 0
+  if year<10:
+    ptc = 0 #$/kg-H2
   # Negative number since hydrogen consumed by FT so final cashflow is positive
   data = {'reference_price':ptc}
   return data, meta
