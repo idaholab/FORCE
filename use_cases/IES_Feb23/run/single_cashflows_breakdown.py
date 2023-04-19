@@ -277,9 +277,3 @@ if __name__ == "__main__":
     elif tag == "baseline":
       print("Baseline case")
     test(args.case_name, final_out, plant_dir, tag=tag, case_number=case_n)
-  if final_out:
-    print("Final out was found here: {}".format(final_out))
-    #main(plant, final_out=final_out, plant_dir=plant_dir, total=True)
-    test(args.case_name, final_out, plant_dir)
-  else:
-    print("Final out was not found!!")
