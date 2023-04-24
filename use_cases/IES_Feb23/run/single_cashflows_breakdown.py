@@ -87,6 +87,7 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant, tag):
     @ In, tag, str, indicates either the case number for a sweep run or "opt" for an optimization run
     @ Out, None
   """
+  plt.style.use('ggplot')
   result_df = yearly_df.copy()
   # Combine for better visibility
   years = result_df.index
@@ -140,6 +141,7 @@ def plot_lifetime_cashflow(plant, plant_dir, lifetime_df, tag):
     @ In, tag, str, indicates either the case number for a sweep run or "opt" for an optimization run
     @ Out, None
   """
+  plt.style.use('ggplot')
   result_df = lifetime_df.copy()
   npv = result_df['npv']
   print('NPV {}'.format(npv))
