@@ -30,7 +30,7 @@ def parse_meta(xml_file):
 
 def calculate_tallies(dispatch_file, rom_meta_xml, project_lifetime):
   """ 
-  Compute the yearly tally for each dispatch variable 
+  Compute the average yearly tally for each dispatch variable 
     @ In, dispatch_file, str, path to the dispatch_print.csv file with the results of the debug dispatch run for a day
     @ In, mult_dic, dic, dictionary with cluster numbers as keys and corresponding multiplicity
     @ Out, ?
@@ -71,7 +71,7 @@ def calculate_tallies(dispatch_file, rom_meta_xml, project_lifetime):
       sum+= np.power(elem,2)
     return np.sqrt(sum)
   tot_std  = new_d_std.apply(uncert_prop, axis=0)
-  lifetime_tallies = new_d_sum.sum()
+  lifetime_tallies = new_d_sum.mean()
   return lifetime_tallies, tot_std
 
 def get_arma_path(heron_input_xml):
@@ -140,11 +140,12 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
     if 'MARKET' in c and (('NAPHTHA' in c) or ('JET_FUEL' in c) or ('DIESEL' in c)):
       synfuels_names.append(c.split(' ')[-2])
       # kg to gal
-      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/1e6)
-      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/1e6)
+      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()]))
+      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()]))
   syn_df = pd.DataFrame(index=synfuels_names)
   syn_df['sum'] = synfuels_values
   syn_df['2std'] = [std*2 for std in synfuels_std]
+  plt.style.use('ggplot')
   fig, ax = plt.subplots(1,2, figsize=(10,6))
   def create_elec_labels(e_prod):
     labels = []
@@ -161,7 +162,7 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
   #ax[0].bar(synfuels_names, synfuels_values)
   ax[0].errorbar(syn_df.index, syn_df['sum'],  yerr = syn_df['2std'], 
               linewidth = 1, color = "black", capsize = 2, fmt='none')
-  ax[0].set_ylabel("Production (Mgal)")
+  ax[0].set_ylabel("Production (gal)")
   ax[0].grid(axis='y')
   fig.tight_layout()
   fig.savefig(save_path)
