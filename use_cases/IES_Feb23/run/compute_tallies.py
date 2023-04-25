@@ -139,9 +139,9 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
       elec_values.append(abs(df.loc[c][0]))
     if 'MARKET' in c and (('NAPHTHA' in c) or ('JET_FUEL' in c) or ('DIESEL' in c)):
       synfuels_names.append(c.split(' ')[-2])
-      # kg to gal
-      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()]))
-      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()]))
+      # kg to gal to barrel (42 gal in 1 barrel)
+      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/(42e6))
+      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/(42e6))
   syn_df = pd.DataFrame(index=synfuels_names)
   syn_df['sum'] = synfuels_values
   syn_df['2std'] = [std*2 for std in synfuels_std]
@@ -162,7 +162,7 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
   #ax[0].bar(synfuels_names, synfuels_values)
   ax[0].errorbar(syn_df.index, syn_df['sum'],  yerr = syn_df['2std'], 
               linewidth = 1, color = "black", capsize = 2, fmt='none')
-  ax[0].set_ylabel("Production (gal)")
+  ax[0].set_ylabel("Production (Mbl/year)")
   ax[0].grid(axis='y')
   fig.tight_layout()
   fig.savefig(save_path)
