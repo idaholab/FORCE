@@ -72,7 +72,9 @@ def pp_sweep_results(sweep_file, mean_NPV_baseline, std_NPV_baseline):
 
 def get_baseline_NPV(case):
   case_list = case.split("_")
-  if len(case_list)>1:
+  if 'ptc' in case_list:
+    baseline_case = case_list[0]+"_baseline"
+  elif len(case_list)>1:
     baseline_case ="_".join(case_list[:-1])+"_baseline"
   else:
     baseline_case = case_list[0]+"_baseline"
@@ -90,7 +92,7 @@ def get_baseline_NPV(case):
   return mean_NPV, std_NPV
 
 def main():
-  case = "prairie_island_sweep"
+  case = "braidwood_ptc_270"
   dir = os.path.dirname(os.path.abspath(__file__))
   os.chdir(dir)
   print("Current Directory: {}".format(os.getcwd()))
