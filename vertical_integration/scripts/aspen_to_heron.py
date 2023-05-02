@@ -1,3 +1,5 @@
+# Copyright 2022, Battelle Energy Alliance, LLC
+# ALL RIGHTS RESERVED
 """
 A script that creates/updates the component sets in HERON from a set of Aspen HYSYS and APEA output xlsx files. The script also creates the components cost functions
 
@@ -14,11 +16,17 @@ Example:
 python aspen_to_heron.py ../HYSYS/HYSYS_outputs/ ../APEA/APEA_outputs/ ../FORCE_Components/ComponentSetsFiles/Sets1/ ../HERON/HERON_input_XML_files/heron_input.xml
 """
 
-
+#!/usr/bin/env python
 # Importing libraries and modules
-from main import *
-import convert_utils as xm
+import os
+import sys
 import argparse
+
+# import from the vertical_inegration/src
+sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
+from main_methods import extract_all_force_componentsets
+import convert_utils as xm
+from main_methods import extract_all_hysys_components, extract_all_apea_components, create_all_force_components_from_hysys_apea, extract_all_force_componentsets, create_componentsets_in_HERON
 
 
 # Specifying user inputs and output file
@@ -34,21 +42,21 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
 
-print("\n",'\033[95m',"Step1 (creating HYSES and APEA components) begins", '\033[0m',"\n")
+print("\n",'\033[95m', "Step1 (creating HYSES and APEA components) begins", '\033[0m', "\n")
 hys_comp_dir = os.path.dirname(os.path.abspath(extract_all_hysys_components(args.hyses_xlsx_outputs_folder_path)))
 apea_comp_dir = os.path.dirname(os.path.abspath(extract_all_apea_components(args.apea_xlsx_outputs_folder_path)))
 print("\n",'\033[95m', "Step1 (creating HYSES and APEA components) is complete", '\033[0m', "\n")
 
-print("\n",'\033[95m',"Step2 (creating HYSES and APEA FORCE components) begins", '\033[0m', "\n")
+print("\n",'\033[95m', "Step2 (creating HYSES and APEA FORCE components) begins", '\033[0m', "\n")
 create_all_force_components_from_hysys_apea(apea_comp_dir, hys_comp_dir )
-print("\n",'\033[95m',"Step2 (creating HYSES and APEA FORCE components) is complete", '\033[0m', "\n")
+print("\n",'\033[95m', "Step2 (creating HYSES and APEA FORCE components) is complete", '\033[0m', "\n")
 
-print("\n",'\033[95m',"Step3 (creating FORCE componentsSets) begins", '\033[0m', "\n")
-extract_all_force_componentSets(args.componentSets_folder)
-print("\n",'\033[95m',"Step3 (creating FORCE componentsSets) is complete", '\033[0m', "\n")
+print("\n",'\033[95m', "Step3 (creating FORCE componentsSets) begins", '\033[0m', "\n")
+extract_all_force_componentsets(args.componentSets_folder)
+print("\n",'\033[95m', "Step3 (creating FORCE componentsSets) is complete", '\033[0m', "\n")
 
-print("\n",'\033[95m',"Step4 (Component Sets are loaded to the HERON input XMl file) begins", '\033[0m', "\n")
-new_HERON_tree = create_componentSets_in_HERON (args.componentSets_folder, args.HERON_Input_XML)
+print("\n",'\033[95m', "Step4 (Component Sets are loaded to the HERON input XMl file) begins", '\033[0m', "\n")
+new_HERON_tree = create_componentsets_in_HERON (args.componentSets_folder, args.HERON_Input_XML)
 
 parnet_folder_name = os.path.abspath(os.path.join(args.HERON_Input_XML, os.pardir))
 filename = os.path.basename(args.HERON_Input_XML)

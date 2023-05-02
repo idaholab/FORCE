@@ -1,0 +1,7 @@
+# For the user, the script that will be more useful is "aspen_to_heron.py".
+
+# other scripts are intermediate steps (from the Aspen outputs to the HERON XML file).
+
+# These intermediate steps can be helpful if the user wants to verify that the code works properly.
+
+# Inside each script are examples (commented) to help the user understand how the code works.
