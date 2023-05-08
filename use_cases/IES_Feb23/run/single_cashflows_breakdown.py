@@ -201,7 +201,7 @@ def plot_lifetime_cashflow(plant, plant_dir, lifetime_df, tag):
   baseline_NPV, std_NPV = get_baseline_NPV(plant)
   baseline_NPV /=1e6
   ax.axhline(baseline_NPV, color='b', linewidth=4)
-  ax.text(7, baseline_NPV+100, 'baseline NPV', color='b')
+  ax.text(7, baseline_NPV+100, 'BAU NPV', color='b')
   plt.xticks(rotation=70)
   plt.gcf().set_size_inches(13, 6)
   fig.tight_layout()
