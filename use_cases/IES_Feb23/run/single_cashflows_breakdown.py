@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os, argparse, glob
+from plot_sweep import get_baseline_NPV
 
 """ The goal of this script is to produce csv and png files showing the yearly and total 
     cashflows breakdown for a given NPP"""
@@ -87,7 +88,7 @@ def plot_yearly_cashflow(yearly_df, plant_dir, plant, tag):
     @ In, tag, str, indicates either the case number for a sweep run or "opt" for an optimization run
     @ Out, None
   """
-  plt.style.use('ggplot')
+  plt.rc('font', size=14)
   result_df = yearly_df.copy()
   # Combine for better visibility
   years = result_df.index
@@ -141,7 +142,7 @@ def plot_lifetime_cashflow(plant, plant_dir, lifetime_df, tag):
     @ In, tag, str, indicates either the case number for a sweep run or "opt" for an optimization run
     @ Out, None
   """
-  plt.style.use('ggplot')
+  plt.rc('font', size=14)
   result_df = lifetime_df.copy()
   npv = result_df['npv']
   print('NPV {}'.format(npv))
@@ -189,16 +190,21 @@ def plot_lifetime_cashflow(plant, plant_dir, lifetime_df, tag):
   bars = ax.bar(x=df[x],height=upper, color =df['color'])
   ax.yaxis.grid(which='major',color='gray', linestyle='dashed', alpha=0.7)
   # plot second bar - invisible
-  plt.bar(x=df[x], height=lower,color='white')
-  plt.ylabel('M$(2020(USD))')
+  ax.bar(x=df[x], height=lower,color='white')
+  ax.set_ylabel('M$(2020(USD))')
   # plot connectors
-  plt.plot(connect.index,connect.values, 'k' )
+  ax.plot(connect.index,connect.values, 'k' )
   # plot bar labels
   for i, v in enumerate(upper):
-      plt.text(i-.15, mid[i], f"{df[y][i]:,.0f}")
-  plt.xticks(rotation=90)
-  plt.gcf().set_size_inches(11, 6)
-  plt.tight_layout()
+      ax.text(i-.15, mid[i], f"{df[y][i]:,.0f}")
+  # Baseline case as horizontal line
+  baseline_NPV, std_NPV = get_baseline_NPV(plant)
+  baseline_NPV /=1e6
+  ax.axhline(baseline_NPV, color='b', linewidth=4)
+  ax.text(7, baseline_NPV+100, 'BAU NPV', color='b')
+  plt.xticks(rotation=70)
+  plt.gcf().set_size_inches(13, 6)
+  fig.tight_layout()
   plt.savefig(os.path.join(plant_dir, plant+"_"+tag+"_total_cashflow_breakdown.png"))
   return None
 
@@ -267,6 +273,7 @@ if __name__ == "__main__":
   os.chdir(dir)
   print("Current Directory: {}".format(os.getcwd()))
   plant_dir = os.path.join(dir, args.case_name)
+  print("Case directory : {}".format(plant_dir))
   for final_out in glob.glob(plant_dir+'/gold/out~inner*'):
     print("Breaking down cashflows for {}".format(final_out))
     tag = final_out.split("_")[-1]
