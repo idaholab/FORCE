@@ -1,5 +1,5 @@
 <HERON>
-  <Case name="braidwoodSA_synfuels075">
+  <Case name="braidwoodSA_elec125">
     <label name="scenario">ref</label>
     <label name="location">braidwood</label>
     <label name="fuel_region">illinois</label>
