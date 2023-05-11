@@ -1,4 +1,0 @@
-iteration,accepted,npp_capacity,htse_capacity,ft_capacity,ft_elec_consumption_capacity,electricity_market_capacity,naphtha_market_capacity,jet_fuel_market_capacity,diesel_market_capacity,h2_storage_capacity,mean_NPV,std_NPV,med_NPV
-0.0,first,1193.0,-750.0,-12000.0,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,6000.55,2401632184.84,3888445.3276,2402060363.11
-1.0,accepted,1193.0,-686.827992112,-16223.3542575,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,41815.7699356,2860923367.86,5886524.31976,2858867062.37
-2.0,final,1193.0,-686.827992112,-16223.3542575,-14.9,-1e+200,-1e+200,-1e+200,-1e+200,41815.7699356,2860923367.86,5886524.31976,2858867062.37
