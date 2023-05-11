@@ -17,9 +17,18 @@ FEDERAL_TAX = 0.21
 
 def get_final_npv(plant):
   opt_out_file = os.path.join(".", plant, "gold","opt_soln_0.csv")
-  df = pd.read_csv(opt_out_file)
-  final_npv = float(df.iloc[-1].loc['mean_NPV'])
-  std_npv = float(df.iloc[-1].loc['std_NPV'])
+  sweep_file = os.path.join(".", plant, "gold", 'sweep.csv')
+  if os.path.isfile(opt_out_file):
+    df = pd.read_csv(opt_out_file)
+    final_npv = float(df.iloc[-1].loc['mean_NPV'])
+    std_npv = float(df.iloc[-1].loc['std_NPV'])
+  elif os.path.isfile(sweep_file):
+    df = pd.read_csv(sweep_file)
+    # ASSUME first line is the one to plot
+    final_npv = float(df.iloc[0].loc['mean_NPV'])
+    std_npv = float(df.iloc[0].loc['std_NPV'])
+  else: 
+    raise FileNotFoundError("No sweep or optimization results in the gold folder of {} case".format(plant))
   return final_npv, std_npv
 
 def find_final_out(plant):
@@ -60,7 +69,7 @@ def find_final_out(plant):
   return final_out
 
 
-def compute_cashflows(dir, plant, final_out, final_npv):
+def compute_cashflows(final_out, final_npv):
   # Compute cashflows in optimization out file
   with open(final_out) as fp:
     lines = fp.readlines()
@@ -86,11 +95,12 @@ def compute_cashflows(dir, plant, final_out, final_npv):
   tax_cost = final_npv-npv
   #print(plant)
   #print(tax_cost)
-  dic['taxes'] = tax_cost
+  dic['taxes'] = [tax_cost]
   return dic
 
 
 def plot_cashflows_2(dir, csv_file):
+  plt.style.use('ggplot')
   result_df = pd.read_csv(csv_file)
   result_df = result_df.rename(columns={'elec_cap_market':'ft_elec_cap_market'})
   # Combine columns for better visibility
