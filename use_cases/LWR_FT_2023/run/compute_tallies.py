@@ -28,7 +28,7 @@ def parse_meta(xml_file):
   multiplicity_dic = dict(sorted(meta.items()))[0]
   return multiplicity_dic
 
-def calculate_tallies(dispatch_file, rom_meta_xml, project_lifetime):
+def calculate_tallies(dispatch_file, rom_meta_xml):
   """ 
   Compute the average yearly tally for each dispatch variable 
     @ In, dispatch_file, str, path to the dispatch_print.csv file with the results of the debug dispatch run for a day
@@ -85,7 +85,7 @@ def get_arma_path(heron_input_xml):
   arma = root.find("DataGenerators/ARMA")
   path_arma_pk = arma.text
   output = path_arma_pk.split('/')[-2]
-  arma_xml = os.path.join("train",output,"romMeta.xml")
+  arma_xml = os.path.join("..","train",output,"romMeta.xml")
   return arma_xml
 
 
@@ -110,13 +110,6 @@ def check_dispatch_run(case_folder, case_name):
     dispatch_file = gold_file
   return dispatch_file
 
-def get_project_lifetime(heron_input_xml):
-  """ Parse the heron input file xml for project lifetime 
-    In, heron_input_xml, str, path to the heron input for the case
-    Out, project_lifetime, float, project lifetime value"""
-  root = ET.parse(heron_input_xml).getroot()
-  project_lifetime = float(root.find("Case/economics/ProjectTime").text)
-  return project_lifetime
 
 def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
   """ 
@@ -140,8 +133,8 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
     if 'MARKET' in c and (('NAPHTHA' in c) or ('JET_FUEL' in c) or ('DIESEL' in c)):
       synfuels_names.append(c.split(' ')[-2])
       # kg to gal to barrel (42 gal in 1 barrel)
-      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/(42e6))
-      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/(42e6))
+      synfuels_values.append(abs(df.loc[c][0])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/(42))
+      synfuels_std.append(abs(df.loc[c][1])*(1/GAL_to_L)*(1/FUEL_DENSITY[synfuels_names[-1].lower()])/(42))
   syn_df = pd.DataFrame(index=synfuels_names)
   syn_df['sum'] = synfuels_values
   syn_df['2std'] = [std*2 for std in synfuels_std]
@@ -162,7 +155,7 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
   #ax[0].bar(synfuels_names, synfuels_values)
   ax[0].errorbar(syn_df.index, syn_df['sum'],  yerr = syn_df['2std'], 
               linewidth = 1, color = "black", capsize = 2, fmt='none')
-  ax[0].set_ylabel("Production (Mbl/year)")
+  ax[0].set_ylabel("Production (bbl/year)")
   ax[0].grid(axis='y')
   fig.tight_layout()
   fig.savefig(save_path)
@@ -170,31 +163,29 @@ def plot_lifetime_tallies(lifetime_series, lifetime_std, save_path):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument("location", type=str, help="Name of folder with case")
+  parser.add_argument("location", type=str, help="Dispatch print location")
   args = parser.parse_args()
   
   #Check dispatch result file
-  d = check_dispatch_run(os.path.join("./run", args.location), args.location)
-  if d: 
-    print("Dispatch results file found: {}".format(d))
-  else: 
-    print("Dispatch results file not found, exiting")
-    exit()
+  path = os.path.abspath(args.location)
+  print(path)
   # Get ARMA location
-  heron_input_xml = os.path.join("./run", args.location, "heron_input.xml")
+  case_dir = os.path.dirname(os.path.dirname(path))
+  heron_input_xml = os.path.join(case_dir, "heron_input.xml")
+  print(heron_input_xml)
   if not os.path.isfile(heron_input_xml):
-    exit("Not heron input")
+    exit("No heron input")
   else: 
     print("HERON input file found here: {}".format(heron_input_xml))
   rom_meta_xml = get_arma_path(heron_input_xml=heron_input_xml)
-  # Get project lifetime
-  project_lifetime = get_project_lifetime(heron_input_xml=heron_input_xml)
+  print("arma path : {}".format(os.path.abspath(rom_meta_xml)))
   # Compute tallies for the duration of the project
   print("Lifetime tallies: \n")
-  lifetime_tallies, lifetime_std = calculate_tallies(dispatch_file=d, rom_meta_xml=rom_meta_xml, project_lifetime=project_lifetime)
-  csv_path = os.path.join('./run', args.location, args.location+"_lifetime_tallies.csv")
+  lifetime_tallies, lifetime_std = calculate_tallies(dispatch_file=path, rom_meta_xml=rom_meta_xml)
+  csv_path = os.path.join(os.path.dirname(args.location),"lifetime_tallies.csv")
+  lifetime_tallies.sort_index(axis=0, inplace=True)
   lifetime_tallies.to_csv(csv_path, header=None)
-  fig_path = os.path.join('./run', args.location, args.location+"_lifetime_tallies_elec_synfuels.png")
+  fig_path = os.path.join(os.path.dirname(args.location), "lifetime_tallies_elec_synfuels.png")
   plot_lifetime_tallies(lifetime_tallies, lifetime_std, fig_path)
   
 
