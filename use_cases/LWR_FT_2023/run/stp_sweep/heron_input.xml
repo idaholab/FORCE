@@ -57,7 +57,7 @@
       <produces resource="h2" dispatch="independent">
         <consumes>electricity</consumes>
         <capacity resource="electricity">
-          <sweep_values>-1265,-650,-100</sweep_values> <!-- MWe -->
+          <sweep_values>-985,-885,-785,-685,-585,-485,-385,-285,-185,-85</sweep_values> <!-- MWe -->
         </capacity>
         <minimum resource="electricity">
           <!-- To model hot standby mode, 0.85% of electrical capacity-->
@@ -126,7 +126,7 @@
       <produces resource='naphtha,diesel,jet_fuel' dispatch='fixed'>
         <consumes>h2</consumes>
         <capacity resource='h2'>
-          <sweep_values>-31789,-15000,-2513</sweep_values>
+          <sweep_values>-24756,-22243,-19730,-17217,-14704,-12191,-9678,-7165,-4652,-2139</sweep_values>
         </capacity>
         <transfer>
           <linear>
@@ -306,7 +306,7 @@
     <Component name='h2_storage'>
       <stores resource="h2" dispatch="independent">
         <capacity resource='h2'>
-          <sweep_values>10,500000,4000000,8000000,16000000,32000000,64000000,120000000</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
+          <sweep_values>10,924208,1848415,2772623,3696831,4621038,5545246,6469454,7393661,8317869</sweep_values> <!-- kg: Max is 4 hours worth of H2 for FT -->
         </capacity>
         <initial_stored>
           <fixed_value>0.1</fixed_value>
