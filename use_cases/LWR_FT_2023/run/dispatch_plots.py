@@ -6,6 +6,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter # type:ignore
+import itertools
 
 # Matplotlib Global Settings
 plt.rc("figure", figsize=(18,13), titleweight='bold')
@@ -26,38 +27,27 @@ def hydrogen(df, ax):
   sns.set_context("paper", font_scale=1.75)
   var_cols_1 = [
         'Dispatch__htse__production__h2',
-        'Dispatch__ft__production__h2'
-  ]
-  var_cols_2 =[
-        'Dispatch__h2_storage__level__h2'
+        'Dispatch__ft__production__h2',
+        'Dispatch__h2_storage__discharge__h2'
   ]
   ax1 = ax
   ax1.set_ylabel('Hydrogen Rate (ton/hour)')
-  labels1 = ["HTSE Production", "FT Consumption"]
-  labels2 = ["H2 storage level"] 
-  colors1 = ["aqua","orangered"]
-  colors2 = ["violet"]
+  labels1 = ["HTSE Production", "FT Consumption","H2 Storage Discharge"] 
+  colors1 = ["aqua","orangered","green"]
   for var, lab, col in zip(var_cols_1, labels1, colors1):
       df[var] = abs(df[var])/1e3
-      df.plot(x='hour', y=var,ax=ax1,marker='+',label=lab, color=col)
+      df.plot(x='hour', y=var,ax=ax1,marker='+',linestyle='dashed',label=lab, color=col)
   ax1.yaxis.set_major_formatter(StrMethodFormatter("{x:,.01f}"))
-  ax2 = ax1.twinx()
-  ax2.set_ylabel("Hydrogen (ton)")
-  for var, lab, col in zip(var_cols_2,labels2, colors2) :
-    df[var] = df[var]/1e3
-    df.plot(x='hour', y=var, ax=ax2,marker='.',label=lab,color=col)
-  ax2.tick_params(axis='y', labelcolor='violet')
-  h1, l1, h2, l2 = ax1.get_legend_handles_labels() + ax2.get_legend_handles_labels()
-  ax2.grid(False)
-  ax.legend(h1, l1, loc='upper left')
-  ax2.legend(h2, l2, loc='upper right')
+  h1, l1= ax1.get_legend_handles_labels() 
+  ax.legend(h1, l1, loc='lower right')
+
 
 def price(df, ax):
   sns.set_theme(style='whitegrid')
   sns.set_context("paper", font_scale=1.75)
   df.plot(x='hour', y='price', ax =ax, marker='.', label='Price ($/MWh)', color='tab:red')
   ax.set_ylabel('Price ($/MWh)')
-  ax.legend(loc="upper left")
+  ax.legend(loc="lower right")
 
 def electricity(df, ax):
   sns.set_theme(style='whitegrid')
@@ -81,7 +71,7 @@ def electricity(df, ax):
   ax2.tick_params(axis='y', labelcolor="navy")
   ax2.grid(False)
   h1, l1, h2, l2 = ax.get_legend_handles_labels() + ax2.get_legend_handles_labels()
-  ax.legend(h1, l1, loc='upper left')
+  ax.legend(h1, l1, loc='lower right')
   ax2.legend(h2, l2, loc='upper right')
 
 def synfuels(df, ax):
@@ -99,7 +89,7 @@ def synfuels(df, ax):
     df[var] = abs(df[var])
     df.plot(x='hour',y=var,ax=ax,marker='.',label=lab, color=col)
   h1, l1= ax.get_legend_handles_labels()
-  ax.legend(h1, l1, loc='upper left')
+  ax.legend(h1, l1, loc='lower right')
 
 
 def load_data(file_path):
@@ -109,7 +99,7 @@ def load_data(file_path):
     )
     #df = df.set_index(['_ROM_Cluster','hour'])
     df = df.drop([
-        'Year',
+        #'Year',
         'RAVEN_sample_ID',
         'prefix',
         'scaling',
@@ -124,9 +114,11 @@ def main(path):
     # Load csv data into dataframe, select only first ROM cluster
     df = load_data(path)
     clusters = [i for i in range(20)] #20 later
-    for cluster in clusters:
+    years = df['Year'].unique()
+    for cluster, year in itertools.product(clusters, years):
       temp_df = df.copy()
       temp_df = temp_df.loc[temp_df['_ROM_Cluster']==cluster]
+      temp_df = temp_df.loc[temp_df['Year']==year]
       temp_df.set_index('hour')
 
       fig, axes = plt.subplots(nrows=4, sharex=True)
@@ -145,7 +137,7 @@ def main(path):
       hydrogen(temp_df, axes[2])
       synfuels(df, axes[3])
       fig.tight_layout()
-      fig.savefig(os.path.join('../',results_dir,'dispatch_'+str(cluster)+'.png'))
+      fig.savefig(os.path.join('../',results_dir,'dispatch_'+str(cluster)+"_"+str(year)+'.png'))
 
 
 
