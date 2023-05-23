@@ -28,4 +28,4 @@ if __name__ == "__main__":
   parser.add_argument("folder2_HYSES_or_APEA", help="folder2_HYSES_or_APEA")
   args = parser.parse_args()
 
-create_all_force_components_from_hysys_apea(args.folder1_HYSES_or_APEA, args.folder2_HYSES_or_APEA)
+  create_all_force_components_from_hysys_apea(args.folder1_HYSES_or_APEA, args.folder2_HYSES_or_APEA)

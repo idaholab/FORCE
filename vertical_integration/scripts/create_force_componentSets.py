@@ -25,4 +25,4 @@ if __name__ == "__main__":
   parser.add_argument("componentSets_folder", help="The paths of folders that contain the setfiles. Setfiles are files that list the components that the user wants to group together as one list")
   args = parser.parse_args()
 
-extract_all_force_componentsets(args.componentSets_folder)
+  extract_all_force_componentsets(args.componentSets_folder)

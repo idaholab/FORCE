@@ -34,6 +34,6 @@ if __name__ == "__main__":
   parser.add_argument("codes_outputs_folders_paths", help="The paths of folders having components from different codes", nargs='+') # at least one terminal argument
   args = parser.parse_args()
 
-extract_all_force_components(args.codes_outputs_folders_paths)
+  extract_all_force_components(args.codes_outputs_folders_paths)
 
 

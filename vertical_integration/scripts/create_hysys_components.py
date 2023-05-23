@@ -28,4 +28,4 @@ if __name__ == "__main__":
   parser.add_argument("hyses_xlsx_outputs_folder_path", help="hyses_xlsx_outputs_folder_path")
   args = parser.parse_args()
 
-extract_all_hysys_components(args.hyses_xlsx_outputs_folder_path)
+  extract_all_hysys_components(args.hyses_xlsx_outputs_folder_path)
