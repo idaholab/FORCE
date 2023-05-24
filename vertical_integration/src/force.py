@@ -14,16 +14,13 @@ https://www.osti.gov/biblio/1890160
 
 To faciliate this integration, vaious classes and methods are created. This code includes the following:
 
-1 - Python Classes for the component info in Aspen HYSYS, and Aspen APEA
 
-2 - A Python Class for the "FORCE Component". "FORCE Component" is a component that combines the component's inforation from two (or more) codes.
+1 - A Python Class for the "FORCE Component". "FORCE Component" is a component that combines the component's inforation from two (or more) codes.
 
-3 - A Python Class for the "FORCE Component Set". The "FORCE Component Set" is set of components grouped together.
+2 - A Python Class for the "FORCE Component Set". The "FORCE Component Set" is set of components grouped together.
 For example: grouping all the pumps together. The component set is created to produce the cost function of a specific component category (e.g. a pump or a turbine). It is also needed to create a component set to be used in HERON.
 
- 4 - Python Methods to extract ALL the components (or "FORCE components). This is useful if the user is extracting the information of several components from several output files.
-
- 5 - A Python Method to create/update a component (or a component set) in HERON using the components' info from Aspen HYSYS and APEA
+3- Python Methods to extract all the  "FORCE" components. This is useful if the user is extracting the information of several components from several output files.
 """
 #####
 # Section 0
@@ -33,100 +30,13 @@ import os
 import json
 from collections import OrderedDict
 import numpy as np
-import pandas as pd
 from scipy.optimize import curve_fit
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-
 #####
 # Section 1:
 # Python Classes for the APEA Component, HYSYS Component, FORCE component, and FORCE ComponentSet
-
-class ApeaComponent:
-  """
-    The APEA component: the APEA component is defined by the component name and the APEA output xlsx file from which the component info is imported (it is possible to have two compoennts with the same name) from different xlsx APEA outputs
-  """
-  def __init__(self, xlsx_filename, component_name):
-    """
-    Constructor
-    @ In, xlsx_filename, str, APEA output xlsx file from which the component info is imported
-    @ In, component_name, str, the component name
-    @ Out, None
-    """
-    self.xlsx_filename = xlsx_filename
-    self.component_name = component_name
-
-  def component_cost_info(self):
-    """
-    extracting the cost info of one component
-    @ In, None
-    @ Out, apea_comp_info,  dict, The component economic infomration extracted from the APEA code for a specific component
-    """
-
-    file_data= pd.read_excel(self.xlsx_filename, sheet_name='Equipment', skiprows=3)
-    equipment_cost = file_data.loc[file_data['Name'] == self.component_name,  'Equipment Cost [USD]'].values[0]
-    installed_cost = file_data.loc[file_data['Name'] == self.component_name,  'Installed Cost [USD]'].values[0]
-    equipment_weight  = file_data.loc[file_data['Name'] == self.component_name,  'Equipment Weight [LBS]'].values[0]
-    total_installed_weight = file_data.loc[file_data['Name'] == self.component_name, 'Total Installed Weight [LBS]'].values[0]
-
-    apea_comp_info= {
-                      "APEA Component Name": self.component_name,
-                      "APEA Source":self.xlsx_filename,
-                      "APEA Equipment Cost [USD]": equipment_cost.item(),
-                      "APEA Installed Cost [USD]":installed_cost.item() ,
-                      "APEA Equipment Weight [LBS]": equipment_weight.item(),"APEA Total Installed Weight [LBS]": total_installed_weight.item()}
-
-    return apea_comp_info
-
-
-class AspenHysysComponent:
-  """
-    The aspen HYSYS component:
-    Aspen HYSYS component is defined by:
-    1- The component name,
-    2- The HYSYS output xlsx file from which the component info is imported
-    It is possible to have two compoennts with the same name from different xlsx output files
-  """
-  def __init__(self, xlsx_filename, component_name):
-    """
-    Constructor
-    @ In, xlsx_filename, str, HYSYS output xlsx file from which the component info is imported
-    @ In, component_name, str, the component name
-    @ Out, None
-    """
-    self.xlsx_filename = xlsx_filename
-    self.component_name = component_name
-
-  def component_info(self):
-    """
-    extracting the relevant info one component
-    @ In, None
-    @ Out, HYSYS_comp_info,  dict, The component relevant infomration extracted from the HYSYS code for a specific component
-    """
-
-    sheets_names = ['Expanders', 'Coolers', 'Pumps', 'Heaters', 'Tees', 'Mixers', 'Heat Exchangers']
-    for sheet in sheets_names:
-      headers =list(pd.read_excel(self.xlsx_filename, sheet_name= sheet).columns.values)
-      if self.component_name in headers:
-        df = pd.read_excel(self.xlsx_filename, sheet_name= sheet)
-        keywords = ['POWER' , 'Power' , 'DUTY' , 'Duty']
-        capacity = (list(set(keywords).intersection(df.iloc[:, 0].values)))
-        if len(capacity):
-          power = df.loc[df.iloc[:, 0] == capacity[0] , self.component_name].values[0]
-          power_unit = df.loc[df.iloc[:, 0] == capacity[0] , "Unit"].values[0]
-        else:
-          power ="unknown"
-          power_unit = "unknown"
-
-        HYSYS_comp_info= {
-                          "HYSYS Component Name": self.component_name,
-                          "HYSYS Category": sheet,
-                          "HYSYS Source":self.xlsx_filename,
-                          "HYSYS Power": power,
-                          "HYSYS Power Units":power_unit}
-    return HYSYS_comp_info
-
 
 class ForceComponent:
   """
@@ -177,17 +87,6 @@ class ForceComponent:
     return(force_dict)
 
 
-
-
-# FORCE component_set class
-# It is characterized by:
-# 1 - A list of components
-# 2 - Cost functions curve of the component set
-# 3- The mean error due to the cost function curve fitting
-# 4 - The cost function equation coefficent A: reference price
-# 5- The cost function equation coefficent D': reference driver
-# 6- The cost function equation coefficient X: The scaling factor
-# For each component I need the name, the power, installed cost
 class ForceComponentSet:
   """
     FORCE component_set class which is characterized by:
@@ -362,3 +261,118 @@ class ForceComponentSet:
       print ('\n','\033[91m', f"Warning: The number of included components in the the component set '{set_name}' is only {len(updated_components_set)}. At least 3 components are required to produce the cost function curve", '\033[0m')
 
     return comp_set_info_dict
+
+
+#####
+# Section 2:
+# Python Methods extracing all the FORCE components
+
+def extract_all_force_components(folders_paths_list):
+  """
+    Extracting all the the FOCE components (by merging components from differetn codes)
+    @ In, folders_paths_list, list, The list of component folder.
+    Each foldes includes components created by a different code (e.g. HYSYS or APEA).
+    @ Out, None
+  """
+  current_path= (os.path.abspath(__file__))
+  force_outputs_path = current_path.split('/src', 1)[0]+"/FORCE_Components/"
+
+  # Since somtimes we have components with the same name (e.g. turbine) but have different characteristics,
+  # we added a suffix to the filename to be able to distinguish between components from different sources
+  codes_suffix = ["APEA.xlsx", "HYSYS.xlsx", "HERON.xml", "HYBRID.txt"]
+  for string in codes_suffix:
+    if os.path.dirname(folders_paths_list[0]).endswith(string):
+      suffix = (str(os.path.dirname(folders_paths_list[0]))).strip(string)
+  filename_suffix = "_"+ suffix.split("/")[-1].replace(" ", "")
+
+  files_list = [] # the list of lists of files in eac folder
+  for folder_path in folders_paths_list:
+    files_list.append(os.listdir(folder_path))
+  common_components = set(files_list[0])
+  for item in files_list[1:]:
+    common_components.intersection_update(item)
+
+  for comp in common_components:
+    codes_files_list=[]
+    for folder_path in folders_paths_list:
+      filepath= folder_path+comp
+      codes_files_list.append(filepath)
+    component_1 = ForceComponent(codes_files_list)
+
+    output_file = force_outputs_path+str(component_1.component_info().get('Component Name')).replace(" ", "").replace('/', '_')+filename_suffix +".txt"
+
+    file_exists = os.path.exists(output_file)
+    if file_exists:
+      os.remove(output_file)
+    json.dump(component_1.component_info(), open(output_file, 'w'),indent = 2)
+  print(f" \n {len(common_components)} Force components are created at: {force_outputs_path } by combining info from: \n {folders_paths_list} \n")
+
+
+def create_all_force_components_from_hysys_apea(folder1, folder2):
+  """
+    This method is similar to the previous "extract_all_force_components"
+    The difference is that it works on several folders (of output files) at the same time and
+    This method connects the HYSYS file with its corresponding APEA file
+
+    @ In, folders_paths_list, list, The list of component folder. Each foldes includes components created by a different code (e.g. HYSYS or APEA).
+    @ Out, None
+  """
+  # one folder is the Aspen HYSES folder and the other is the APEA one
+  fol1_list = os.listdir(folder1)
+  fol2_list = os.listdir(folder2)
+  for i in range (len(fol1_list)):
+    fol1_list[i] =  folder1 +"/" +fol1_list[i]
+  for i in range (len(fol2_list)):
+    fol2_list[i] =  folder2 + "/"+fol2_list[i]
+  tot_list = fol1_list +  fol2_list
+
+  aspen_apea_files_paths  = []
+  for item in tot_list:
+    if item.endswith ("HYSYS.xlsx"):
+      hysys_model_name = item.strip('HYSYS.xlsx')
+      aspen_apea_files_paths.append(hysys_model_name)
+    if item.endswith ("APEA.xlsx"):
+      apea_model_name = item.strip('APEA..xlsx')
+      aspen_apea_files_paths.append(apea_model_name)
+
+  aspen_apea_file_names = []
+  for filepath in aspen_apea_files_paths:
+    filename = os.path.basename(filepath)
+    aspen_apea_file_names.append(filename)
+
+  duplicate_file_names = set([x for x in aspen_apea_file_names if aspen_apea_file_names.count(x) > 1])
+
+  hyses_filepaths =[]
+  apea_filepaths =[]
+  for filename in duplicate_file_names:
+    for filepath in tot_list:
+      if filepath.endswith(filename+ "HYSYS.xlsx"):
+        hyses_filepaths.append(filepath+"/")
+      if filepath.endswith(filename+ "APEA.xlsx"):
+        apea_filepaths.append(filepath+"/")
+
+  for i in range(len(hyses_filepaths)):
+    extract_all_force_components([hyses_filepaths[i], apea_filepaths[i]])
+
+
+
+
+def extract_all_force_componentsets(component_sets_folder):
+  """
+    Extracting ALL the component sets
+    @ In, component_sets_folder, str, The path of the folder that includes several files of the user-input files
+    These user-input files determine the components which will be grouped together in one set
+    @ Out, None
+  """
+  for Setfile in os.listdir(component_sets_folder):
+    if Setfile.startswith("Setfile") and Setfile.endswith(".txt"):
+      print('\033[1m', f"\n\n A component set is found in '{Setfile}'", '\033[0m')
+      Setfile_path = component_sets_folder + Setfile
+      componentSet_dict = ForceComponentSet(Setfile_path).component_set_info()
+
+      output_file_path = Setfile_path.replace("Setfile", "componentSet")
+      file_exists = os.path.exists(output_file_path)
+      if file_exists:
+        os.remove(output_file_path)
+      json.dump(componentSet_dict, open(output_file_path, 'w'), indent = 2)
+      print(" \n", f"The new component set can be found at {output_file_path}")
