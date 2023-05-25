@@ -1,0 +1,5 @@
+# The folders inside the "APEA components" include text files that are loaded with the APEA components info in the form of dictionaries.
+
+# Note that the folders are named based on the name of the APEA output XLSX file that was imported from the Aspen APEA code.
+
+# For example: The folder "from_Output_APEA.xlsx" contains the components extracted from an excel file named "Output_APEA.xlsx" that was imported from Aspen APEA

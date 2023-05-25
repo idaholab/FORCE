@@ -15,3 +15,8 @@ romMeta.xml
 # Allow these files
 !FORCE_logo-bw.png
 !FORCE_logo-color.png
+
+
+# python stuff
+__pycache__
+*.pyc

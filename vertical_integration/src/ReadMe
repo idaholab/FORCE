@@ -1,0 +1,60 @@
+# In this folder, the script "main.py" includes the main classes and methods that are used to create other scripts
+
+# For developers, to understand how each class or method works, below are examples. The examples need to be uncommented and added to the main.py file
+
+
+######  APEA component class Example
+# component_1 = ApeaComponent("~/projects/FORCE/vertical_integration/FORCE/APEA/APEA_outputs/APEA_Output.xlsx", 'Ref Condenser')
+# print(component_1.component_cost_info())
+#######
+
+
+######  Aspen HYSYS component class Example
+# component_1 = AspenHysysComponent("~/projects/FORCE/vertical_integration/FORCE/HYSYS/HYSYS_outputs/HYSYS_output.xlsx",'Data point BOP Pump 2198kW')
+# print(component_1.component_info())
+#######
+
+
+######  FORCE component class Example
+# apea_component_file= '/Users/hannbn/projects/FORCE/vertical_integration/FORCE/APEA/APEA_components/from_APEA_Output.xlsx/SG.txt'
+# HYSYS_component_file = '/Users/hannbn/projects/FORCE/vertical_integration/FORCE/HYSYS/HYSYS_components/from_HYSYS_output.xlsx/SG.txt'
+# component_1 = ForceComponent([apea_component_file,HYSYS_component_file])
+# print(component_1.component_info().get('Component Name'))
+# print(component_1.component_info())
+#######
+
+######  FORCE Component Set class Example
+# component_sets_file = '/Users/hannbn/projects/FORCE/vertical_integration/FORCE/FORCE_Components/ComponentSetsFiles/Sets1/Setfile_turbines.txt'
+# componentSet_1 = ForceComponentSet(component_sets_file)
+# print(componentSet_1.component_set_info())
+#######
+
+######  Extracting HYSYS components Example
+# extract_all_hysys_components("/Users/hannbn/projects/FORCE/vertical_integration/HYSYS/HYSYS_outputs")
+#######
+
+######  Extracting APEA components Example
+# extract_all_apea_components("/Users/hannbn/projects/FORCE/vertical_integration/APEA/APEA_outputs")
+########
+
+######  Extracting All APEA components Example
+# extract_all_apea_components("/Users/hannbn/projects/FORCE/vertical_integration/APEA/APEA_outputs")
+########
+
+######  Extracting All FORCE components Example
+# extract_all_force_components(["/Users/hannbn/projects/FORCE/vertical_integration/APEA/APEA_components/from_Output_APEA.xlsx", "/Users/hannbn/projects/FORCE/vertical_integration/HYSYS/HYSYS_components/from_Output_HYSYS.xlsx"])
+########
+
+######  Extracting All FORCE components from HYSYS and APEA Example
+# create_all_force_components_from_hysys_apea("/Users/hannbn/projects/FORCE/vertical_integration/HYSYS/HYSYS_components", "/Users/hannbn/projects/FORCE/vertical_integration/APEA/APEA_components")
+########
+
+
+######  Extracting All FORCE component sets from HYSYS and APEA Example
+#extract_all_force_componentSets("/Users/hannbn/projects/FORCE/vertical_integration/FORCE_Components/ComponentSetsFiles/Sets1")
+########
+
+
+######  Creating the component sets in HERON Example
+#create_componentSets_in_HERON("~/projects/FORCE/vertical_integration/FORCE_Components/ComponentSetsFiles/Sets1","~/projects/FORCE/vertical_integration/HERON/HERON_input_XML_files/heron_input.xml")
+########

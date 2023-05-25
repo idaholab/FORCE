@@ -1,0 +1,34 @@
+# This folder (vertical integration) includes scripts and examples to demonstrate the integration between different IES Codes.
+
+
+# Definitions
+# "Force Component": a component whose attributes are imported from two (or more) IES codes
+# "Component set": a set of components grouped together to be represented later as one component
+
+
+# The code includes now scripts that integrate Apsen HYSYS, Aspen APEA and HERON. Since this integration typically requires developing cost functions of different components, scripts that produce cost functions are included too.
+# This code includes also some scripts that will help later to integrate other IES codes
+
+
+# For a user, a quick way to understand the code, is to run the script "src/aspen_to_heon.py" from the terminal as follows:
+
+python aspen_to_heron.py ../HYSYS/HYSYS_outputs/ ../APEA/APEA_outputs/ ../FORCE_Components/ComponentSetsFiles/Sets1/ ../HERON/HERON_input_XML_files/heron_input.xml
+
+
+
+# For a developer, a quick way to understand the code is to:
+1- Go through the examples (commented) in src/main.py
+2- Go through the following scripts in order: 
+
+create_hysys_components,.py
+create_apea_components.py,
+create_force_components.py, 
+create_force_componentSets.py,
+create_all_forceComponents_from_aspen_apea.py, 
+force_component_sets_to_heron.py
+
+
+
+3- Run the script aspen_to_heon.py
+
+

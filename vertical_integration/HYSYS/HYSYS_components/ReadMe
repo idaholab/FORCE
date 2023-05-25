@@ -1,0 +1,5 @@
+# The folders inside the "HYSYS components" include text files that are loaded with the HYSYS components info in the form of dictionaries
+
+# Note that the folders are named based on the name of the HYSYS output XLSX file that was imported from the HYYS code.
+
+# For example: The folder "from_Output_HYSYS.xlsx" contains the components extracted from an excel file named "Output_HYSYS.xlsx" that was imported from HYSYS
