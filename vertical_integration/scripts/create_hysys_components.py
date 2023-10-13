@@ -16,7 +16,7 @@ import argparse
 
 # import from the vertical_inegration/src
 sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
-from main_methods import extract_all_hysys_components
+from hysys import extract_all_hysys_components
 
 
 # # Specifying terminal command arguments

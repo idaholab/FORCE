@@ -18,7 +18,7 @@ import argparse
 
 # import from the vertical_inegration/src
 sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
-from main_methods import create_componentsets_in_HERON
+from heron import create_componentsets_in_HERON
 import convert_utils as xm
 
 # Specifying user inputs and output file

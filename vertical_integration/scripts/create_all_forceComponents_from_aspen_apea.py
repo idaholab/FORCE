@@ -16,7 +16,7 @@ import sys
 import os
 # import from the vertical_inegration/src
 sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
-from main_methods import create_all_force_components_from_hysys_apea
+from force import create_all_force_components_from_hysys_apea
 
 # User inputs
 if __name__ == "__main__":
