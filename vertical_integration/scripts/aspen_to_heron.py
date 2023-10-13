@@ -24,9 +24,12 @@ import argparse
 
 # import from the vertical_inegration/src
 sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
-from main_methods import extract_all_force_componentsets
+from force import extract_all_force_componentsets
 import convert_utils as xm
-from main_methods import extract_all_hysys_components, extract_all_apea_components, create_all_force_components_from_hysys_apea, extract_all_force_componentsets, create_componentsets_in_HERON
+from hysys import extract_all_hysys_components
+from apea import extract_all_apea_components
+from force import create_all_force_components_from_hysys_apea, extract_all_force_componentsets
+from heron import create_componentsets_in_HERON
 
 
 # Specifying user inputs and output file

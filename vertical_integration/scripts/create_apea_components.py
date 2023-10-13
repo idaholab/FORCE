@@ -15,7 +15,7 @@ import os
 import argparse
 # import from the vertical_inegration/src
 sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
-from main_methods import extract_all_apea_components
+from apea import extract_all_apea_components
 
 # # Specifying terminal command arguments
 if __name__ == "__main__":
