@@ -95,13 +95,14 @@ def extract_all_hysys_components(HYSYS_xlsx_outputs_folder_path):
       if xlsxfile[0].isalpha() or xlsxfile[0].isdigit():
         HYSYS_file_path = HYSYS_xlsx_outputs_folder_path +"/" +xlsxfile
 
-        HYSYS_outputs_path = current_path.split('/src', 1)[0]+"/HYSYS/HYSYS_components/"+ "from_"+str(os.path.basename(HYSYS_file_path))+"/"
+        HYSYS_outputs_path = current_path.split('/src', 1)[0]+"/tests/integration_tests/HYSYS/HYSYS_components/"+\
+            "from_"+str(os.path.basename(HYSYS_file_path))+"/"
         isExist = os.path.exists(HYSYS_outputs_path)
         if isExist:
           shutil.rmtree(HYSYS_outputs_path)
         # Create a new directory
         os.makedirs(HYSYS_outputs_path)
-        print("\n A new directory is created with all the Apsen HYSYS components at:",HYSYS_outputs_path, "\n")
+        print("\n A new directory is created with all the Apsen HYSYS components at:", "\n", HYSYS_outputs_path, "\n")
 
         sheets_names = ['Expanders', 'Coolers', 'Pumps', 'Heaters', 'Tees', 'Mixers', 'Heat Exchangers']
         for sheet in sheets_names:

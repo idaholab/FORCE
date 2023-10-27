@@ -85,13 +85,15 @@ def extract_all_apea_components(apea_xlsx_outputs_folder_path):
         apea_file_path = apea_xlsx_outputs_folder_path + "/"+xlsxfile
         apea_file_data= pd.read_excel(apea_file_path, sheet_name='Equipment',skiprows=3)
 
-        APEA_outputs_path = current_path.split('/src', 1)[0]+"/APEA/APEA_components/"+ "from_"+str(os.path.basename(apea_file_path))+"/"
+        APEA_outputs_path = current_path.split('/src', 1)[0]+\
+          "/tests/integration_tests/APEA/APEA_components/"+\
+              "from_"+str(os.path.basename(apea_file_path))+"/"
         isExist = os.path.exists(APEA_outputs_path)
         if isExist:
           shutil.rmtree(APEA_outputs_path)
         # Create a new directory
         os.makedirs(APEA_outputs_path)
-        print("\n A new directory is created with all the APEA components at:",APEA_outputs_path, "\n")
+        print("\n A new directory is created with all the APEA components at:","\n",APEA_outputs_path, "\n")
 
         for ind in apea_file_data.index:
           component_1= ApeaComponent(apea_file_path, apea_file_data['Name'][ind])

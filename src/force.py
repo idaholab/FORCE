@@ -275,7 +275,7 @@ def extract_all_force_components(folders_paths_list):
     @ Out, None
   """
   current_path= (os.path.abspath(__file__))
-  force_outputs_path = current_path.split('/src', 1)[0]+"/FORCE_Components/"
+  force_outputs_path = current_path.split('/src', 1)[0]+"/tests/integration_tests/FORCE_Components/"
 
   # Since somtimes we have components with the same name (e.g. turbine) but have different characteristics,
   # we added a suffix to the filename to be able to distinguish between components from different sources
@@ -305,7 +305,7 @@ def extract_all_force_components(folders_paths_list):
     if file_exists:
       os.remove(output_file)
     json.dump(component_1.component_info(), open(output_file, 'w'),indent = 2)
-  print(f" \n {len(common_components)} Force components are created at: {force_outputs_path } by combining info from: \n {folders_paths_list} \n")
+  print(f" \n {len(common_components)} Force components are created at:\n {force_outputs_path } \nby combining info from: \n {folders_paths_list} \n")
 
 
 def create_all_force_components_from_hysys_apea(folder1, folder2):

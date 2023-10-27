@@ -14,8 +14,7 @@ python create_all_forceComponents_from_aspen_apea.py ../APEA/APEA_components ../
 import argparse
 import sys
 import os
-# import from the vertical_inegration/src
-sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
+sys.path.append(os.path.dirname(__file__).split("FORCE")[:-1][0]+"/FORCE/src")
 from force import create_all_force_components_from_hysys_apea
 
 # User inputs

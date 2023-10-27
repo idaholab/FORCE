@@ -14,7 +14,7 @@ import argparse
 import sys
 import os
 # import from the vertical_inegration/src
-sys.path.append(os.path.dirname(__file__).split("vertical_integration")[:-1][0]+"vertical_integration/src")
+sys.path.append(os.path.dirname(__file__).split("FORCE")[:-1][0]+"/FORCE/src")
 from force import extract_all_force_componentsets
 
 if __name__ == "__main__":
