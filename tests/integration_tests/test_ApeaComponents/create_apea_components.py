@@ -13,7 +13,7 @@ python create_apea_components.py ../APEA/APEA_outputs/
 import sys
 import os
 import argparse
-# import from the vertical_inegration/src
+# import frm the vertical_inegration/src
 sys.path.append(os.path.dirname(__file__).split("FORCE")[:-1][0]+"FORCE/src")
 from apea import extract_all_apea_components
 

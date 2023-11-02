@@ -31,7 +31,8 @@ import pandas as pd
 
 class ApeaComponent:
   """
-    The APEA component: the APEA component is defined by the component name and the APEA output xlsx file from which the component info is imported (it is possible to have two compoennts with the same name) from different xlsx APEA outputs
+    The APEA component: the APEA component is defined by the component name and the APEA output xlsx file from which the component info is 
+    imported (it is possible to have two compoennts with the same name) from different xlsx APEA outputs
   """
   def __init__(self, xlsx_filename, component_name):
     """

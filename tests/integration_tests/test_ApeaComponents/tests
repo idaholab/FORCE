@@ -1,0 +1,6 @@
+[Tests]  
+  [./createAPEAComponents]
+    type = RavenPython
+    input = 'create_apea_components.py ../APEA/APEA_outputs/'
+  [../]
+[]
