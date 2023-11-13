@@ -1,0 +1,8 @@
+{
+  "APEA Component Name": "HT",
+  "APEA Source": "APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 7677300,
+  "APEA Installed Cost [USD]": 11808100,
+  "APEA Equipment Weight [LBS]": 0,
+  "APEA Total Installed Weight [LBS]": 1192775
+}

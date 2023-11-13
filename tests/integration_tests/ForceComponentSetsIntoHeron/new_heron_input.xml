@@ -1,0 +1,282 @@
+<?xml version="1.0" ?>
+<HERON>
+  <Case name="LWR_08292022_15ARMA_FullCase_Per3">
+    <mode>opt</mode>
+    <verbosity>debug</verbosity>
+    <num_arma_samples>15</num_arma_samples>
+    <time_discretization>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
+      <end_time>23</end_time>
+      <num_steps>24</num_steps>
+    </time_discretization>
+
+    <economics>
+      <ProjectTime>30</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.08</tax>
+      <inflation>0.0</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+
+    <dispatcher>
+      <pyomo>
+        <solver>ipopt</solver>
+      </pyomo>
+    </dispatcher>
+
+    <optimization_settings>
+      <metric>expectedValue</metric>
+      <type>max</type>
+      <persistence>3</persistence>
+    </optimization_settings>
+
+  </Case>
+
+
+  <Components>
+    <Component name="NPP">
+      <produces resource="reactor_heat" dispatch="fixed">
+        <capacity resource="reactor_heat">
+          <fixed_value>158.8</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="BOP1">
+      <produces resource="electricity" dispatch="independent">
+        <consumes>reactor_heat</consumes>
+        <capacity resource="reactor_heat">
+          <fixed_value>-160</fixed_value>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="reactor_heat">-1</rate>
+            <rate resource="electricity">0.33</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="Converter">
+      <produces resource="thermal_heat" dispatch="independent">
+        <consumes>reactor_heat</consumes>
+        <capacity resource="reactor_heat">
+          <fixed_value>-160</fixed_value>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="reactor_heat">-1</rate>
+            <rate resource="thermal_heat">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="TES_Charger">
+      <produces resource="tes_heat" dispatch="independent">
+        <consumes>thermal_heat</consumes>
+        <capacity resource="thermal_heat">
+          <opt_bounds debug_value="-100">-160,0</opt_bounds>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="thermal_heat">-1</rate>
+            <rate resource="tes_heat">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="TES_Charger_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>TES_Charger_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-2964480</fixed_value>
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.959</fixed_value>
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>-72.57</fixed_value>
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="TES">
+      <stores resource="tes_heat" dispatch="independent">
+        <capacity resource="tes_heat">
+          <opt_bounds debug_value="200">0,952.8</opt_bounds>
+        </capacity>
+        <initial_stored>
+          <fixed_value>30</fixed_value>
+        </initial_stored>
+        <RTE>0.9</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="TES_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>TES_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-36027173</fixed_value>
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.839</fixed_value>
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>435.42</fixed_value>
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="BOP2">
+      <produces resource="electricity" dispatch="independent">
+        <consumes>tes_heat</consumes>
+        <capacity resource="tes_heat">
+          <opt_bounds debug_value="-300">-160,0</opt_bounds>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="tes_heat">-1</rate>
+            <rate resource="electricity">0.26</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="BOP2_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>BOP2_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-10896427</fixed_value>
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.692</fixed_value>
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>-72.57</fixed_value>
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="turbines set">
+      <economics>
+        <CashFlow name="ts_capex" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <variable>BOP2_capacity</variable>
+          </driver>
+          <scaling_factor_x>
+            <fixed_value>0.692</fixed_value>
+          </scaling_factor_x>
+          <!-- Some of this component cashFlow info are imported from: FORCE_Components/ComponentSetsFiles/Sets1//componentSet_turbines.txt-->
+          <reference_driver>
+            <fixed_value>17.4</fixed_value>
+            <!--Units : MW-->
+          </reference_driver>
+          <reference_price>
+            <fixed_value>-3230400.0</fixed_value>
+            <!--Reference Price (USD)-->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.7628610270246472</fixed_value>
+          </scaling_factor_x>
+          <!--Note that the cost function curve fitting error is 0.0 %-->
+        </CashFlow>
+        <!-- Some of this component economic info are imported from: FORCE_Components/ComponentSetsFiles/Sets1//componentSet_turbines.txt-->
+      </economics>
+    </Component>
+
+    <Component name="electricity_market">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="grid_sales" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <ARMA variable="price">price</ARMA>
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="pumps set">
+      <!-- This component info are imported from: FORCE_Components/ComponentSetsFiles/Sets1//componentSet_pumps.txt-->
+      <economics>
+        <CashFlow name="pumps set_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <!-- Default values are assigned to the cashflow parameters and need to be reviewed by the user-->
+          <reference_driver>
+            <fixed_value>2.74763868640817</fixed_value>
+            <!--Units : MW-->
+          </reference_driver>
+          <reference_price>
+            <fixed_value>-1298891.633318288</fixed_value>
+            <!--Reference Price (USD)-->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.3165984993228245</fixed_value>
+          </scaling_factor_x>
+          <!--Note that the cost function curve fitting error is 5.59 %-->
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="HX set">
+      <!-- This component info are imported from: FORCE_Components/ComponentSetsFiles/Sets1//componentSet_heat_exchangers.txt-->
+      <economics>
+        <CashFlow name="HX set_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <!-- Default values are assigned to the cashflow parameters and need to be reviewed by the user-->
+          <reference_driver>
+            <fixed_value>11.637680295019</fixed_value>
+            <!--Units : MW-->
+          </reference_driver>
+          <reference_price>
+            <fixed_value>-530144.6197970972</fixed_value>
+            <!--Reference Price (USD)-->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.46533781554473563</fixed_value>
+          </scaling_factor_x>
+          <!--Note that the cost function curve fitting error is 22.24 %-->
+        </CashFlow>
+      </economics>
+    </Component>
+
+  </Components>
+
+
+  <DataGenerators>
+    <ARMA name="price" variable="price">../../../../train/Output_2018_2021_to2045_presvInpCDF_0_1_F1095_F168/arma.pk</ARMA>
+  </DataGenerators>
+
+
+</HERON>
+

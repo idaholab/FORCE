@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "BOP Ref Pump",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 215.956117728843,
+  "HYSYS Power Units": "kW"
+}

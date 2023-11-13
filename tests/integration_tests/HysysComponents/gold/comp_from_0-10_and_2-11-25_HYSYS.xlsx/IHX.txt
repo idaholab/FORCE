@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "IHX",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 36.3533021393001,
+  "HYSYS Power Units": "MW"
+}

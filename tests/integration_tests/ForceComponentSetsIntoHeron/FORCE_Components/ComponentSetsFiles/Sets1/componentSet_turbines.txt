@@ -1,0 +1,13 @@
+{
+  "Component Set Name": "turbines set",
+  "Component Set file": "FORCE_Components/ComponentSetsFiles/Sets1/Setfile_turbines.txt",
+  "Included components": [
+    "Sized Turbine (1/5) @90%",
+    "Sized Turbine (1/5) @96.97%"
+  ],
+  "Reference Driver": 17400,
+  "Reference Driver Power Units": "kW",
+  "Reference Price (USD)": 3230400.0,
+  "Scaling Factor": 0.7628610270246472,
+  "Fitting Average Error (%)": 0.0
+}

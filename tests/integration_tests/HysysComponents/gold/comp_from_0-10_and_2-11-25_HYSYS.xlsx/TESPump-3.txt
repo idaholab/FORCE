@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "TES Pump-3",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 0,
+  "HYSYS Power Units": "kW"
+}

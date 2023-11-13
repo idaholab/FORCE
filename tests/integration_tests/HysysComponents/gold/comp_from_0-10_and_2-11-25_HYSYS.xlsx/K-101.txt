@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "K-101",
+  "HYSYS Category": "Expanders",
+  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 15733.8629005851,
+  "HYSYS Power Units": "kW"
+}

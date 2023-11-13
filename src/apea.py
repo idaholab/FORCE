@@ -21,6 +21,7 @@ To faciliate this integration, vaious classes and methods are created. This code
 # Importing libraries and modules
 
 import os
+from pathlib import Path
 import json
 import shutil
 import pandas as pd
@@ -78,17 +79,14 @@ def extract_all_apea_components(apea_xlsx_outputs_folder_path):
     @ Out, APEA_outputs_path, str, The folder that contains the components created from the Aspen APEA code
   """
   files_list = os.listdir(apea_xlsx_outputs_folder_path)
-  current_path= (os.path.abspath(__file__))
   for xlsxfile in files_list:
     if xlsxfile.endswith(".xlsx"):
       if xlsxfile[0].isalpha() or xlsxfile[0].isdigit():
-      #print(xlsxfile)
         apea_file_path = apea_xlsx_outputs_folder_path + "/"+xlsxfile
         apea_file_data= pd.read_excel(apea_file_path, sheet_name='Equipment',skiprows=3)
-
-        APEA_outputs_path = current_path.split('/src', 1)[0]+\
-          "/tests/integration_tests/APEA/APEA_components/"+\
-              "from_"+str(os.path.basename(apea_file_path))+"/"
+        APEA_outputs_path = os.path.split(os.path.abspath(apea_xlsx_outputs_folder_path))[0]+\
+          "/comp_from_"+str(os.path.basename(apea_file_path))+"/"
+        APEA_outputs_path  = APEA_outputs_path.replace(" ", "_")
         isExist = os.path.exists(APEA_outputs_path)
         if isExist:
           shutil.rmtree(APEA_outputs_path)

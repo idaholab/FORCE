@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "D-IHX hot standby",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 0.741654335462684,
+  "HYSYS Power Units": "MW"
+}

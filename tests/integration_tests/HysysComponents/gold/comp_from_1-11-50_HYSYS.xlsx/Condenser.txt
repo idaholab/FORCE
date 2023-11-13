@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "Condenser",
+  "HYSYS Category": "Coolers",
+  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 59.9869137082498,
+  "HYSYS Power Units": "MW"
+}

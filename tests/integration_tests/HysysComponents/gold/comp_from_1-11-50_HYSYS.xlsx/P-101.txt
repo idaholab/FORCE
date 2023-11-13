@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "P-101",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 30.5686755541533,
+  "HYSYS Power Units": "kW"
+}

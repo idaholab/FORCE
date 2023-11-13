@@ -1,0 +1,8 @@
+{
+  "APEA Component Name": "IHX Pump",
+  "APEA Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 7400,
+  "APEA Installed Cost [USD]": 55000,
+  "APEA Equipment Weight [LBS]": 500,
+  "APEA Total Installed Weight [LBS]": 7786
+}

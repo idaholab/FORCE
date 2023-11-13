@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "TES Loop cond (sized 1/10)",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 5.41373781795774,
+  "HYSYS Power Units": "MW"
+}

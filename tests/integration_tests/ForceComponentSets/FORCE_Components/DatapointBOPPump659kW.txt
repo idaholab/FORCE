@@ -1,0 +1,12 @@
+{
+  "Component Name": "Data point BOP Pump 659 kW",
+  "APEA Source": "APEA_outputs//Output_APEA.xlsx",
+  "APEA Equipment Cost [USD]": 643700,
+  "APEA Installed Cost [USD]": 814000,
+  "APEA Equipment Weight [LBS]": 31800,
+  "APEA Total Installed Weight [LBS]": 60832,
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
+  "HYSYS Power": 659.433284737962,
+  "HYSYS Power Units": "kW"
+}

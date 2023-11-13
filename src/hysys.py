@@ -88,15 +88,15 @@ def extract_all_hysys_components(HYSYS_xlsx_outputs_folder_path):
     @ Out, HYSYS_outputs_path, str, The folder that contains the components created from the HYSYS code
   """
   files_list = os.listdir(HYSYS_xlsx_outputs_folder_path)
-  current_path= (os.path.abspath(__file__))
 
   for xlsxfile in files_list:
     if xlsxfile.endswith(".xlsx"):
       if xlsxfile[0].isalpha() or xlsxfile[0].isdigit():
         HYSYS_file_path = HYSYS_xlsx_outputs_folder_path +"/" +xlsxfile
 
-        HYSYS_outputs_path = current_path.split('/src', 1)[0]+"/tests/integration_tests/HYSYS/HYSYS_components/"+\
-            "from_"+str(os.path.basename(HYSYS_file_path))+"/"
+        HYSYS_outputs_path = os.path.split(os.path.abspath(HYSYS_xlsx_outputs_folder_path))[0]+\
+            "/comp_from_"+str(os.path.basename(HYSYS_file_path))+"/"
+        HYSYS_outputs_path   = HYSYS_outputs_path .replace(" ", "_")
         isExist = os.path.exists(HYSYS_outputs_path)
         if isExist:
           shutil.rmtree(HYSYS_outputs_path)

@@ -1,6 +1,6 @@
 #!/bin/bash
 echo 'Running FORCE tests ...'
-
+PYTHON_COMMAND=python
 SCRIPT_NAME=`readlink $0`
 if test -x "$SCRIPT_NAME";
 then
@@ -10,7 +10,7 @@ else
 fi
 SCRIPT_DIR=`(cd $SCRIPT_DIRNAME; pwd)`
 
-TEST_SET= 0 # 0 for normal tests, 1 for plugin tests, 2 for both
+TEST_SET=0 # 0 for normal tests, 1 for plugin tests, 2 for both
 
 # source read ravenrc script
 RAVEN_RC_SCRIPT=$SCRIPT_DIR/scripts/read_ravenrc.sh
@@ -111,10 +111,10 @@ if [[ $DO_RAVEN == 0 ]]; then
   rc=$?
   ALL_PASS=$rc
   if [[ $rc != 0 ]]; then
-      echo ' ... there were failed RAVEN tests!'
+      echo ' ... there were failed tests!'
       FAILED=( "${FAILED[@]}" "RAVEN" )
   else
-      echo ' ... RAVEN tests passed successfully.'
+      echo ' ... tests passed successfully.'
       PASSED=( "${PASSED[@]}" "RAVEN" )
   fi # end "if passed"
 
@@ -200,4 +200,3 @@ else
   fi
   echo ... tests passed!
 fi
-

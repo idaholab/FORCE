@@ -1,0 +1,8 @@
+{
+  "APEA Component Name": "DischargeCond",
+  "APEA Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 554900,
+  "APEA Installed Cost [USD]": 870800,
+  "APEA Equipment Weight [LBS]": 159900,
+  "APEA Total Installed Weight [LBS]": 229789
+}

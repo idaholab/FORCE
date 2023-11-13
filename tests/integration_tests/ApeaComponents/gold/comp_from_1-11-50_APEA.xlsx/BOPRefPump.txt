@@ -1,0 +1,8 @@
+{
+  "APEA Component Name": "BOP Ref Pump",
+  "APEA Source": "APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 144800,
+  "APEA Installed Cost [USD]": 240400,
+  "APEA Equipment Weight [LBS]": 6800,
+  "APEA Total Installed Weight [LBS]": 20897
+}

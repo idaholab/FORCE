@@ -274,16 +274,6 @@ def extract_all_force_components(folders_paths_list):
     Each foldes includes components created by a different code (e.g. HYSYS or APEA).
     @ Out, None
   """
-  current_path= (os.path.abspath(__file__))
-  force_outputs_path = current_path.split('/src', 1)[0]+"/tests/integration_tests/FORCE_Components/"
-
-  # Since somtimes we have components with the same name (e.g. turbine) but have different characteristics,
-  # we added a suffix to the filename to be able to distinguish between components from different sources
-  codes_suffix = ["APEA.xlsx", "HYSYS.xlsx", "HERON.xml", "HYBRID.txt"]
-  for string in codes_suffix:
-    if os.path.dirname(folders_paths_list[0]).endswith(string):
-      suffix = (str(os.path.dirname(folders_paths_list[0]))).strip(string)
-  filename_suffix = "_"+ suffix.split("/")[-1].replace(" ", "")
 
   files_list = [] # the list of lists of files in eac folder
   for folder_path in folders_paths_list:
@@ -292,15 +282,19 @@ def extract_all_force_components(folders_paths_list):
   for item in files_list[1:]:
     common_components.intersection_update(item)
 
+  parent_folder_path = os.path.split(os.path.abspath(folder_path))[0]
+  force_outputs_path = parent_folder_path + "/FORCE_Components/"
+
   for comp in common_components:
+    
     codes_files_list=[]
     for folder_path in folders_paths_list:
-      filepath= folder_path+comp
+      filepath = folder_path+ comp
       codes_files_list.append(filepath)
     component_1 = ForceComponent(codes_files_list)
 
-    output_file = force_outputs_path+str(component_1.component_info().get('Component Name')).replace(" ", "").replace('/', '_')+filename_suffix +".txt"
-
+    output_file = force_outputs_path+str(component_1.component_info().get('Component Name')).replace(" ", "").replace('/', '_') +".txt"
+    print(output_file, "lll")
     file_exists = os.path.exists(output_file)
     if file_exists:
       os.remove(output_file)

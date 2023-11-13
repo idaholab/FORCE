@@ -1,0 +1,12 @@
+{
+  "Component Name": "Sized Ref Cond 1/10 (7kPa, X=0.7809)",
+  "APEA Source": "APEA_outputs//Output_APEA.xlsx",
+  "APEA Equipment Cost [USD]": 444800,
+  "APEA Installed Cost [USD]": 696400,
+  "APEA Equipment Weight [LBS]": 101400,
+  "APEA Total Installed Weight [LBS]": 149725,
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
+  "HYSYS Power": 11.8564092184121,
+  "HYSYS Power Units": "MW"
+}

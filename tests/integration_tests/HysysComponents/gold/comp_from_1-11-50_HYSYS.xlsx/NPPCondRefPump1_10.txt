@@ -1,0 +1,7 @@
+{
+  "HYSYS Component Name": "NPP Cond Ref Pump 1/10",
+  "HYSYS Category": "Pumps",
+  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": 3.96282001345491,
+  "HYSYS Power Units": "kW"
+}

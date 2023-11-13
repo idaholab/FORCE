@@ -1,0 +1,8 @@
+{
+  "APEA Component Name": "CondModel",
+  "APEA Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 261200,
+  "APEA Installed Cost [USD]": 448900,
+  "APEA Equipment Weight [LBS]": 50800,
+  "APEA Total Installed Weight [LBS]": 87858
+}

@@ -1,0 +1,14 @@
+[Tests]  
+  [./createForceComponentsPlusComparingCompTxtFiles]
+    type = RavenPython
+    input = 'create_force_components.py comp_from_Output_APEA.xlsx/ comp_from_Output_HYSYS.xlsx/'
+    output = 'FORCE_Components/DatapointBOPPump1758kW.txt FORCE_Components/SG.txt FORCE_Components/SizedRefX-100Cond1_10-(8.067kPa,X=0.7809).txt FORCE_Components/RefTurbine.txt'
+    [./text_test]
+      type = Text
+      output = 'FORCE_Components/DatapointBOPPump1758kW.txt FORCE_Components/SG.txt FORCE_Components/SizedRefX-100Cond1_10-(8.067kPa,X=0.7809).txt FORCE_Components/RefTurbine.txt'
+    [../]
+
+  [../]  
+[]
+
+

@@ -1,0 +1,12 @@
+{
+  "Component Name": "NuScale Ref 1/10 at 7 kPa",
+  "APEA Source": "APEA_outputs//Output_APEA.xlsx",
+  "APEA Equipment Cost [USD]": 366500,
+  "APEA Installed Cost [USD]": 604900,
+  "APEA Equipment Weight [LBS]": 86000,
+  "APEA Total Installed Weight [LBS]": 132681,
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
+  "HYSYS Power": 10.3906789172145,
+  "HYSYS Power Units": "MW"
+}
