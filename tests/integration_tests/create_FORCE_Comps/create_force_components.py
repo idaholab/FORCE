@@ -1,16 +1,12 @@
 # Copyright 2022, Battelle Energy Alliance, LLC
 # ALL RIGHTS RESERVED
 """
-A script that creates/updates the component sets in HERON from a set of Aspen HYSYS and APEA output xlsx files. The script also creates the components cost functions
+A script that creates FORCE components from Aspen HYSYS and APEA xlsx outputs
 
-This script combines the functionality of the following scripts:
-(create_apea_components.py, create_hysys_components.py, create_all_forceComponents_from_aspen_apea, create_force_componentSets, force_component_sets_to_heron.py)
 
 It takes the following arguments:
 1- The folder containing the HYSYS output XLSX files
 2- The folder containing the APEA output XLSX files
-3- A folder that contains the user-defined files that idntify which components to group together
-4- The initial HERON XML file that needs to be updated
 
 Example:
 python create_force_components.py HYSYS_outputs/ APEA_outputs/
