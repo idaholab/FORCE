@@ -1,0 +1,9 @@
+{
+  "Component Name": "P-101",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
+  "APEA Equipment Cost [USD]": 26700,
+  "APEA Installed Cost [USD]": 73500,
+  "APEA Equipment Weight [LBS]": 1700,
+  "APEA Total Installed Weight [LBS]": 7740,
+  "Component ID": "P-101_from_0-10 and 2-11-25.xlsx"
+}

@@ -1,0 +1,9 @@
+{
+  "Component Name": "CT",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
+  "APEA Equipment Cost [USD]": 7510600,
+  "APEA Installed Cost [USD]": 11494000,
+  "APEA Equipment Weight [LBS]": 0,
+  "APEA Total Installed Weight [LBS]": 1123530,
+  "Component ID": "CT_from_0-10 and 2-11-25.xlsx"
+}

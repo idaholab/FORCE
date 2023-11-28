@@ -1,0 +1,16 @@
+{
+      "Component Name": "Ref Turbine",
+      "Component ID": "Ref Turbine_from_Output.xlsx",
+      "Sources": "HYSYS_outputs//Output.xlsx  &  APEA_outputs//Output.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 0,
+            "Installed Cost [USD]": 0,
+            "Equipment Weight [LBS]": 0,
+            "Total Installed Weight [LBS]": 0
+      },
+      "HYSYS": {
+            "Category": "Expanders",
+            "Power": 86981.5657332157,
+            "Power Units": "kW"
+      }
+}

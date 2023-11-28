@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "IHX Pump",
-  "HYSYS Category": "Pumps",
-  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
-  "HYSYS Power": 3.12714989166597,
-  "HYSYS Power Units": "kW"
-}

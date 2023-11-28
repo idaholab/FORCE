@@ -1,0 +1,9 @@
+{
+  "Component Name": "Turbine-discharge (sized 1/3)",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
+  "APEA Equipment Cost [USD]": 2734600,
+  "APEA Installed Cost [USD]": 3064400,
+  "APEA Equipment Weight [LBS]": 146300,
+  "APEA Total Installed Weight [LBS]": 222587,
+  "Component ID": "Turbine-discharge (sized 1/3)_from_0-10 and 2-11-25.xlsx"
+}

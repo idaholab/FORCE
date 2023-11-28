@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "P-100",
-  "APEA Source": "APEA_outputs//1-11-50 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 496900,
-  "APEA Installed Cost [USD]": 1242000,
-  "APEA Equipment Weight [LBS]": 30500,
-  "APEA Total Installed Weight [LBS]": 175368
-}

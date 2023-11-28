@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "TEE-100",
-  "HYSYS Category": "Tees",
-  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
-  "HYSYS Power": "unknown",
-  "HYSYS Power Units": "unknown"
-}

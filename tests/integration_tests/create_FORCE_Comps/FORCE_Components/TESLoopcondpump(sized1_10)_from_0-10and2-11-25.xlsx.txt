@@ -1,0 +1,16 @@
+{
+      "Component Name": "TES Loop cond pump (sized 1/10)",
+      "Component ID": "TES Loop cond pump (sized 1/10)_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 13100,
+            "Installed Cost [USD]": 72200,
+            "Equipment Weight [LBS]": 840,
+            "Total Installed Weight [LBS]": 10669
+      },
+      "HYSYS": {
+            "Category": "Pumps",
+            "Power": 9.57261669807236,
+            "Power Units": "kW"
+      }
+}

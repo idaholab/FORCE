@@ -1,0 +1,8 @@
+{
+  "Component Name": "DischargeCond-2",
+  "HYSYS Category": "Coolers",
+  "HYSYS Source": "HYSYS_outputs//1-11-50.xlsx",
+  "HYSYS Power": 0.54998384680213,
+  "HYSYS Power Units": "MW",
+  "Component ID": "DischargeCond-2_from_1-11-50.xlsx"
+}

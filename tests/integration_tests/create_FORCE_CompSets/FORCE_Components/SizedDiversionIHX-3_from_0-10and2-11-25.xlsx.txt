@@ -1,0 +1,16 @@
+{
+      "Component Name": "Sized Diversion IHX-3",
+      "Component ID": "Sized Diversion IHX-3_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 832300,
+            "Installed Cost [USD]": 1558000,
+            "Equipment Weight [LBS]": 214500,
+            "Total Installed Weight [LBS]": 400122
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 36.3659305534682,
+            "Power Units": "MW"
+      }
+}

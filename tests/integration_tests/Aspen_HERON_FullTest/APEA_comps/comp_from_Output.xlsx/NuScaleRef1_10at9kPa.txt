@@ -1,0 +1,9 @@
+{
+  "Component Name": "NuScale Ref 1/10 at 9 kPa",
+  "APEA_Source": "APEA_outputs//Output.xlsx",
+  "APEA Equipment Cost [USD]": 219600,
+  "APEA Installed Cost [USD]": 374200,
+  "APEA Equipment Weight [LBS]": 41600,
+  "APEA Total Installed Weight [LBS]": 72255,
+  "Component ID": "NuScale Ref 1/10 at 9 kPa_from_Output.xlsx"
+}

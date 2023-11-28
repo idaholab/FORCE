@@ -1,0 +1,9 @@
+{
+  "Component Name": "Sized Turbine (1/5) @90%",
+  "APEA_Source": "APEA_outputs//Output_APEA.xlsx",
+  "APEA Equipment Cost [USD]": 2889700,
+  "APEA Installed Cost [USD]": 3230400,
+  "APEA Equipment Weight [LBS]": 155500,
+  "APEA Total Installed Weight [LBS]": 235626,
+  "Component ID": "Sized Turbine (1/5) @90%_from_Output_APEA.xlsx"
+}

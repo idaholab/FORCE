@@ -1,0 +1,24 @@
+{
+  "Component Set Name": "turbines set",
+  "Component Set file": "Sets1/Setfile_turbines.txt",
+  "Included components": [
+    "2ndTurbine",
+    "NPP Ref Turbine (1/3)",
+    "Turbine",
+    "2ndTurbine-2",
+    "Turbine-charge (sized 1/2)",
+    "Sized Turbine (1/5) @96.97%",
+    "2ndTurbine",
+    "Turbine-discharge (sized 1/3)",
+    "2ndTurbine-2",
+    "Sized Turbine (1/5) @90%",
+    "Turbine-charge (sized 1/2)",
+    "NPP Ref Turbine (1/3)",
+    "Turbine-discharge (sized 1/3)"
+  ],
+  "Reference Driver": 26422.2377835452,
+  "Reference Driver Power Units": "kW",
+  "Reference Price (USD)": 4421246.130480997,
+  "Scaling Factor": 0.7474134800543523,
+  "Fitting Average Error (%)": 3.22
+}

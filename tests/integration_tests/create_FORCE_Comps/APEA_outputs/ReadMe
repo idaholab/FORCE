@@ -1,0 +1,6 @@
+# This folder contains the XLSX files imported from Aspen Process Economic Analyzer (APEA)
+
+# In this folder, the APEA output files' names have to start with a letter or a number and ends with ".xlsx"
+
+# In order to be able to merge the information of the APEA components and the Aspen HYSYS components, you need to make sure that the Aspen HYSYS output XLSX file(s) and the APEA output XLSX file(s) have the same name expect that one of them ends with "APEA.xlsx" and the other ends with "HYSYS.xlsx".
+# For example, the HYSYS and APEA output files should be:  "Output_HYSYS" and  "Output_APEA.xlsx" 

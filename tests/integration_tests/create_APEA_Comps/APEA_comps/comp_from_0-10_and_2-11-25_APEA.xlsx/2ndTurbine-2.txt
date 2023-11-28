@@ -1,0 +1,9 @@
+{
+  "Component Name": "2ndTurbine-2",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 46600,
+  "APEA Installed Cost [USD]": 90000,
+  "APEA Equipment Weight [LBS]": 2100,
+  "APEA Total Installed Weight [LBS]": 7641,
+  "Component ID": "2ndTurbine-2_from_0-10 and 2-11-25 APEA.xlsx"
+}

@@ -1,0 +1,8 @@
+{
+  "Component Name": "Steam Generator",
+  "HYSYS Category": "Heaters",
+  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 158.84394237493,
+  "HYSYS Power Units": "MW",
+  "Component ID": "Steam Generator_from_0-10 and 2-11-25 HYSYS.xlsx"
+}

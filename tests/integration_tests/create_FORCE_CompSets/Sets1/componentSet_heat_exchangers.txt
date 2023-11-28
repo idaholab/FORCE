@@ -1,0 +1,15 @@
+{
+  "Component Set Name": "HX set",
+  "Component Set file": "Sets1/Setfile_heat_exchangers.txt",
+  "Included components": [
+    "Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)",
+    "NuScale Ref 1/10 at 7 kPa",
+    "NuScale Ref 1/10 at 9 kPa",
+    "Sized Ref X-100 Cond 1/10 -  (8.067kPa, X=0.7809)"
+  ],
+  "Reference Driver": 11.637680295019,
+  "Reference Driver Power Units": "MW",
+  "Reference Price (USD)": 530144.6197970972,
+  "Scaling Factor": 0.46534,
+  "Fitting Average Error (%)": 22.24
+}

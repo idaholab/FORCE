@@ -1,0 +1,9 @@
+{
+  "Component Name": "NPP Cond Ref Pump 1/10",
+  "APEA_Source": "APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 8200,
+  "APEA Installed Cost [USD]": 59100,
+  "APEA Equipment Weight [LBS]": 570,
+  "APEA Total Installed Weight [LBS]": 8049,
+  "Component ID": "NPP Cond Ref Pump 1/10_from_1-11-50 APEA.xlsx"
+}

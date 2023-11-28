@@ -1,0 +1,16 @@
+{
+      "Component Name": "SG",
+      "Component ID": "SG_from_1-11-50.xlsx",
+      "Sources": "HYSYS_outputs//1-11-50.xlsx  &  APEA_outputs//1-11-50.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 3187100,
+            "Installed Cost [USD]": 6320600,
+            "Equipment Weight [LBS]": 883000,
+            "Total Installed Weight [LBS]": 1585594
+      },
+      "HYSYS": {
+            "Category": "Heaters",
+            "Power": 158.844445623597,
+            "Power Units": "MW"
+      }
+}

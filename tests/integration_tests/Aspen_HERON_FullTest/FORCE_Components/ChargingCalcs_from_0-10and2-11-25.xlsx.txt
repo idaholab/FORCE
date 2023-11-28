@@ -1,0 +1,11 @@
+{
+      "Component Name": "Charging Calcs",
+      "Component ID": "Charging Calcs_from_0-10 and 2-11-25.xlsx",
+      "Sources": "None  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 0,
+            "Installed Cost [USD]": 0,
+            "Equipment Weight [LBS]": 0,
+            "Total Installed Weight [LBS]": 0
+      }
+}

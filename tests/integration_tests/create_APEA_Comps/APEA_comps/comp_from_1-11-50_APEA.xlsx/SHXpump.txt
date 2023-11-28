@@ -1,0 +1,9 @@
+{
+  "Component Name": "SHX pump",
+  "APEA_Source": "APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 37600,
+  "APEA Installed Cost [USD]": 251200,
+  "APEA Equipment Weight [LBS]": 2400,
+  "APEA Total Installed Weight [LBS]": 49351,
+  "Component ID": "SHX pump_from_1-11-50 APEA.xlsx"
+}

@@ -1,0 +1,11 @@
+{
+      "Component Name": "RCY-2",
+      "Component ID": "RCY-2_from_1-11-50.xlsx",
+      "Sources": "None  &  APEA_outputs//1-11-50.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 0,
+            "Installed Cost [USD]": 0,
+            "Equipment Weight [LBS]": 0,
+            "Total Installed Weight [LBS]": 0
+      }
+}

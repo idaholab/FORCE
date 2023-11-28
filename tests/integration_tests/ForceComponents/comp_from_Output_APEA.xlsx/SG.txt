@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "SG",
-  "APEA Source": "APEA_outputs//Output_APEA.xlsx",
-  "APEA Equipment Cost [USD]": 0,
-  "APEA Installed Cost [USD]": 0,
-  "APEA Equipment Weight [LBS]": 0,
-  "APEA Total Installed Weight [LBS]": 0
-}

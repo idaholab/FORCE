@@ -1,0 +1,8 @@
+{
+  "Component Name": "FWH Mix-2",
+  "HYSYS Category": "Mixers",
+  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
+  "HYSYS Power": "unknown",
+  "HYSYS Power Units": "unknown",
+  "Component ID": "FWH Mix-2_from_1-11-50 HYSYS.xlsx"
+}

@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "ColdTank",
-  "APEA Source": "APEA_outputs//1-11-50 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 4307800,
-  "APEA Installed Cost [USD]": 7142100,
-  "APEA Equipment Weight [LBS]": 0,
-  "APEA Total Installed Weight [LBS]": 802159
-}

@@ -1,0 +1,16 @@
+{
+      "Component Name": "2ndBOPPump-2",
+      "Component ID": "2ndBOPPump-2_from_1-11-50.xlsx",
+      "Sources": "HYSYS_outputs//1-11-50.xlsx  &  APEA_outputs//1-11-50.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 16300,
+            "Installed Cost [USD]": 42900,
+            "Equipment Weight [LBS]": 980,
+            "Total Installed Weight [LBS]": 3245
+      },
+      "HYSYS": {
+            "Category": "Pumps",
+            "Power": 0.363580736020033,
+            "Power Units": "kW"
+      }
+}

@@ -1,0 +1,12 @@
+[Tests]  
+  [./CreateHYSYS_Comps_Plus_Comps_Diff]
+    type = RavenPython
+    input = 'create_hysys_components.py HYSYS_outputs/'
+    output = 'HYSYS_comps/comp_from_0-10_and_2-11-25_HYSYS.xlsx/Cond-chargecond1_10.txt HYSYS_comps/comp_from_1-11-50_HYSYS.xlsx/SteamGenerator-2.txt HYSYS_comps/comp_from_Output_HYSYS.xlsx/SG.txt'
+    [./text_test]
+      type = Text
+      output = 'HYSYS_comps/comp_from_0-10_and_2-11-25_HYSYS.xlsx/Cond-chargecond1_10.txt HYSYS_comps/comp_from_1-11-50_HYSYS.xlsx/SteamGenerator-2.txt HYSYS_comps/comp_from_Output_HYSYS.xlsx/SG.txt'
+    [../]
+
+  [../]  
+[]

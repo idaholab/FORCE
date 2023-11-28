@@ -1,0 +1,9 @@
+{
+  "Component Name": "SG",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
+  "APEA Equipment Cost [USD]": 3187100,
+  "APEA Installed Cost [USD]": 6320600,
+  "APEA Equipment Weight [LBS]": 883000,
+  "APEA Total Installed Weight [LBS]": 1585594,
+  "Component ID": "SG_from_0-10 and 2-11-25.xlsx"
+}

@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "Turbine",
-  "HYSYS Category": "Expanders",
-  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
-  "HYSYS Power": 26422.2377835452,
-  "HYSYS Power Units": "kW"
-}

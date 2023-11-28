@@ -1,0 +1,9 @@
+{
+  "Component Name": "D-IHX hot standby",
+  "APEA_Source": "APEA_outputs//1-11-50.xlsx",
+  "APEA Equipment Cost [USD]": 20900,
+  "APEA Installed Cost [USD]": 115200,
+  "APEA Equipment Weight [LBS]": 4100,
+  "APEA Total Installed Weight [LBS]": 23547,
+  "Component ID": "D-IHX hot standby_from_1-11-50.xlsx"
+}

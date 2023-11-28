@@ -1,0 +1,8 @@
+{
+  "Component Name": "2) 1/10th NPP Ref Cond",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
+  "HYSYS Power": 10.8748062347271,
+  "HYSYS Power Units": "MW",
+  "Component ID": "2) 1/10th NPP Ref Cond_from_0-10 and 2-11-25 HYSYS.xlsx"
+}

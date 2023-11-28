@@ -1,0 +1,9 @@
+{
+  "Component Name": "SHX-2",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 15500,
+  "APEA Installed Cost [USD]": 94600,
+  "APEA Equipment Weight [LBS]": 2500,
+  "APEA Total Installed Weight [LBS]": 16233,
+  "Component ID": "SHX-2_from_0-10 and 2-11-25 APEA.xlsx"
+}

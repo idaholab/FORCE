@@ -1,0 +1,9 @@
+{
+  "Component Name": "TES Pump",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 19000,
+  "APEA Installed Cost [USD]": 137900,
+  "APEA Equipment Weight [LBS]": 1200,
+  "APEA Total Installed Weight [LBS]": 26466,
+  "Component ID": "TES Pump_from_0-10 and 2-11-25 APEA.xlsx"
+}

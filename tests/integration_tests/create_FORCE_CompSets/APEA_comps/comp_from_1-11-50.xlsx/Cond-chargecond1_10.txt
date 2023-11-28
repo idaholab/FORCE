@@ -1,0 +1,9 @@
+{
+  "Component Name": "Cond-charge cond 1/10",
+  "APEA_Source": "APEA_outputs//1-11-50.xlsx",
+  "APEA Equipment Cost [USD]": 144300,
+  "APEA Installed Cost [USD]": 285800,
+  "APEA Equipment Weight [LBS]": 32800,
+  "APEA Total Installed Weight [LBS]": 60617,
+  "Component ID": "Cond-charge cond 1/10_from_1-11-50.xlsx"
+}

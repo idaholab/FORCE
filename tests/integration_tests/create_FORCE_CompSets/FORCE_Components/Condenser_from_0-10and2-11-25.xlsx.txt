@@ -1,0 +1,16 @@
+{
+      "Component Name": "Condenser",
+      "Component ID": "Condenser_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 2296800,
+            "Installed Cost [USD]": 3853700,
+            "Equipment Weight [LBS]": 664800,
+            "Total Installed Weight [LBS]": 953405
+      },
+      "HYSYS": {
+            "Category": "Coolers",
+            "Power": 85.2371522156958,
+            "Power Units": "MW"
+      }
+}

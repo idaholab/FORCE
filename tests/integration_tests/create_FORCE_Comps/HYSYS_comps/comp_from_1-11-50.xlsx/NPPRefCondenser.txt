@@ -1,0 +1,8 @@
+{
+  "Component Name": "NPP Ref Condenser",
+  "HYSYS Category": "Coolers",
+  "HYSYS Source": "HYSYS_outputs//1-11-50.xlsx",
+  "HYSYS Power": 110.045486080363,
+  "HYSYS Power Units": "MW",
+  "Component ID": "NPP Ref Condenser_from_1-11-50.xlsx"
+}

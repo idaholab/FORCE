@@ -1,0 +1,9 @@
+{
+  "Component Name": "FWH_Split",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 0,
+  "APEA Installed Cost [USD]": 0,
+  "APEA Equipment Weight [LBS]": 0,
+  "APEA Total Installed Weight [LBS]": 0,
+  "Component ID": "FWH_Split_from_0-10 and 2-11-25 APEA.xlsx"
+}

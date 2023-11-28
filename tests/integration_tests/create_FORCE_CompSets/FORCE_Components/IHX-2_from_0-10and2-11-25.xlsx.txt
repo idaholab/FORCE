@@ -1,0 +1,16 @@
+{
+      "Component Name": "IHX-2",
+      "Component ID": "IHX-2_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 89400,
+            "Installed Cost [USD]": 240600,
+            "Equipment Weight [LBS]": 22600,
+            "Total Installed Weight [LBS]": 59812
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 1.48326401852097,
+            "Power Units": "MW"
+      }
+}

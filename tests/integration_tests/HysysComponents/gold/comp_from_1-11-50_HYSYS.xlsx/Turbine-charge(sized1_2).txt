@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "Turbine-charge (sized 1/2)",
-  "HYSYS Category": "Expanders",
-  "HYSYS Source": "HYSYS_outputs//1-11-50 HYSYS.xlsx",
-  "HYSYS Power": 13059.6120838089,
-  "HYSYS Power Units": "kW"
-}

@@ -1,0 +1,37 @@
+# In this folder, each file that starts with "Setfile" is a file that the user can create or modify to decide which components needs to be collected together as a component set.
+
+# The file set can have any of the following three forms:
+
+1- Grouping components that have the same category (e.g. all the turbines, all the pumps, ...etc).
+For example, the example below means that all the components that are considered pumps will be grouped together. Note that the category of each component is extracted from the Aspen HYSYS output XLSX file.
+
+Example:
+"""
+{
+  "Set Name": "pumps set",
+  "Included Categories": ["Pumps"]
+  }
+"""
+
+2- Grouping components by adding the components names manually. The names of the components are extracted from the Aspen HYSYS output XLSX file.
+
+Example:
+"""
+{
+  "Set Name": "HX set",
+  "Included Components": ["Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)", "NuScale Ref 1/10 at 7 kPa", "NuScale Ref 1/10 at 9 kPa", "Sized Ref X-100 Cond 1/10 -  (8.067kPa, X=0.7809)"]
+}
+"""
+
+
+3- Grouping components that have the same category (e.g. all the turbines, all the pumps, ...etc) AND also adding extra components manually
+
+
+Example:
+"""
+{
+  "Set Name": "pumps set",
+  "Included Categories": ["Pumps"]
+  "Included Components": ["Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)"]
+}
+"""

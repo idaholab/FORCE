@@ -1,0 +1,43 @@
+[Tests]  
+  [./Aspen_Heron_FullTest]
+    type = RavenPython
+    input = 'aspen_to_heron.py HYSYS_outputs/ APEA_outputs/ Sets1/ heron_input.xml'
+   
+    [./text_test_HYSYS]
+      type = Text
+      output = 'HYSYS_comps/comp_from_1-11-50.xlsx/Cond-chargecondPump1_10.txt'
+    [../]
+
+    [./text_test_APEA]
+      type = Text
+      output = 'APEA_comps/comp_from_Output.xlsx/DatapointBOPPump1358kW.txt'
+    [../]
+
+    [./text_test_FORCE]
+      type = Text
+      output = 'FORCE_Components/SHX_from_0-10and2-11-25.xlsx.txt'
+    [../]
+
+    [./costFunctionCompare]
+      type = ImageDiffer
+      output = 'Sets1/Setfile_pumps.png'
+	rel_err = 0.01
+    [../]
+
+    [./HERON_XMLCompare]
+      type =  XML
+      output = 'new_heron_input.xml'
+      rel_err = 1e-2
+    [../]
+  [../]
+  
+  [./run_HERON]
+    type = HeronIntegration
+    input = new_heron_input.xml
+    [./run_RAVEN]
+      type = OrderedCSV
+      output = 'Runs_o/sweep.csv'
+      rel_err = 1e-4
+    [../]  
+  [../]  
+[] 

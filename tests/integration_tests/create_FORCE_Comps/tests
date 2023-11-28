@@ -1,0 +1,14 @@
+[Tests]  
+  [./CreateFORCE_Comps_Plus_Comps_Diff]
+    type = RavenPython
+    input = 'create_force_components.py HYSYS_outputs/ APEA_outputs/'
+    output = 'FORCE_Components/C-IHX_from_1-11-50.xlsx.txt FORCE_Components/NPPRefTurbine_from_0-10and2-11-25.xlsx.txt FORCE_Components/SG_from_Output.xlsx.txt'
+    [./text_test]
+      type = Text
+      output = 'FORCE_Components/C-IHX_from_1-11-50.xlsx.txt FORCE_Components/NPPRefTurbine_from_0-10and2-11-25.xlsx.txt FORCE_Components/SG_from_Output.xlsx.txt'
+    [../]
+
+  [../]  
+[]
+
+

@@ -1,0 +1,9 @@
+{
+  "Component Name": "Turbine-charge (sized 1/2)",
+  "APEA_Source": "APEA_outputs//1-11-50 APEA.xlsx",
+  "APEA Equipment Cost [USD]": 2325800,
+  "APEA Installed Cost [USD]": 2613600,
+  "APEA Equipment Weight [LBS]": 122500,
+  "APEA Total Installed Weight [LBS]": 185589,
+  "Component ID": "Turbine-charge (sized 1/2)_from_1-11-50 APEA.xlsx"
+}

@@ -1,0 +1,16 @@
+{
+      "Component Name": "Cond-charge cond 1/10",
+      "Component ID": "Cond-charge cond 1/10_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 182900,
+            "Installed Cost [USD]": 315900,
+            "Equipment Weight [LBS]": 35000,
+            "Total Installed Weight [LBS]": 60946
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 8.45413012652234,
+            "Power Units": "MW"
+      }
+}

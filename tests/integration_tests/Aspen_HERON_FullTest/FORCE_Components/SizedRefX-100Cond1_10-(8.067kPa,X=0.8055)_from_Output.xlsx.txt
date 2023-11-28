@@ -1,0 +1,16 @@
+{
+      "Component Name": "Sized Ref X-100 Cond 1/10 - (8.067kPa, X=0.8055)",
+      "Component ID": "Sized Ref X-100 Cond 1/10 - (8.067kPa, X=0.8055)_from_Output.xlsx",
+      "Sources": "HYSYS_outputs//Output.xlsx  &  APEA_outputs//Output.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 269100,
+            "Installed Cost [USD]": 456800,
+            "Equipment Weight [LBS]": 52000,
+            "Total Installed Weight [LBS]": 89058
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 12.0088045940865,
+            "Power Units": "MW"
+      }
+}

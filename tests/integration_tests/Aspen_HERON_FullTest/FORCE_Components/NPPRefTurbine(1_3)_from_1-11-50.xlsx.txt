@@ -1,0 +1,16 @@
+{
+      "Component Name": "NPP Ref Turbine (1/3)",
+      "Component ID": "NPP Ref Turbine (1/3)_from_1-11-50.xlsx",
+      "Sources": "HYSYS_outputs//1-11-50.xlsx  &  APEA_outputs//1-11-50.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 2800200,
+            "Installed Cost [USD]": 3134600,
+            "Equipment Weight [LBS]": 150200,
+            "Total Installed Weight [LBS]": 228104
+      },
+      "HYSYS": {
+            "Category": "Expanders",
+            "Power": 16691.4944908838,
+            "Power Units": "kW"
+      }
+}

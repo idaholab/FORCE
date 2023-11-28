@@ -1,0 +1,16 @@
+{
+      "Component Name": "E-102",
+      "Component ID": "E-102_from_1-11-50.xlsx",
+      "Sources": "HYSYS_outputs//1-11-50.xlsx  &  APEA_outputs//1-11-50.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 6728100,
+            "Installed Cost [USD]": 12877600,
+            "Equipment Weight [LBS]": 1900000,
+            "Total Installed Weight [LBS]": 3129680
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 123.96777783474,
+            "Power Units": "MW"
+      }
+}

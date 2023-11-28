@@ -1,0 +1,16 @@
+{
+      "Component Name": "IHX Pump",
+      "Component ID": "IHX Pump_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 7400,
+            "Installed Cost [USD]": 55000,
+            "Equipment Weight [LBS]": 500,
+            "Total Installed Weight [LBS]": 7786
+      },
+      "HYSYS": {
+            "Category": "Pumps",
+            "Power": 3.12714989166597,
+            "Power Units": "kW"
+      }
+}

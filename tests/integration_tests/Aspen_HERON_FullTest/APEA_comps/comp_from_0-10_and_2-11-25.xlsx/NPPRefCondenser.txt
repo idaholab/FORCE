@@ -1,0 +1,9 @@
+{
+  "Component Name": "NPP Ref Condenser",
+  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
+  "APEA Equipment Cost [USD]": 0,
+  "APEA Installed Cost [USD]": 0,
+  "APEA Equipment Weight [LBS]": 0,
+  "APEA Total Installed Weight [LBS]": 0,
+  "Component ID": "NPP Ref Condenser_from_0-10 and 2-11-25.xlsx"
+}

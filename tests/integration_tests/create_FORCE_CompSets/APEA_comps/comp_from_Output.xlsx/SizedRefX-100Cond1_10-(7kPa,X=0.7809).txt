@@ -1,0 +1,9 @@
+{
+  "Component Name": "Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)",
+  "APEA_Source": "APEA_outputs//Output.xlsx",
+  "APEA Equipment Cost [USD]": 408600,
+  "APEA Installed Cost [USD]": 644800,
+  "APEA Equipment Weight [LBS]": 80000,
+  "APEA Total Installed Weight [LBS]": 125467,
+  "Component ID": "Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)_from_Output.xlsx"
+}

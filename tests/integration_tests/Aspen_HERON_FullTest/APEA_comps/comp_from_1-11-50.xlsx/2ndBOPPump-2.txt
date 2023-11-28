@@ -1,0 +1,9 @@
+{
+  "Component Name": "2ndBOPPump-2",
+  "APEA_Source": "APEA_outputs//1-11-50.xlsx",
+  "APEA Equipment Cost [USD]": 16300,
+  "APEA Installed Cost [USD]": 42900,
+  "APEA Equipment Weight [LBS]": 980,
+  "APEA Total Installed Weight [LBS]": 3245,
+  "Component ID": "2ndBOPPump-2_from_1-11-50.xlsx"
+}

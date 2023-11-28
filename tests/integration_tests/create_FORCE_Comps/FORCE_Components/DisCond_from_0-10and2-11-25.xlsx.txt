@@ -1,0 +1,16 @@
+{
+      "Component Name": "DisCond",
+      "Component ID": "DisCond_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 852500,
+            "Installed Cost [USD]": 1505000,
+            "Equipment Weight [LBS]": 249000,
+            "Total Installed Weight [LBS]": 390226
+      },
+      "HYSYS": {
+            "Category": "Coolers",
+            "Power": 46.9338494974344,
+            "Power Units": "MW"
+      }
+}

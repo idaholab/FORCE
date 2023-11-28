@@ -1,0 +1,16 @@
+{
+      "Component Name": "NuScale Ref 1/10 at 9 kPa",
+      "Component ID": "NuScale Ref 1/10 at 9 kPa_from_Output.xlsx",
+      "Sources": "HYSYS_outputs//Output.xlsx  &  APEA_outputs//Output.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 219600,
+            "Installed Cost [USD]": 374200,
+            "Equipment Weight [LBS]": 41600,
+            "Total Installed Weight [LBS]": 72255
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 10.7271763803899,
+            "Power Units": "MW"
+      }
+}

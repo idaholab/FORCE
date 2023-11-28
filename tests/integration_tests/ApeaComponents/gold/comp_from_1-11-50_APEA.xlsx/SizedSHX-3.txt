@@ -1,8 +1,0 @@
-{
-  "APEA Component Name": "Sized SHX-3",
-  "APEA Source": "APEA_outputs//1-11-50 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 1970400,
-  "APEA Installed Cost [USD]": 3513100,
-  "APEA Equipment Weight [LBS]": 537600,
-  "APEA Total Installed Weight [LBS]": 881410
-}

@@ -1,0 +1,8 @@
+{
+  "Component Name": "NuScale Ref 1/10 at 9 kPa",
+  "HYSYS Category": "Heat Exchangers",
+  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
+  "HYSYS Power": 10.7271763803899,
+  "HYSYS Power Units": "MW",
+  "Component ID": "NuScale Ref 1/10 at 9 kPa_from_Output_HYSYS.xlsx"
+}

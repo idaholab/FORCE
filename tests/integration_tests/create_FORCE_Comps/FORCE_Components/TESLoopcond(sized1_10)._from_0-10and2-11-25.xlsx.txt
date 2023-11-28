@@ -1,0 +1,16 @@
+{
+      "Component Name": "TES Loop cond (sized 1/10).",
+      "Component ID": "TES Loop cond (sized 1/10)._from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 67300,
+            "Installed Cost [USD]": 173300,
+            "Equipment Weight [LBS]": 13000,
+            "Total Installed Weight [LBS]": 32864
+      },
+      "HYSYS": {
+            "Category": "Heat Exchangers",
+            "Power": 2.70592501620386,
+            "Power Units": "MW"
+      }
+}

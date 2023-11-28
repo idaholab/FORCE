@@ -1,0 +1,16 @@
+{
+      "Component Name": "BOP Ref Pump",
+      "Component ID": "BOP Ref Pump_from_0-10 and 2-11-25.xlsx",
+      "Sources": "HYSYS_outputs//0-10 and 2-11-25.xlsx  &  APEA_outputs//0-10 and 2-11-25.xlsx",
+      "APEA": {
+            "Equipment Cost [USD]": 144800,
+            "Installed Cost [USD]": 240400,
+            "Equipment Weight [LBS]": 6800,
+            "Total Installed Weight [LBS]": 20897
+      },
+      "HYSYS": {
+            "Category": "Pumps",
+            "Power": 215.956117728843,
+            "Power Units": "kW"
+      }
+}

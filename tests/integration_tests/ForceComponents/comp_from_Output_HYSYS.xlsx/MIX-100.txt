@@ -1,7 +1,0 @@
-{
-  "HYSYS Component Name": "MIX-100",
-  "HYSYS Category": "Mixers",
-  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
-  "HYSYS Power": "unknown",
-  "HYSYS Power Units": "unknown"
-}
