@@ -1,8 +1,0 @@
-{
-  "Component Name": "CondModel",
-  "HYSYS Category": "Heat Exchangers",
-  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25.xlsx",
-  "HYSYS Power": 10.7841926209846,
-  "HYSYS Power Units": "MW",
-  "Component ID": "CondModel_from_0-10 and 2-11-25.xlsx"
-}

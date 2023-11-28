@@ -1,9 +1,0 @@
-{
-  "Component Name": "HotTank-2",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
-  "APEA Equipment Cost [USD]": 2207900,
-  "APEA Installed Cost [USD]": 4064000,
-  "APEA Equipment Weight [LBS]": 0,
-  "APEA Total Installed Weight [LBS]": 539533,
-  "Component ID": "HotTank-2_from_0-10 and 2-11-25.xlsx"
-}

@@ -1,8 +1,0 @@
-{
-  "Component Name": "Data point BOP Pump 2198kW",
-  "HYSYS Category": "Pumps",
-  "HYSYS Source": "HYSYS_outputs//Output.xlsx",
-  "HYSYS Power": 2198.11094912654,
-  "HYSYS Power Units": "kW",
-  "Component ID": "Data point BOP Pump 2198kW_from_Output.xlsx"
-}

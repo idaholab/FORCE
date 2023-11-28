@@ -1,8 +1,0 @@
-{
-  "Component Name": "FWH Split",
-  "HYSYS Category": "Tees",
-  "HYSYS Source": "HYSYS_outputs//1-11-50.xlsx",
-  "HYSYS Power": "unknown",
-  "HYSYS Power Units": "unknown",
-  "Component ID": "FWH Split_from_1-11-50.xlsx"
-}

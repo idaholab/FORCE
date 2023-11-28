@@ -1,8 +1,0 @@
-{
-  "Component Name": "FWH_Mix",
-  "HYSYS Category": "Mixers",
-  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
-  "HYSYS Power": "unknown",
-  "HYSYS Power Units": "unknown",
-  "Component ID": "FWH_Mix_from_0-10 and 2-11-25 HYSYS.xlsx"
-}

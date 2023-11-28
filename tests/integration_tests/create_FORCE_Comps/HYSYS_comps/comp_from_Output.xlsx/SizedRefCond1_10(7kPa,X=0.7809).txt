@@ -1,8 +1,0 @@
-{
-  "Component Name": "Sized Ref Cond 1/10 (7kPa, X=0.7809)",
-  "HYSYS Category": "Heat Exchangers",
-  "HYSYS Source": "HYSYS_outputs//Output.xlsx",
-  "HYSYS Power": 11.8564092184121,
-  "HYSYS Power Units": "MW",
-  "Component ID": "Sized Ref Cond 1/10 (7kPa, X=0.7809)_from_Output.xlsx"
-}

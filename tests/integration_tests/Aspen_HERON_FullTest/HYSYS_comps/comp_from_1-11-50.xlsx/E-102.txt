@@ -1,8 +1,0 @@
-{
-  "Component Name": "E-102",
-  "HYSYS Category": "Heat Exchangers",
-  "HYSYS Source": "HYSYS_outputs//1-11-50.xlsx",
-  "HYSYS Power": 123.96777783474,
-  "HYSYS Power Units": "MW",
-  "Component ID": "E-102_from_1-11-50.xlsx"
-}

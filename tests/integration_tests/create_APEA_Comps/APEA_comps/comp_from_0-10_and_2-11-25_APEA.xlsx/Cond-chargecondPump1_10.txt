@@ -1,9 +1,0 @@
-{
-  "Component Name": "Cond-charge cond Pump 1/10",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 21100,
-  "APEA Installed Cost [USD]": 123200,
-  "APEA Equipment Weight [LBS]": 1600,
-  "APEA Total Installed Weight [LBS]": 22255,
-  "Component ID": "Cond-charge cond Pump 1/10_from_0-10 and 2-11-25 APEA.xlsx"
-}

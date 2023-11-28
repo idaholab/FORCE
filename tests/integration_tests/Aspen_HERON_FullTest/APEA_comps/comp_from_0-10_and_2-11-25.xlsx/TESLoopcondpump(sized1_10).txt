@@ -1,9 +1,0 @@
-{
-  "Component Name": "TES Loop cond pump (sized 1/10)",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
-  "APEA Equipment Cost [USD]": 13100,
-  "APEA Installed Cost [USD]": 72200,
-  "APEA Equipment Weight [LBS]": 840,
-  "APEA Total Installed Weight [LBS]": 10669,
-  "Component ID": "TES Loop cond pump (sized 1/10)_from_0-10 and 2-11-25.xlsx"
-}

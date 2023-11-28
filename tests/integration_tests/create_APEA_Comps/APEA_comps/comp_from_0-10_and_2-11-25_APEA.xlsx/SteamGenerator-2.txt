@@ -1,9 +1,0 @@
-{
-  "Component Name": "Steam Generator-2",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 3268800,
-  "APEA Installed Cost [USD]": 6402700,
-  "APEA Equipment Weight [LBS]": 910000,
-  "APEA Total Installed Weight [LBS]": 1612730,
-  "Component ID": "Steam Generator-2_from_0-10 and 2-11-25 APEA.xlsx"
-}

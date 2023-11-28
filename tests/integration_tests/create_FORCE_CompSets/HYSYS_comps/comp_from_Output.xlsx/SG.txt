@@ -1,8 +1,0 @@
-{
-  "Component Name": "SG",
-  "HYSYS Category": "Heaters",
-  "HYSYS Source": "HYSYS_outputs//Output.xlsx",
-  "HYSYS Power": 203.059037299301,
-  "HYSYS Power Units": "MW",
-  "Component ID": "SG_from_Output.xlsx"
-}

@@ -1,8 +1,0 @@
-{
-  "Component Name": "sized Ref Cond Pump 1/10",
-  "HYSYS Category": "Pumps",
-  "HYSYS Source": "HYSYS_outputs//Output.xlsx",
-  "HYSYS Power": 0.868057972941394,
-  "HYSYS Power Units": "kW",
-  "Component ID": "sized Ref Cond Pump 1/10_from_Output.xlsx"
-}

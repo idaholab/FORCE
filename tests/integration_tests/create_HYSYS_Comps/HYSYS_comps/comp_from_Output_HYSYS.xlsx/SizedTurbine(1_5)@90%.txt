@@ -1,8 +1,0 @@
-{
-  "Component Name": "Sized Turbine (1/5) @90%",
-  "HYSYS Category": "Expanders",
-  "HYSYS Source": "HYSYS_outputs//Output_HYSYS.xlsx",
-  "HYSYS Power": 17400,
-  "HYSYS Power Units": "kW",
-  "Component ID": "Sized Turbine (1/5) @90%_from_Output_HYSYS.xlsx"
-}

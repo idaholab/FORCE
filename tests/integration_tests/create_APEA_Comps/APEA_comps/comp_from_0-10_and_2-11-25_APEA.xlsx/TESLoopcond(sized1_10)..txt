@@ -1,9 +1,0 @@
-{
-  "Component Name": "TES Loop cond (sized 1/10).",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 67300,
-  "APEA Installed Cost [USD]": 173300,
-  "APEA Equipment Weight [LBS]": 13000,
-  "APEA Total Installed Weight [LBS]": 32864,
-  "Component ID": "TES Loop cond (sized 1/10)._from_0-10 and 2-11-25 APEA.xlsx"
-}

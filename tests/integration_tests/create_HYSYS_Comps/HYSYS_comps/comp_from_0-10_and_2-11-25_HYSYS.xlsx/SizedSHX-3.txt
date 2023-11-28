@@ -1,8 +1,0 @@
-{
-  "Component Name": "Sized SHX-3",
-  "HYSYS Category": "Heat Exchangers",
-  "HYSYS Source": "HYSYS_outputs//0-10 and 2-11-25 HYSYS.xlsx",
-  "HYSYS Power": 36.3081792366704,
-  "HYSYS Power Units": "MW",
-  "Component ID": "Sized SHX-3_from_0-10 and 2-11-25 HYSYS.xlsx"
-}

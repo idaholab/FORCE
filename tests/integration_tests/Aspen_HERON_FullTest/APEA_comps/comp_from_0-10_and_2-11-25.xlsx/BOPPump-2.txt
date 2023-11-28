@@ -1,9 +1,0 @@
-{
-  "Component Name": "BOP Pump-2",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25.xlsx",
-  "APEA Equipment Cost [USD]": 145300,
-  "APEA Installed Cost [USD]": 240900,
-  "APEA Equipment Weight [LBS]": 6900,
-  "APEA Total Installed Weight [LBS]": 20997,
-  "Component ID": "BOP Pump-2_from_0-10 and 2-11-25.xlsx"
-}

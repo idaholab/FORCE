@@ -1,9 +1,0 @@
-{
-  "Component Name": "Sized Diversion IHX-3",
-  "APEA_Source": "APEA_outputs//0-10 and 2-11-25 APEA.xlsx",
-  "APEA Equipment Cost [USD]": 832300,
-  "APEA Installed Cost [USD]": 1558000,
-  "APEA Equipment Weight [LBS]": 214500,
-  "APEA Total Installed Weight [LBS]": 400122,
-  "Component ID": "Sized Diversion IHX-3_from_0-10 and 2-11-25 APEA.xlsx"
-}
