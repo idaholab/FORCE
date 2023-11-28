@@ -69,11 +69,13 @@ class AspenHysysComponent:
           power_unit = "unknown"
 
         HYSYS_comp_info= {
-                          "HYSYS Component Name": self.component_name,
+                          "Component Name": self.component_name,
                           "HYSYS Category": sheet,
-                          "HYSYS Source":self.xlsx_filename,
+                          "HYSYS Source": self.xlsx_filename,
                           "HYSYS Power": power,
-                          "HYSYS Power Units":power_unit}
+                          "HYSYS Power Units": power_unit,
+                          "Component ID": self.component_name + "_from_" + self.xlsx_filename.split("/")[-1]
+                          }
     return HYSYS_comp_info
 
 
@@ -88,26 +90,27 @@ def extract_all_hysys_components(HYSYS_xlsx_outputs_folder_path):
     @ Out, HYSYS_outputs_path, str, The folder that contains the components created from the HYSYS code
   """
   files_list = os.listdir(HYSYS_xlsx_outputs_folder_path)
-
+  list_of_HYSYS_dicts = []
   for xlsxfile in files_list:
     if xlsxfile.endswith(".xlsx"):
       if xlsxfile[0].isalpha() or xlsxfile[0].isdigit():
         HYSYS_file_path = HYSYS_xlsx_outputs_folder_path +"/" +xlsxfile
 
         HYSYS_outputs_path = os.path.split(os.path.abspath(HYSYS_xlsx_outputs_folder_path))[0]+\
-            "/comp_from_"+str(os.path.basename(HYSYS_file_path))+"/"
+            "/HYSYS_comps/comp_from_"+str(os.path.basename(HYSYS_file_path))+"/"
         HYSYS_outputs_path   = HYSYS_outputs_path .replace(" ", "_")
         isExist = os.path.exists(HYSYS_outputs_path)
         if isExist:
           shutil.rmtree(HYSYS_outputs_path)
         # Create a new directory
         os.makedirs(HYSYS_outputs_path)
-        print("\n A new directory is created with all the Apsen HYSYS components at:", "\n", HYSYS_outputs_path, "\n")
+        print("\n A new directory is created with all the Aspen HYSYS components at:", "\n", HYSYS_outputs_path, "\n")
 
         sheets_names = ['Expanders', 'Coolers', 'Pumps', 'Heaters', 'Tees', 'Mixers', 'Heat Exchangers']
         for sheet in sheets_names:
           HYSYS_file_data= pd.read_excel(HYSYS_file_path,sheet_name=sheet)
           headers=list(HYSYS_file_data.columns.values)
+         
           unwanted_headers =[]
           for header in headers:
             if (header.__contains__("Unit")) or (header.__contains__("named")):
@@ -121,5 +124,5 @@ def extract_all_hysys_components(HYSYS_xlsx_outputs_folder_path):
             if file_exists:
               os.remove(output_file)
             json.dump(component_1.component_info(), open(output_file, 'w'),indent = 2)
-
-  return HYSYS_outputs_path
+            list_of_HYSYS_dicts.append(component_1.component_info())
+  return HYSYS_outputs_path, list_of_HYSYS_dicts

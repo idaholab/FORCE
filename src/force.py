@@ -1,4 +1,4 @@
-# Copyright 2022, Battelle Energy Alliance, LLC
+# Copyright 2023, Battelle Energy Alliance, LLC
 # ALL RIGHTS RESERVED
 """
 The objective of this code is the vertical integration (auomated data transfer) between different IES codes.
@@ -34,7 +34,6 @@ from scipy.optimize import curve_fit
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-#####
 # Section 1:
 # Python Classes for the APEA Component, HYSYS Component, FORCE component, and FORCE ComponentSet
 
@@ -97,54 +96,59 @@ class ForceComponentSet:
     5- The cost function equation coefficent D': reference driver
     6- The cost function equation coefficient X: The scaling factor
   """
-  def __init__(self, component_sets_file):
+  
+  def __init__(self, component_sets_file, component_dicts_list):
     """
     Constructor
     @ In, component_sets_file, str,
     The file that is is edited by the used to idnetify the sets of components that need to be grouped together
+    @ In, list of dictionaries of the FORCE components, list.
     @ Out, None
     """
     self.component_sets_file = component_sets_file
+    self.component_dicts_list = component_dicts_list
 
+   
   def component_set_info(self):
     """
     Creating the component set and its the cost function
     @ In, None
     @ Out, comp_set_info_dict,  dict, A dictionay of the component set information
     """
-    components_folder = self.component_sets_file.split('ComponentSetsFiles', 1)[0]
-
-    # # # First we wanna know which components are avaiilable
-    files = [f for f in os.listdir(components_folder) if os.path.isfile(os.path.join(components_folder, f)) if f.endswith('txt')]
 
     available_components, available_component_types = [], []
 
-    for f in files:
-      component_name =json.load(open(os.path.join(components_folder, f))).get('Component Name')
-      component_type=json.load(open(os.path.join(components_folder, f))).get('HYSYS Category')
-      available_components.append(component_name)
-      available_component_types.append(component_type)
+    for comp in self.component_dicts_list:
+      if comp.get('HYSYS'):
+        component_name = comp.get('Component Name')      
+        component_type=(comp.get('HYSYS')).get('Category')
+        available_components.append(component_name)
+        available_component_types.append(component_type)
     all_included_components, all_included_powers, all_included_power_units, all_included_installed_costs=[], [], [], []
 
     component_sets_file_dict = json.load(open(self.component_sets_file))
     set_name = component_sets_file_dict.get("Set Name")
+    
     if "Included Categories" in component_sets_file_dict:
       included_types = (component_sets_file_dict.get("Included Categories"))
       for type in included_types:
         if type not in available_component_types:
           print(f"The components category '{type}' does not exist")
-        else:
-          for f in files:
-            component_type=json.load(open(os.path.join(components_folder, f))).get('HYSYS Category')
-            if component_type == type:
-              included_comp = json.load(open(os.path.join(components_folder,  f))).get('Component Name')
-              all_included_components.append(included_comp)
-              included_power = json.load(open(os.path.join(components_folder,  f))).get('HYSYS Power')
-              all_included_powers.append(included_power)
-              included_power_unit = json.load(open(os.path.join(components_folder, f))).get('HYSYS Power Units')
-              all_included_power_units.append(included_power_unit)
-              included_installed_cost_USD = json.load(open(os.path.join(components_folder, f))).get('APEA Installed Cost [USD]')
-              all_included_installed_costs.append(included_installed_cost_USD)
+        elif type in available_component_types: 
+          
+          for comp in self.component_dicts_list:
+            if comp.get('HYSYS'):
+              component_type=(comp.get('HYSYS')).get('Category')
+              if component_type == type:
+                included_comp =comp.get('Component Name')  
+                all_included_components.append(included_comp)
+                included_power = (comp.get('HYSYS')).get('Power')
+                all_included_powers.append(included_power)
+                included_power_unit = (comp.get('HYSYS')).get('Power Units')
+                all_included_power_units.append(included_power_unit)
+                included_installed_cost_USD = (comp.get('APEA')).get('Installed Cost [USD]')
+                all_included_installed_costs.append(included_installed_cost_USD)
+
 
     if "Included Components" in component_sets_file_dict:
       included_names = (component_sets_file_dict.get("Included Components"))
@@ -153,15 +157,17 @@ class ForceComponentSet:
           print(f"The component named '{comp_name}' does not exist")
         else:
           all_included_components.append(comp_name)
-          for f in files:
-            component_name=json.load(open(os.path.join(components_folder, f))).get('Component Name')
-            if component_name == comp_name:
-              included_power = json.load(open(os.path.join(components_folder,  f))).get('HYSYS Power')
-              all_included_powers.append(included_power)
-              included_power_unit = json.load(open(os.path.join(components_folder, f))).get('HYSYS Power Units')
-              all_included_power_units.append(included_power_unit)
-              included_installed_cost_USD = json.load(open(os.path.join(components_folder, f))).get('APEA Installed Cost [USD]')
-              all_included_installed_costs.append(included_installed_cost_USD)
+          
+          for comp in self.component_dicts_list:
+            if comp.get('HYSYS'):
+              component_name= comp.get('Component Name') 
+              if component_name == comp_name:
+                included_power = (comp.get('HYSYS')).get('Power')
+                all_included_powers.append(included_power)
+                included_power_unit = (comp.get('HYSYS')).get('Power Units')
+                all_included_power_units.append(included_power_unit)
+                included_installed_cost_USD = (comp.get('APEA')).get('Installed Cost [USD]')
+                all_included_installed_costs.append(included_installed_cost_USD)
 
     # # Excluding components with unknown information or non reasonable info
     excluded_components_indices = []
@@ -172,7 +178,6 @@ class ForceComponentSet:
       if all_included_power_units[i] not in ['kW', 'MW']:
         print('\033[91m', "\n", f"The component(s) '{all_included_components[i]}' will be excluded because of unknown power unit", '\033[0m')
         excluded_components_indices.append(i)
-
       if all_included_installed_costs[i]<=0:
             print('\033[91m', "\n", f"The component '{all_included_components[i]}' will be excluded because of non-positive cost", '\033[0m')
             excluded_components_indices.append(i)
@@ -208,7 +213,7 @@ class ForceComponentSet:
 
     # # Curve fitting
     updated_costs_output = updated_costs
-    popt, pcov  = curve_fit(lambda t, a, b: a * (t ** b), capacity_ratio, updated_costs_output)
+    popt, _  = curve_fit(lambda t, a, b: a * (t ** b), capacity_ratio, updated_costs_output)
     ref_price = popt[0]
     scaling_factor = popt[1]
     calculated_costs = ref_price*(capacity_ratio**scaling_factor)
@@ -223,7 +228,7 @@ class ForceComponentSet:
                           "Reference Driver": reference_driver,
                           "Reference Driver Power Units": common_unit,
                           "Reference Price (USD)": ref_price,
-                          "Scaling Factor": scaling_factor,
+                          "Scaling Factor": np.round(scaling_factor,5),
                           "Fitting Average Error (%)": avg_error }
 
     # Plotting
@@ -263,106 +268,86 @@ class ForceComponentSet:
     return comp_set_info_dict
 
 
-#####
 # Section 2:
 # Python Methods extracing all the FORCE components
 
-def extract_all_force_components(folders_paths_list):
-  """
-    Extracting all the the FOCE components (by merging components from differetn codes)
-    @ In, folders_paths_list, list, The list of component folder.
-    Each foldes includes components created by a different code (e.g. HYSYS or APEA).
-    @ Out, None
-  """
+def create_all_force_components_from_hysys_apea(list_of_lists_of_comps_from_multiple_codes, hysys_folder):
+  comps_from_multiple_codes_flat_list = [item for sublist in list_of_lists_of_comps_from_multiple_codes for item in sublist]
+  available_comps = []
+  for dict in comps_from_multiple_codes_flat_list:
+    available_comps.append(dict.get("Component ID")) 
+      
 
-  files_list = [] # the list of lists of files in eac folder
-  for folder_path in folders_paths_list:
-    files_list.append(os.listdir(folder_path))
-  common_components = set(files_list[0])
-  for item in files_list[1:]:
-    common_components.intersection_update(item)
+  force_dicts_list = []
+  for comp in set(available_comps):
+    same_name_comps = []
+    for dict in comps_from_multiple_codes_flat_list:
+      if dict.get("Component ID") == comp:
+        same_name_comps.append(dict)
+    force_dicts_list.append(same_name_comps)
 
-  parent_folder_path = os.path.split(os.path.abspath(folder_path))[0]
-  force_outputs_path = parent_folder_path + "/FORCE_Components/"
-
-  for comp in common_components:
+  # merging dictionaries
+  force_dicts_list_1 = []
+  for list in force_dicts_list:
+    force_dict = {}
+    for d in list:
+      force_dict.update(d)
+    force_dicts_list_1.append(force_dict )
+  # re-arranging FORCEdictionary
+  force_dicts_list_2 = []
+  for dict in force_dicts_list_1:
+    new_force_dict  = {x:dict[x] for x in ["Component Name", "Component ID"]} 
+    new_force_dict['Sources'] = str(dict.get('HYSYS Source')) +"  &  " + str(dict.get('APEA_Source'))
     
-    codes_files_list=[]
-    for folder_path in folders_paths_list:
-      filepath = folder_path+ comp
-      codes_files_list.append(filepath)
-    component_1 = ForceComponent(codes_files_list)
+    #APEA mini dictionary
+    if any("APEA" in key for key in dict):
+      APEA_dict = {
+        "Equipment Cost [USD]" : dict.get("APEA Equipment Cost [USD]"),
+        "Installed Cost [USD]": dict.get("APEA Installed Cost [USD]"),
+        "Equipment Weight [LBS]" : dict.get("APEA Equipment Weight [LBS]"),
+        "Total Installed Weight [LBS]" : dict.get("APEA Total Installed Weight [LBS]")
+      }
+      new_force_dict["APEA"] = APEA_dict
 
-    output_file = force_outputs_path+str(component_1.component_info().get('Component Name')).replace(" ", "").replace('/', '_') +".txt"
-    print(output_file, "lll")
-    file_exists = os.path.exists(output_file)
-    if file_exists:
-      os.remove(output_file)
-    json.dump(component_1.component_info(), open(output_file, 'w'),indent = 2)
-  print(f" \n {len(common_components)} Force components are created at:\n {force_outputs_path } \nby combining info from: \n {folders_paths_list} \n")
+    #HYSYS mini dictionary
+    if any("HYSYS" in key for key in dict):
+      HYSYS_dict = {
+        "Category" : dict.get("HYSYS Category"),
+        "Power": dict.get("HYSYS Power"),
+        "Power Units" : dict.get("HYSYS Power Units")
+      }
+      new_force_dict["HYSYS"] = HYSYS_dict
 
+    force_dicts_list_2.append(new_force_dict)
 
-def create_all_force_components_from_hysys_apea(folder1, folder2):
-  """
-    This method is similar to the previous "extract_all_force_components"
-    The difference is that it works on several folders (of output files) at the same time and
-    This method connects the HYSYS file with its corresponding APEA file
-
-    @ In, folders_paths_list, list, The list of component folder. Each foldes includes components created by a different code (e.g. HYSYS or APEA).
-    @ Out, None
-  """
-  # one folder is the Aspen HYSES folder and the other is the APEA one
-  fol1_list = os.listdir(folder1)
-  fol2_list = os.listdir(folder2)
-  for i in range (len(fol1_list)):
-    fol1_list[i] =  folder1 +"/" +fol1_list[i]
-  for i in range (len(fol2_list)):
-    fol2_list[i] =  folder2 + "/"+fol2_list[i]
-  tot_list = fol1_list +  fol2_list
-
-  aspen_apea_files_paths  = []
-  for item in tot_list:
-    if item.endswith ("HYSYS.xlsx"):
-      hysys_model_name = item.strip('HYSYS.xlsx')
-      aspen_apea_files_paths.append(hysys_model_name)
-    if item.endswith ("APEA.xlsx"):
-      apea_model_name = item.strip('APEA..xlsx')
-      aspen_apea_files_paths.append(apea_model_name)
-
-  aspen_apea_file_names = []
-  for filepath in aspen_apea_files_paths:
-    filename = os.path.basename(filepath)
-    aspen_apea_file_names.append(filename)
-
-  duplicate_file_names = set([x for x in aspen_apea_file_names if aspen_apea_file_names.count(x) > 1])
-
-  hyses_filepaths =[]
-  apea_filepaths =[]
-  for filename in duplicate_file_names:
-    for filepath in tot_list:
-      if filepath.endswith(filename+ "HYSYS.xlsx"):
-        hyses_filepaths.append(filepath+"/")
-      if filepath.endswith(filename+ "APEA.xlsx"):
-        apea_filepaths.append(filepath+"/")
-
-  for i in range(len(hyses_filepaths)):
-    extract_all_force_components([hyses_filepaths[i], apea_filepaths[i]])
+    # dumping FORCE components
+    force_outputs_path = os.path.split(os.path.abspath(hysys_folder))[0]+ "/FORCE_Components/"
+    if not os.path.exists(force_outputs_path):
+      os.makedirs(force_outputs_path)
+    for dict in force_dicts_list_2:
+      output_file = force_outputs_path+str(dict.get("Component ID")).replace(" ", "").replace('/', '_') +".txt"
+      file_exists = os.path.exists(output_file)
+      if file_exists:
+        os.remove(output_file)
+      json.dump(dict, open(output_file, 'w'), indent = 6)
+  print(f" \n {len(force_dicts_list_2)} FORCE components are created at:\n {force_outputs_path }  \n")
+  
+  return force_dicts_list_2, force_outputs_path   
 
 
-
-
-def extract_all_force_componentsets(component_sets_folder):
+def extract_all_force_componentsets(component_sets_folder, component_dicts_list):
   """
     Extracting ALL the component sets
     @ In, component_sets_folder, str, The path of the folder that includes several files of the user-input files
     These user-input files determine the components which will be grouped together in one set
+    @ In, list of dictionaries of the FORCE components, list
     @ Out, None
   """
   for Setfile in os.listdir(component_sets_folder):
     if Setfile.startswith("Setfile") and Setfile.endswith(".txt"):
       print('\033[1m', f"\n\n A component set is found in '{Setfile}'", '\033[0m')
       Setfile_path = component_sets_folder + Setfile
-      componentSet_dict = ForceComponentSet(Setfile_path).component_set_info()
+      componentSet_dict = ForceComponentSet(Setfile_path, component_dicts_list).component_set_info()
 
       output_file_path = Setfile_path.replace("Setfile", "componentSet")
       file_exists = os.path.exists(output_file_path)

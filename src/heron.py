@@ -33,7 +33,7 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
   """
     Create/update components (componnet-sets) in HERON input file
     @ In, comp_sets_folder, str, The path of the folder that includes several files of the user-input files
-    These user-inpit files determine the components which will be grouped together in one set
+    These user-input files determine the components which will be grouped together in one set
     @ In, heron_input_xml, str, The path of the original HERON xml file at which components will be updated/created
     @ Out, HERON_inp_tree, xml.etree.ElementTree.ElementTree, the updated HERON inut file (XML tree)
   """
@@ -71,26 +71,27 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
 
       # if the component is already in the HERON file, it gets updated
       if comp_set_name in heron_comp_list:
-        print(f"The component set {comp_set_name} already exists in the HERON XML input file and will be updated")
+        print(f"The component set {comp_set_name} already exists in the HERON XML input file. The {comp_set_name} info will be updated")
         for component in components_list:
           for comp in component:
             if comp.attrib["name"] == comp_set_name:
               for node in comp:
-
                 # if the "economics" node is found in the component node
                 if node.tag == "economics":
                   ECO_NODE_FOUND = "True"
-                  print(f"The 'economics' node is found in the component {comp.attrib['name']}")
-                  node.append(ET.Comment(f" Some of this component economic info are imported from: {textfile_path}"))
+                  print(f"The 'economics' node is found in the component {comp.attrib['name']} and will be updated.")
+                  
                   for subnode in node:
                     # If the cashflow node is found
                     if subnode.tag == "CashFlow":
                       if 'capex' in str(subnode.attrib["name"]):
+                        node.append(ET.Comment(f" Some of this component economic info are imported from: {textfile_path}"))
                         print("The 'cashflow' subnode is found too and is updated")
                         Cashflow_NODE_FOUND = "True"
                         for subsubnode in subnode:
                           if subsubnode.tag in ['reference_driver', 'reference_price', 'scaling_factor_x']:
                             subnode.remove(subsubnode)
+                            print(f"WARNING: The value of the {subsubnode.tag} is updated.")
                         new_cash_node = subnode
                         new_cash_node.append(ET.Comment(f" Some of this component cashFlow info are imported from: {textfile_path}"))
 

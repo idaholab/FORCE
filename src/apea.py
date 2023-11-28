@@ -59,11 +59,14 @@ class ApeaComponent:
     total_installed_weight = file_data.loc[file_data['Name'] == self.component_name, 'Total Installed Weight [LBS]'].values[0]
 
     apea_comp_info= {
-                      "APEA Component Name": self.component_name,
-                      "APEA Source":self.xlsx_filename,
+                      "Component Name": self.component_name,
+                      "APEA_Source":self.xlsx_filename,
                       "APEA Equipment Cost [USD]": equipment_cost.item(),
                       "APEA Installed Cost [USD]":installed_cost.item() ,
-                      "APEA Equipment Weight [LBS]": equipment_weight.item(),"APEA Total Installed Weight [LBS]": total_installed_weight.item()}
+                      "APEA Equipment Weight [LBS]": equipment_weight.item(),
+                      "APEA Total Installed Weight [LBS]": total_installed_weight.item(), 
+                      "Component ID": self.component_name + "_from_" + self.xlsx_filename.split("/")[-1]
+                      }
 
     return apea_comp_info
 
@@ -79,13 +82,14 @@ def extract_all_apea_components(apea_xlsx_outputs_folder_path):
     @ Out, APEA_outputs_path, str, The folder that contains the components created from the Aspen APEA code
   """
   files_list = os.listdir(apea_xlsx_outputs_folder_path)
+  list_of_APEA_dicts = []
   for xlsxfile in files_list:
     if xlsxfile.endswith(".xlsx"):
       if xlsxfile[0].isalpha() or xlsxfile[0].isdigit():
         apea_file_path = apea_xlsx_outputs_folder_path + "/"+xlsxfile
         apea_file_data= pd.read_excel(apea_file_path, sheet_name='Equipment',skiprows=3)
         APEA_outputs_path = os.path.split(os.path.abspath(apea_xlsx_outputs_folder_path))[0]+\
-          "/comp_from_"+str(os.path.basename(apea_file_path))+"/"
+          "/APEA_comps/comp_from_"+str(os.path.basename(apea_file_path))+"/"
         APEA_outputs_path  = APEA_outputs_path.replace(" ", "_")
         isExist = os.path.exists(APEA_outputs_path)
         if isExist:
@@ -102,5 +106,5 @@ def extract_all_apea_components(apea_xlsx_outputs_folder_path):
           if file_exists:
             os.remove(output_file)
           json.dump(component_1.component_cost_info(), open(output_file, 'w'),indent = 2)
-
-  return APEA_outputs_path
+          list_of_APEA_dicts.append(component_1.component_cost_info())
+  return APEA_outputs_path, list_of_APEA_dicts
