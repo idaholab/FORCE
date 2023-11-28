@@ -13,6 +13,8 @@ Example:
   }
 """
 
+
+
 2- Grouping components by adding the components names manually. The names of the components are extracted from the Aspen HYSYS output XLSX file.
 
 Example:
@@ -22,6 +24,8 @@ Example:
   "Included Components": ["Sized Ref X-100 Cond 1/10 - (7kPa, X=0.7809)", "NuScale Ref 1/10 at 7 kPa", "NuScale Ref 1/10 at 9 kPa", "Sized Ref X-100 Cond 1/10 -  (8.067kPa, X=0.7809)"]
 }
 """
+
+
 
 
 3- Grouping components that have the same category (e.g. all the turbines, all the pumps, ...etc) AND also adding extra components manually
