@@ -37,15 +37,6 @@ else
 fi
 
 
-# for A in "$@"; do
-#     case $A in
-#         --library_report | --library-report)
-#             $PYTHON_COMMAND $SCRIPT_DIR/scripts/library_report
-#             exit
-#             ;;
-#     esac
-# done
-
 #Note that this is from the perspective of python, otherwise would be
 # identical to $SCRIPT_DIR (which matters on windows, but not elsewhere)
 RAVEN_DIR=`$PYTHON_COMMAND $SCRIPT_DIR/raven/scripts/plugin_handler.py -r`
