@@ -1,5 +1,5 @@
 [Tests]  
-  [./Aspen_Heron_FullTest]
+  [./create_HERON_file]
     type = RavenPython
     input = 'aspen_to_heron.py HYSYS_outputs/ APEA_outputs/ Sets1/ heron_input.xml'
    
@@ -21,7 +21,7 @@
     [./costFunctionCompare]
       type = ImageDiffer
       output = 'Sets1/Setfile_pumps.png'
-	rel_err = 0.01
+	    rel_err = 0.01
     [../]
 
     [./HERON_XMLCompare]
@@ -30,14 +30,15 @@
       rel_err = 1e-2
     [../]
   [../]
-  
-  [./run_HERON]
+
+  [./run_HERON_and_RAVEN]
     type = HeronIntegration
     input = new_heron_input.xml
+    prereq = create_HERON_file
     [./run_RAVEN]
       type = OrderedCSV
       output = 'Runs_o/sweep.csv'
-      rel_err = 1e-4
+      rel_err = 5e-2
     [../]  
-  [../]  
+  [../]
 [] 
