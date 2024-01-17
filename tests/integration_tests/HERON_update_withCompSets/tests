@@ -1,0 +1,16 @@
+[Tests]  
+  [./CompSetsIntoHERON]
+    type = RavenPython
+    input = 'force_component_sets_to_heron.py Sets1/ heron_input.xml'
+    output = 'new_heron_input.xml'
+    [./xml_test]
+      type =  XML
+      output = 'new_heron_input.xml'
+    [../]
+
+  [../]  
+[]
+
+
+
+

@@ -1,0 +1,32 @@
+[Tests]  
+  [./CreateCompSets_Plus_CostFuncs_Diff]
+    type = RavenPython
+    input = 'create_force_componentSets.py HYSYS_outputs/ APEA_outputs/ Sets1/'
+    output = 'Sets1/componentSet_turbines.txt Sets1/componentSet_heat_exchangers.txt Sets1/componentSet_pumps.txt'
+
+    
+    [./image_diff]
+      type = ImageDiffer
+      output = 'Sets1/Setfile_pumps.png'
+      rel_err = 0.01
+    [../]
+    
+    [./image_diff]
+      type = ImageDiffer
+      output = 'Sets1/Setfile_heat_exchangers.png'
+      rel_err = 0.01
+    [../]
+    
+    [./image_diff]
+      type = ImageDiffer
+      output = 'Sets1/Setfile_turbines.png'
+      rel_err = 0.01
+    [../]
+
+  [../]  
+[]
+
+
+
+
+

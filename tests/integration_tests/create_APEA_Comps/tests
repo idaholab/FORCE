@@ -1,0 +1,14 @@
+[Tests]  
+  [./CreateAPEA_Comps_Plus_Comps_Diff]
+    type = RavenPython
+    input = 'create_apea_components.py APEA_outputs/'
+    output = 'APEA_comps/comp_from_0-10_and_2-11-25_APEA.xlsx/P-101.txt APEA_comps/comp_from_1-11-50_APEA.xlsx/CT.txt APEA_comps/comp_from_Output_APEA.xlsx/DatapointBOPPump879kW.txt' 
+    [./text_test]
+      type = Text
+      output = 'APEA_comps/comp_from_0-10_and_2-11-25_APEA.xlsx/P-101.txt APEA_comps/comp_from_1-11-50_APEA.xlsx/CT.txt APEA_comps/comp_from_Output_APEA.xlsx/DatapointBOPPump879kW.txt' 
+    [../]
+
+  [../]  
+[]
+
+
