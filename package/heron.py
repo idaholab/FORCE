@@ -15,6 +15,8 @@
 import re
 import sys
 from HERON.src.main import main
+from gui import BasicGUI
 if __name__ == '__main__':
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    sys.exit(main())
+    gui = BasicGUI()
+    gui.run_function(main)

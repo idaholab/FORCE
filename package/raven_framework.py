@@ -21,5 +21,7 @@ This is a package that properly imports Driver and runs it.
 """
 import sys
 from ravenframework.Driver import main
+from gui import BasicGUI
 if __name__ == '__main__':
-  sys.exit(main(True))
+  gui = BasicGUI()
+  gui.run_function(lambda: sys.exit(main(True)))
