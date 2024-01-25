@@ -4,7 +4,6 @@ Implements a GUI for running the HERON and RAVEN main scripts using tkinter.
 
 import sys
 import os
-import subprocess
 import threading
 import time
 import datetime
@@ -52,45 +51,6 @@ class Redirect:
         pass
 
 
-class StoppableThread(threading.Thread):
-    """ A thread that can be stopped from the outside. """
-    def __init__(self, *args, **kwargs) -> None:
-        """
-        Constructor
-        @In, *args, list, positional arguments for threading.Thread
-        @In, **kwargs, dict, keyword arguments for threading.Thread
-        @Out, None
-        """
-        super().__init__(*args, **kwargs)
-        self._stop_event = threading.Event()
-        self.start_time = 0.0
-
-    def start(self) -> None:
-        """
-        Start the thread.
-        @In, None
-        @Out, None
-        """
-        self.start_time = time.time()  # record start time for time elapsed
-        super().start()
-
-    def stop(self) -> None:
-        """
-        Stop the thread.
-        @In, None
-        @Out, None
-        """
-        self._stop_event.set()
-
-    def stopped(self) -> bool:
-        """
-        Check if the thread is stopped.
-        @In, None
-        @Out, bool, True if the thread is stopped, False otherwise
-        """
-        return self._stop_event.is_set()
-
-
 class BasicGUI:
     """ A basic graphical user interface for running FORCE tools. """
     def __init__(self) -> None:
@@ -113,7 +73,7 @@ class BasicGUI:
         #   1. File selection
         #   2. Status panel
         #   2. Output text
-        #   3. "Show/Hide Output", "Run" and "Cancel" buttons
+        #   3. "Show/Hide Output", "Run" and "Abort" buttons
         file_frame = tk.Frame(self._root, height=20)
         file_frame.grid(column=0, row=0, sticky=tk.NW)
         status_frame = tk.Frame(self._root, height=40)
@@ -149,16 +109,18 @@ class BasicGUI:
         # Buttons for showing and hiding the text widget, running the script, and canceling the run
         self._show_output = tk.Button(buttons_frame, text='Show Output', command=self._show_text)
         self._show_output.grid(column=0, row=0, sticky=tk.SW)
-        self._cancel_pressed = False
-        self._cancel_button = tk.Button(buttons_frame, text='Cancel', command=self._ask_cancel)
-        self._cancel_button.grid(column=1, row=0, sticky=tk.SE)
+        self._abort_button = tk.Button(buttons_frame, text='Abort', command=self._ask_abort, state=tk.DISABLED)
+        self._abort_button.grid(column=1, row=0, sticky=tk.SE)
         self._run_button = tk.Button(buttons_frame, text='Run', state=tk.DISABLED)
         self._run_button.grid(column=2, row=0, sticky=tk.SE)
         buttons_frame.grid_rowconfigure(0, weight=1)
         buttons_frame.grid_columnconfigure(0, weight=1)
 
-        # Bind Ctrl+C to the cancel button for convenience
-        self._root.bind('<Control-c>', lambda event: self._cancel_button.invoke())
+        # Bind Ctrl+C to the "Abort" button for convenience
+        self._root.bind('<Control-c>', lambda event: self._abort_button.invoke())
+
+        # Keep track of thread start time to calculate time elapsed
+        self._thread_start_time = 0.0
 
     def _show_text(self) -> None:
         """
@@ -180,14 +142,16 @@ class BasicGUI:
         self._text.pack_forget()
         self._root.geometry(self._window_size_no_output)
 
-    def _ask_cancel(self) -> None:
+    def _ask_abort(self) -> None:
         """
         Abort the run.
         @In, None
         @Out, None
         """
-        response = askokcancel('Abort run', 'Are you sure you want to abort? This will close the window and any text output will be lost.')
+        response = askokcancel('Abort run', 'Are you sure you want to abort? '
+                               'This will close the window and any text output will be lost.')
         if response:
+            # TODO: We could dump the text output to a file here for better debugging
             self._root.destroy()
 
     def get_file_to_run(self) -> str:
@@ -198,8 +162,8 @@ class BasicGUI:
         """
         filename = filedialog.askopenfilename(title='Select File to Run', filetypes=[('XML files', '*.xml')])
         self._xml_file_to_run = filename
-        self._file_to_run_label.configure(text=os.path.relpath(self._xml_file_to_run))
         if filename:  # activate the run button if a file was selected
+            self._file_to_run_label.configure(text=os.path.relpath(self._xml_file_to_run))
             self._run_button.configure(state=tk.NORMAL)
             self._update_status(status='Ready')
 
@@ -216,84 +180,20 @@ class BasicGUI:
             time_elapsed = datetime.timedelta(seconds=round(time_elapsed))
             self._time_elapsed_label.configure(text='Time elapsed: ' + str(time_elapsed))
 
-    def write_line(self, line: str) -> None:
-        """
-        Write a line to the text widget.
-        @In, line, str, the line to write
-        @Out, None
-        """
-        self._text.configure(state=tk.NORMAL)
-        self._text.insert(tk.END, line)
-        self._text.update()
-        self._text.see(tk.END)  # autoscroll
-        self._text.configure(state=tk.DISABLED)
-
-    def run_script(self, filename: str) -> None:
-        """
-        Run a python script in the GUI.
-        @In, filename, str, the filename to run
-        @Out, None
-        """
-        if not os.path.exists(filename):
-            raise FileNotFoundError(f'File {filename} does not exist.')
-
-        # Wrap the script in a function that will run it in a subprocess
-        def _run_script() -> None:
-            """
-            Run the script in filename as a subprocess.
-            @In, filename, str, the filename to run
-            @Out, None
-            """
-            self._cancel_pressed = False  # reset cancel button
-
-            # Construct python command to run the script. Assumes that the script takes
-            # an XML file as a positional argument. The -u flag is necessary to disable
-            # output buffering, allowing the output to be written to the text widget in
-            # real time.
-            cmd = ['python', '-u', filename, self._xml_file_to_run]
-
-            # Run the script as a subprocess so that the GUI does not freeze while
-            # waiting for the script to finish.
-            self.write_line('Running ' + ' '.join(cmd) + '...\n\n')
-            with subprocess.Popen(cmd,
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT,
-                                  bufsize=1,
-                                  universal_newlines=True) as p:
-                # Disable the run button while the script is running and enable the cancel button
-                self._run_button.configure(state=tk.DISABLED)
-                self._cancel_button.configure(state=tk.NORMAL)
-                # Grab the output from the subprocess and write it to the text widget
-                for line in p.stdout:
-                    self.write_line(line)
-                    # Quit if the cancel button was pressed
-                    if self._cancel_pressed:
-                        p.terminate()
-                        self.write_line('Subprocess terminated.\n')
-                        break
-                    p.poll()  # FIXME: is this necessary?
-            # Re-enable run button when the script is done
-            self._run_button.configure(state=tk.NORMAL)
-
-        # Set the run button command to run the function
-        self._run_button.configure(command=_run_script)
-
-        # Run the GUI
-        self._root.mainloop()
-
     def _check_thread(self, thread: threading.Thread) -> None:
         """
         Check if a thread is still running.
         @In, thread, threading.Thread, the thread to check
         @Out, None
         """
+        time_elapsed = time.time() - self._thread_start_time
         if thread.is_alive():
             self._root.after(100, self._check_thread, thread)
-            self._update_status(time_elapsed=time.time() - thread.start_time)
+            self._update_status(time_elapsed=time_elapsed)
         else:
             self._run_button.configure(state=tk.NORMAL)
-            self._cancel_button.configure(state=tk.DISABLED)
-            self._update_status(status='Done', time_elapsed=time.time() - thread.start_time)
+            self._abort_button.configure(state=tk.DISABLED)
+            self._update_status(status='Done', time_elapsed=time_elapsed)
 
     def run_function(self, func: Callable) -> None:
         """
@@ -318,16 +218,15 @@ class BasicGUI:
             @In, None
             @Out, None
             """
-            # Configure buttons to show that the function is running
-            self._cancel_pressed = False
+            # Configure GUI state to show that the function is running
             self._run_button.configure(state=tk.DISABLED)
-            self._cancel_button.configure(state=tk.NORMAL)
-            # Update status bar
+            self._abort_button.configure(state=tk.NORMAL)
             self._update_status(status='Running')
+            self._thread_start_time = time.time()
             # Add XML file that was selected to sys.argv to be passed to the function
             sys.argv.append(self._xml_file_to_run)
             # Run the function in a thread
-            thread = StoppableThread(target=func)
+            thread = threading.Thread(target=func)
             thread.daemon = True  # makes sure the thread is killed when the GUI is closed
             thread.start()
             # Check if the thread is still running
@@ -339,7 +238,6 @@ class BasicGUI:
         # Run the GUI, redirecting stdout to the text widget
         sys.stdout = Redirect(self._text)
         self._root.mainloop()
-        sys.stdout = sys.__stdout__  # restore stdout
 
 
 def test_run() -> None:
@@ -359,14 +257,5 @@ def test_run() -> None:
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--script', action='store_true', default=False, help='Test run script from file.')
-    parser.add_argument('--function', action='store_true', default=False, help='Test run function.')
-    args = parser.parse_args()
     gui = BasicGUI()
-
-    if args.script:
-        gui.run_script('gui_test_func.py')
-    elif args.function:
-        gui.run_function(test_run)
-    else:
-        raise ValueError('Must specify --filename or --function to run a test.')
+    gui.run_function(test_run)
