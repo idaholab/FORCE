@@ -19,3 +19,10 @@ pip install cx_Freeze
 pip install raven-framework teal-ravenframework heron-ravenframework
 
 python setup.py install_exe --install-dir raven_install
+
+ipopt work:
+
+cd raven_install
+unzip  ~/Downloads/Ipopt-3.14.12-win64-msvs2019-md.zip
+mv Ipopt-3.14.12-win64-msvs2019-md  local
+
