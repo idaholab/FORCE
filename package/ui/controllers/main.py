@@ -18,6 +18,9 @@ class Controller:
         # Bind the abort button to closing the window
         self.view.frames["run_abort"].abort_button.config(command=self.view.quit)
 
+        # Bind Ctrl-C to closing the window for convenvience
+        self.view.root.bind('<Control-c>', lambda cmd: self.view.root.destroy())
+
     def run_model(self):
         self.model.start()
         # Status update loop

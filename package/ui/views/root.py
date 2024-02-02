@@ -13,4 +13,3 @@ class Root(tk.Tk):
         self.title('FORCE')
         self.geometry('800x600')
         self.grid()
-        self.bind('<Control-c>', self.quit)
