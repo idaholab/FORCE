@@ -21,7 +21,16 @@ This is a package that properly imports Driver and runs it.
 """
 import sys
 from ravenframework.Driver import main
-from gui import BasicGUI
+from ui import run_from_gui
 if __name__ == '__main__':
-  gui = BasicGUI()
-  gui.run_function(lambda: sys.exit(main(True)))
+  import argparse
+  parser = argparse.ArgumentParser(description='RAVEN')
+  parser.add_argument('-w', action='store_true', default=False, required=False,help='Run in the GUI')
+  parser.add_argument('file', nargs='?', help='Case file to run')
+  args = parser.parse_args()
+  if args.file:
+    sys.argv = [sys.argv[0], args.file]
+  if args.w or not args.file:  # if asked to or if no file is passed, run the GUI
+    run_from_gui(lambda: sys.exit(main(True)))
+  else:
+    sys.exit(main(True))
