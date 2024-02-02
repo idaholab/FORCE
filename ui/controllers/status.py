@@ -19,3 +19,4 @@ class StatusController(tk.Frame):
         time_elapsed = round(self.model.get_execution_time())
         self.set_timer(f'{datetime.timedelta(seconds=time_elapsed)}')
         self.view.update()
+        self.view.after(100, self.update_status)

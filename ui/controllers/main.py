@@ -10,7 +10,7 @@ class Controller:
 
         # Initialize controllers
         self.file_selection_controller = FileSelectionController(self.model, self.view.frames["file_selection"])
-        # self.status_panel_controller = StatusController(self.model, self.view.frames["status_panel"])
+        self.status_panel_controller = StatusController(self.model, self.view.frames["status_panel"])
         self.text_output_controller = TextOutputController(self.model, self.view.frames["text_output"])
 
         # Bind the run button to the model
@@ -21,7 +21,7 @@ class Controller:
     def run_model(self):
         self.model.start()
         # Status update loop
-        self.view.frames["status_panel"].after(1, self.status_panel_controller.update_status)
+        self.view.frames["status_panel"].after(100, self.status_panel_controller.update_status)
 
     def start(self):
         self.view.mainloop()
