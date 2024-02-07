@@ -21,5 +21,8 @@ This is a package that properly imports Driver and runs it.
 """
 import sys
 from ravenframework.Driver import main
+from utils import add_local_bin_to_path
+
 if __name__ == '__main__':
+  add_local_bin_to_path()
   sys.exit(main(True))

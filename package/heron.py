@@ -14,14 +14,11 @@
 # limitations under the License.
 import re
 import sys
-import os
+from utils import add_local_bin_to_path
+
 
 if __name__ == '__main__':
-    script_path = os.path.dirname(sys.argv[0])
-    local_path = os.path.join(script_path,"local","bin")
-    if os.path.exists(local_path):
-        os.environ['PATH'] += (os.pathsep+local_path)
-    print("PATH",os.environ['PATH'], "local_path", local_path)
+    add_local_bin_to_path()
     from HERON.src.main import main
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
     sys.exit(main())
