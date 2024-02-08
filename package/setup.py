@@ -7,7 +7,7 @@ import HERON.templates.write_inner
 
 
 build_exe_options = {
-    "packages": ["ravenframework","msgpack","ray","crow_modules","AMSC","sklearn","pyomo","HERON", "pyarrow", "netCDF4", "cftime"],
+    "packages": ["ravenframework","msgpack","ray","crow_modules","AMSC","sklearn","pyomo","HERON","TEAL","pyarrow","netCDF4","cftime"],
     "includes": ["ray.thirdparty_files.colorama","ray.autoscaler._private","pyomo.common.plugins","HERON.templates.template_driver"],
     "include_files": [(HERON.templates.write_inner.__file__,"lib/HERON/templates/write_inner.py")],
 }
@@ -29,6 +29,8 @@ setup(
     name="force",
     version="0.1",
     description="FORCE package",
-    executables=[Executable("raven_framework.py"),Executable("heron.py")],
+    executables=[Executable("raven_framework.py"),
+                 Executable("heron.py"),
+                 Executable("teal.py")],
     options={"build_exe": build_exe_options},
 )
