@@ -17,7 +17,12 @@ import sys
 from HERON.src.main import main
 from ui import run_from_gui
 import argparse
+from utils import add_local_bin_to_path
+
+
 if __name__ == '__main__':
+    add_local_bin_to_path()
+    from HERON.src.main import main
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
     parser = argparse.ArgumentParser(description='HERON')
     parser.add_argument('-w', action='store_true', default=False, required=False, help='Run in the GUI')

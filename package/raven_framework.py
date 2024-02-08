@@ -22,7 +22,9 @@ This is a package that properly imports Driver and runs it.
 import sys
 from ravenframework.Driver import main
 from ui import run_from_gui
+from utils import add_local_bin_to_path
 if __name__ == '__main__':
+  add_local_bin_to_path()
   import argparse
   parser = argparse.ArgumentParser(description='RAVEN')
   parser.add_argument('-w', action='store_true', default=False, required=False,help='Run in the GUI')
