@@ -12,6 +12,9 @@ write_inner.py
 .ravenStatus
 romMeta.xml
 
+# Ignore built executables
+build
+
 # Allow these files
 !FORCE_logo-bw.png
 !FORCE_logo-color.png
