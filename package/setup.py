@@ -15,6 +15,7 @@ setup(
     name="force",
     version="0.1",
     description="FORCE package",
-    executables=[Executable("raven_framework.py"),Executable("heron.py")],
+    executables=[Executable(script="raven_framework.py",icon="raven_64.ico"),
+                 Executable(script="heron.py",icon="heron_64.ico")],
     options={"build_exe": build_exe_options},
 )
