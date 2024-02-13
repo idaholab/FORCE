@@ -1,0 +1,69 @@
+#!/bin/bash
+echo 'Running FORCE tests ...'
+
+SCRIPT_NAME=`readlink $0`
+if test -x "$SCRIPT_NAME";
+then
+    SCRIPT_DIRNAME=`dirname $SCRIPT_NAME`
+else
+    SCRIPT_DIRNAME=`dirname $0`
+fi
+SCRIPT_DIR=`(cd $SCRIPT_DIRNAME; pwd)`
+
+
+# source read ravenrc script
+RAVEN_RC_SCRIPT=$SCRIPT_DIR/raven/scripts/read_ravenrc.sh
+RAVEN_RC_SCRIPT="${RAVEN_RC_SCRIPT//\\//}"
+source $RAVEN_RC_SCRIPT
+
+# set up installation manager
+INSTALLATION_MANAGER=$(read_ravenrc "INSTALLATION_MANAGER")
+
+
+echo 'Loading libraries ...'
+if  [[ "$INSTALLATION_MANAGER" == "CONDA" ]];
+then
+    source $SCRIPT_DIR/raven/scripts/establish_conda_env.sh --load
+elif [[ "$INSTALLATION_MANAGER" == "PIP" ]];
+then
+    source $SCRIPT_DIR/scripts/establish_conda_env.sh --load --installation-manager PIP
+else
+    echo No installation: $INSTALLATION_MANAGER
+    if [ -z $PYTHON_COMMAND ];
+    then
+        # check the RC file
+        PYTHON_COMMAND=$(read_ravenrc "PYTHON_COMMAND")
+    fi
+fi
+
+
+#Note that this is from the perspective of python, otherwise would be
+# identical to $SCRIPT_DIR (which matters on windows, but not elsewhere)
+RAVEN_DIR=`$PYTHON_COMMAND $SCRIPT_DIR/raven/scripts/plugin_handler.py -r`
+
+# run the tests
+# success/fail storage
+#   Names of successful test sets are stored in "PASSED"
+#   Names of failed test sets are stored in "FAILED"
+#   Success of most recent test stored in "rc"
+#   Total number of failed test sets stored in "ALL_PASS"
+# initialize vars in case no tests get run
+ALL_PASS=0
+PASSED=()
+FAILED=()
+
+echo
+echo "********************************************************************************"
+echo
+echo 'Running FORCE tests ...'
+
+$PYTHON_COMMAND $SCRIPT_DIR/raven/rook/main.py --config-file=$SCRIPT_DIR/developer_tools/rook.ini --testers-dir $RAVEN_DIR/scripts/TestHarness/testers,$RAVEN_DIR/../HERON/src/Testers "${ARGS[@]}"
+
+# store return codes individually (rc) and combined (ALL_PASS)
+rc=$?
+ALL_PASS=$rc
+if [[ $rc != 0 ]]; then
+    echo ' ... there were failed tests!'
+else
+    echo ' ... tests passed successfully.'
+fi # end "if passed"
