@@ -45,3 +45,11 @@ class Model:
         @Out, is_alive, bool, True if the thread is still running
         """
         return self.thread.is_alive()
+
+    def get_package_name(self):
+        """
+        Get the top-level package name of the model
+        @In, None
+        @Out, package_name, str, the package name
+        """
+        return self.func.__module__.split('.')[0]

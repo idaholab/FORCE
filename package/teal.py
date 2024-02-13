@@ -21,5 +21,26 @@ Runs the TEAL package as a standalone application.
 """
 import sys
 from TEAL.src.CashFlow_ExtMod import TEALmain
+from ui import run_from_gui
+
+
 if __name__ == '__main__':
-    sys.exit(TEALmain())
+    import argparse
+    parser = argparse.ArgumentParser(description='RAVEN')
+    parser.add_argument('-w', action='store_true', default=False, required=False,help='Run in the GUI')
+    parser.add_argument('-iXML', nargs=1, help='XML CashFlow input file name', metavar='inp_file')
+    parser.add_argument('-iINP', nargs=1, help='CashFlow input file name with the input variable list', metavar='inp_file')
+    parser.add_argument('-o', nargs=1, help='Output file name', metavar='out_file')
+    args = parser.parse_args()
+
+    # Remove the -w argument from sys.argv so it doesn't interfere with TEAL's argument parsing
+    if args.w:
+        sys.argv.remove('-w')
+
+    # If the -w argument is present or any of the other arguments are missing, run the GUI
+    if args.w or not args.iXML or not args.iINP or not args.o:
+        print('Running TEAL in GUI mode')
+        run_from_gui(TEALmain)
+    else:
+        print('Running TEAL in command line mode')
+        sys.exit(TEALmain())

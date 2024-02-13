@@ -1,3 +1,5 @@
+import sys
+
 from .file_selection import FileSelectionController
 from .status import StatusController
 from .text_output import TextOutputController
@@ -22,6 +24,10 @@ class Controller:
         self.view.root.bind('<Control-c>', lambda cmd: self.view.root.destroy())
 
     def run_model(self):
+        # Construct sys.argv from the file selectors
+        sys.argv = [sys.argv[0]] + self.file_selection_controller.get_files()
+        print('sys.argv:', sys.argv)
+        # Start the model
         self.model.start()
         # Status update loop
         self.view.frames["status_panel"].after(100, self.status_panel_controller.update_status)

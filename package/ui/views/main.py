@@ -10,6 +10,11 @@ from tkinter.messagebox import askokcancel
 class View:
     """ Main view class. """
     def __init__(self):
+        """
+        Main view constructor. Sets up main window by adding essential frames.
+        @In, None
+        @Out, None
+        """
         self.root = Root()
         self.frames = {}
 
@@ -23,6 +28,7 @@ class View:
         self.add_frame('run_abort', RunAbort(self.root),
                        row=3, column=0, sticky='se', padx=10, pady=5)
 
+        # Let the text output frame expand to fill the available space
         self.root.grid_rowconfigure(2, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
 
@@ -38,9 +44,19 @@ class View:
         frame.grid(**kwargs)
 
     def mainloop(self):
+        """
+        Run the application main loop
+        @In, None
+        @Out, None
+        """
         self.root.mainloop()
 
     def quit(self):
+        """
+        Quit the application
+        @In, None
+        @Out, None
+        """
         response = askokcancel('Abort run', 'Are you sure you want to abort? '
                                'This will close the window and any text output will be lost.')
         if response:

@@ -54,13 +54,3 @@ class Redirect:
         self.widget.configure(state=tk.DISABLED)
         if self.autoscroll:
             self.widget.see(tk.END)  # autoscroll
-        self.widget.update()
-
-    def flush(self) -> None:
-        """
-        Flush the buffer
-        @In, None
-        @Out, None
-        """
-        # No buffer to flush
-        pass
