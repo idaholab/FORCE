@@ -14,14 +14,26 @@
 # limitations under the License.
 import re
 import sys
-import os
+from HERON.src.main import main
+from ui import run_from_gui
+from utils import add_local_bin_to_path
+
 
 if __name__ == '__main__':
-    script_path = os.path.dirname(sys.argv[0])
-    local_path = os.path.join(script_path,"local","bin")
-    if os.path.exists(local_path):
-        os.environ['PATH'] += (os.pathsep+local_path)
-    print("PATH",os.environ['PATH'], "local_path", local_path)
-    from HERON.src.main import main
+    import argparse
+
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    sys.exit(main())
+    parser = argparse.ArgumentParser(description='HERON')
+    parser.add_argument('-w', action='store_true', default=False, required=False, help='Run in the GUI')
+    parser.add_argument('file', nargs='?', help='Case file to run')
+    args = parser.parse_args()
+
+    # Adds the "local/bin" directory to the system path in order to find ipopt and other executables
+    add_local_bin_to_path()
+
+    if args.file:
+        sys.argv = [sys.argv[0], args.file]
+    if args.w or not args.file:  # if asked to or if no file is passed, run the GUI
+        run_from_gui(main)
+    else:
+        main()
