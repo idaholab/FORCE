@@ -28,9 +28,9 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='RAVEN')
     parser.add_argument('-w', action='store_true', default=False, required=False,help='Run in the GUI')
-    parser.add_argument('-iXML', nargs=1, help='XML CashFlow input file name', metavar='inp_file')
-    parser.add_argument('-iINP', nargs=1, help='CashFlow input file name with the input variable list', metavar='inp_file')
-    parser.add_argument('-o', nargs=1, help='Output file name', metavar='out_file')
+    parser.add_argument('-iXML', nargs=1, required=False, help='XML CashFlow input file name', metavar='inp_file')
+    parser.add_argument('-iINP', nargs=1, required=False, help='CashFlow input file name with the input variable list', metavar='inp_file')
+    parser.add_argument('-o', nargs=1, required=False, help='Output file name', metavar='out_file')
     args = parser.parse_args()
 
     # Remove the -w argument from sys.argv so it doesn't interfere with TEAL's argument parsing
