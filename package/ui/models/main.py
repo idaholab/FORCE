@@ -5,15 +5,17 @@ from typing import Callable
 
 class Model:
     """ Runs a function in a separate thread """
-    def __init__(self, func: Callable):
+    def __init__(self, func: Callable, **kwargs):
         """
         Constructor
         @In, func, Callable, the function to run
+        @In, kwargs, dict, keyword arguments to pass to the function
         @Out, None
         """
         self.func = func
         self.thread = None
         self.start_time = None
+        self.kwargs = kwargs
 
     def start(self):
         """
@@ -21,7 +23,7 @@ class Model:
         @In, None
         @Out, None
         """
-        self.thread = threading.Thread(target=self.func)
+        self.thread = threading.Thread(target=self.func, kwargs=self.kwargs)
         self.thread.daemon = True
         self.start_time = time.time()
         self.thread.start()

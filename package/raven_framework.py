@@ -39,6 +39,8 @@ if __name__ == '__main__':
   if args.file:
     sys.argv = [sys.argv[0], args.file]
   if args.w or not args.file:  # if asked to or if no file is passed, run the GUI
-    run_from_gui(lambda: sys.exit(main(True)))
+    # run_from_gui(lambda: sys.exit(main(True)))
+    run_from_gui(main, checkLibraries=True)
+    # run_from_gui(main)
   else:
     sys.exit(main(True))

@@ -34,8 +34,11 @@ class FileSpec:
         @In, parser, argparse.ArgumentParser, the parser
         @Out, parser, argparse.ArgumentParser, the parser with the file specification added
         """
-        parser.add_argument(self.arg_name, nargs=1, required=False, default=self.default_filename,
-                            help=self.description)
+        if self.arg_name.startswith('-'):
+            parser.add_argument(self.arg_name, nargs=1, required=False, default=self.default_filename,
+                                help=self.description)
+        else:  # positional argument
+            parser.add_argument(self.arg_name, nargs='?', default=self.default_filename, help=self.description)
         return parser
 
 
