@@ -42,10 +42,13 @@ Source: "raven_install\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\HERON"; Filename: "{app}\heron.exe"
-Name: "{autoprograms}\RAVEN; Filename: "{app}\raven_framework.exe"
+Name: "{autoprograms}\FORCE\HERON"; Filename: "{app}\heron.exe"
+Name: "{autoprograms}\FORCE\RAVEN"; Filename: "{app}\raven_framework.exe"
+Name: "{autoprograms}\FORCE\TEAL"; Filename: "{app}\teal.exe"
 Name: "{autodesktop}\HERON"; Filename: "{app}\heron.exe"; Tasks: desktopicon
 Name: "{autodesktop}\RAVEN"; Filename: "{app}\raven_framework.exe"; Tasks: desktopicon
+Name: "{autodesktop}\TEAL"; Filename: "{app}\teal.exe"; Tasks: desktopicon
+
 
 ; [Run]
 ; Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
