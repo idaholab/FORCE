@@ -20,20 +20,26 @@ from utils import add_local_bin_to_path
 
 
 if __name__ == '__main__':
-    import argparse
-
-    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    parser = argparse.ArgumentParser(description='HERON')
-    parser.add_argument('-w', action='store_true', default=False, required=False, help='Run in the GUI')
-    parser.add_argument('file', nargs='?', help='Case file to run')
-    args = parser.parse_args()
-
     # Adds the "local/bin" directory to the system path in order to find ipopt and other executables
     add_local_bin_to_path()
 
-    if args.file:
-        sys.argv = [sys.argv[0], args.file]
-    if args.w or not args.file:  # if asked to or if no file is passed, run the GUI
+    # Parse the command line arguments
+    import argparse
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    parser = argparse.ArgumentParser(description='HERON')
+    parser.add_argument('-w', action='store_true', default=False, required=False, help='Run in the GUI')
+    parser.add_argument('input', nargs='?', help='HERON input file')
+    args, unknown = parser.parse_known_args()
+
+    # if the input file is not an xml file, assume it's an unknown argument
+    if args.input and not args.input.endswith('.xml'):
+        unknown.insert(0, args.input)
+        args.input = None
+    # remove the -w argument from sys.argv so it doesn't interfere with HERON's argument parsing
+    if args.w:
+        sys.argv.remove('-w')
+
+    if args.w or not args.input:  # if asked to or if no file is passed, run the GUI
         run_from_gui(main)
     else:
         main()

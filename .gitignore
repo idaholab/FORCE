@@ -15,6 +15,9 @@ romMeta.xml
 # Ignore built executables
 build
 
+# Ignore certain GUI files
+.forceuirc
+
 # Allow these files
 !FORCE_logo-bw.png
 !FORCE_logo-color.png
