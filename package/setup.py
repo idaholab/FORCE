@@ -18,7 +18,7 @@ if platform.system().lower() == "windows":
     # ipopt executable must be included manually
     netCDF4_libs_path = os.path.join(os.path.dirname(sys.executable), "lib", "site-packages", "netCDF4.libs")
     build_exe_options["include_files"] += [
-        ("Ipopt-3.14.13-win64-msvs2019-md/","local/bin/Ipopt-3.14.13-win64-msvs2019-md"),  # FIXME: Point to the correct location for ipopt executable
+        #("Ipopt-3.14.13-win64-msvs2019-md/","local/bin/Ipopt-3.14.13-win64-msvs2019-md"),  # FIXME: Point to the correct location for ipopt executable
         (netCDF4_libs_path,"lib/netCDF4")
     ]
     # Include the Microsoft Visual C++ Runtime
