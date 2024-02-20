@@ -8,7 +8,9 @@ def add_local_bin_to_path():
     """
     script_path = os.path.dirname(sys.argv[0])
     local_path = os.path.join(script_path,"local","bin")
-    os.environ['PATH'] += (os.pathsep+local_path)
+    # Add script path (to get raven_framework in the path, and local/bin
+    #  to get things like ipopt in the path.
+    os.environ['PATH'] += (os.pathsep+local_path+os.pathsep+script_path)
     # Recursively add all additional "bin" directories in "local/bin" to the system path
     if os.path.exists(local_path):
         os.environ['PATH'] += (os.pathsep+local_path)
