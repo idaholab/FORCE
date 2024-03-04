@@ -1,4 +1,5 @@
 import sys
+import io
 import tkinter as tk
 
 

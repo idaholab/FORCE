@@ -55,9 +55,7 @@ if __name__ == '__main__':
     # sys.argv is used by the main function, so we need to remove the -w argument
     if args.w:
         sys.argv.remove('-w')
-    print('FORCE/package/raven_framework.py sys.argv =', sys.argv)
-    print('FORCE/package/raven_framework.py args =', args)
-    print('FORCE/package/raven_framework.py unknown =', unknown)
+
     if args.w or not args.input:  # run the GUI if asked to (-w) or if no input file is given
         run_from_gui(main, checkLibraries=True)
     else:

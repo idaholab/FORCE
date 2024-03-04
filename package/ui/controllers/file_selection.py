@@ -141,15 +141,3 @@ class FileSelectionController:
             if f'-{key}' in [spec.arg_name for spec in self._file_specs]:
                 args[f'-{key}'] = args.pop(key)
         return args, unknown
-
-    def _validate_positional_argument(self, spec, arg):
-        """
-        Validate a positional argument
-        @In, spec, FileSpec, the file specification
-        @In, arg, str, the argument
-        @Out, is_valid, bool, True if the argument matches the spec
-        """
-        is_valid = True
-        if spec.file_type:
-            is_valid &= arg.endswith(f'.{spec.file_type}')
-        # if

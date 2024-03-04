@@ -16,7 +16,7 @@ class FileDialogController:
         """
         self.view = view
 
-        self._filename = None
+        self.filename = None
         self.file_type = file_type
         self.persistence = persistence
 
@@ -33,9 +33,9 @@ class FileDialogController:
         @In, None
         @Out, filename, str, the filename
         """
-        if not self._filename:  # None or empty string
+        if not self.filename:  # None or empty string
             return None
-        return self._filename
+        return self.filename
 
     def set_filename(self, value):
         """
@@ -45,7 +45,7 @@ class FileDialogController:
         """
         if not os.path.exists(value):
             raise FileNotFoundError(f'File {value} does not exist')
-        self._filename = os.path.abspath(value)
+        self.filename = os.path.abspath(value)
         self.view.filename.set(os.path.basename(value))
         self.persistence.set_location(value)
 
@@ -60,6 +60,7 @@ class FileDialogController:
         filename = filedialog.askopenfilename(initialdir=initial_dir, filetypes=filetypes)
         if filename:
             self.filename = filename
+            self.view.filename.set(os.path.basename(filename))
 
     def open_save_dialog(self):
         """
@@ -71,3 +72,4 @@ class FileDialogController:
         filename = filedialog.asksaveasfilename(initialdir=initial_dir, defaultextension=f'.{self.file_type}')
         if filename:
             self.filename = filename
+            self.view.filename.set(os.path.basename(filename))
