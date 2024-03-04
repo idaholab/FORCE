@@ -28,6 +28,7 @@ if __name__ == '__main__':
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
     parser = argparse.ArgumentParser(description='HERON')
     parser.add_argument('-w', action='store_true', default=False, required=False, help='Run in the GUI')
+    parser.add_argument('--definition', action="store_true", dest="definition", help='HERON input file definition compatible with the NEAMS Workbench')
     parser.add_argument('input', nargs='?', help='HERON input file')
     args, unknown = parser.parse_known_args()
 
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     if args.w:
         sys.argv.remove('-w')
 
-    if args.w or not args.input:  # if asked to or if no file is passed, run the GUI
+    if (args.w or not args.input) and not args.definition:  # if asked to or if no file is passed, run the GUI
         run_from_gui(main)
     else:
         main()
