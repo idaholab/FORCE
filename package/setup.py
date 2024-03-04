@@ -7,8 +7,8 @@ import HERON.templates.write_inner
 
 
 build_exe_options = {
-    "packages": ["ravenframework","msgpack","ray","crow_modules","AMSC","sklearn","pyomo","HERON","TEAL","pyarrow","netCDF4","cftime","distributed"],
-    "includes": ["ray.thirdparty_files.colorama","ray.autoscaler._private","pyomo.common.plugins","HERON.templates.template_driver"],
+    "packages": ["ravenframework","msgpack","ray","crow_modules","AMSC","sklearn","pyomo","HERON","TEAL","pyarrow","netCDF4","cftime","distributed","dask","tensorflow"],
+    "includes": ["ray.thirdparty_files.colorama","ray.autoscaler._private","pyomo.common.plugins","HERON.templates.template_driver","dask.distributed"],
     "include_files": [(HERON.templates.write_inner.__file__,"lib/HERON/templates/write_inner.py")],
 }
 
@@ -23,7 +23,11 @@ if platform.system().lower() == "windows":
     ]
     # Include the Microsoft Visual C++ Runtime
     build_exe_options["include_msvcr"] = True
-
+else:
+    ipopt_path = os.path.join(os.path.dirname(sys.executable), "ipopt")
+    build_exe_options["include_files"] += [
+        (ipopt_path, "local/bin/ipopt")
+    ]
 
 setup(
     name="force",

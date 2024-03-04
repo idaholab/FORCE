@@ -66,7 +66,7 @@ class FileSelectionController:
         self.file_dialog_controllers = {}
 
         # Remember the file locations for the user
-        self.file_location_persistence = FileLocationPersistence()
+        self.persistence = FileLocationPersistence()
 
         # Create the file selectors, adding any files specified from the command line
         model_package_name = model.get_package_name().strip().lower()
@@ -80,11 +80,11 @@ class FileSelectionController:
                 view=self.file_selection.file_selectors[spec.description],
                 file_type=spec.file_type,
                 is_output=spec.is_output,
-                persistence=self.file_location_persistence
+                persistence=self.persistence
             )
             if filename := args.get(spec.arg_name, None):
                 file_dialog_controller.set_filename(filename)
-                self.file_location_persistence.set_file_location(filename)
+                self.persistence.set_location(filename)
             self.file_dialog_controllers[spec.description] = file_dialog_controller
 
     def get_sys_args_from_file_selection(self):
@@ -97,7 +97,7 @@ class FileSelectionController:
         args = []
         for spec in self._file_specs:
             # Get the filename from the file selector
-            filename = self.file_dialog_controllers[spec.description].filename
+            filename = self.file_dialog_controllers[spec.description].get_filename()
             # Add the filename with its corresponding argument flag to the list
             if not os.path.exists(filename) and spec.arg_name != '-o':
                 raise FileNotFoundError(f"File {filename} not found")

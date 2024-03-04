@@ -27,8 +27,7 @@ class FileDialogController:
         else:
             self.view.browse_button.config(command=self.open_selection_dialog)
 
-    @property
-    def filename(self):
+    def get_filename(self):
         """
         filename getter
         @In, None
@@ -38,8 +37,7 @@ class FileDialogController:
             return None
         return self._filename
 
-    @filename.setter
-    def filename(self, value):
+    def set_filename(self, value):
         """
         filename setter
         @In, value, str, the filename
