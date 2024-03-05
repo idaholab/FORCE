@@ -1,6 +1,8 @@
 import sys
 import io
+import threading
 import tkinter as tk
+import time
 
 
 class TextOutputController:
@@ -11,9 +13,8 @@ class TextOutputController:
         @In, view, TextOutput, the view to control
         """
         self.view = view
-        # Redirect stdout and stderr to the Text widget
-        sys.stdout = Redirect(self.view.text)
-        sys.stderr = Redirect(self.view.text)
+        self.redirector = StdoutRedirector(self.view.text)
+        self.redirector.start()
         # Define show/hide button behavior
         self.view.show_hide_button.config(command=self.toggle_show_text)
 
@@ -32,35 +33,47 @@ class TextOutputController:
         self.view.is_showing = not self.view.is_showing
 
 
-class Redirect:
-    """ Redirect stdout to tkinter widget """
-    def __init__(self, widget: tk.Widget, autoscroll: bool = True) -> None:
+class StdoutRedirector:
+    """ Redirects stdout to a tkinter widget """
+    def __init__(self, widget: tk.Widget):
         """
         Constructor
-        @In, widget, tk.Widget, the widget to redirect output to
-        @In, autoscroll, bool, if True, scroll to end of output (default True)
+        @In, widget, tk.Widget, the widget to redirect stdout to
         @Out, None
         """
         self.widget = widget
-        self.autoscroll = autoscroll
+        self.redirect_output = io.StringIO()
+        sys.stdout = self.redirect_output
+        sys.stderr = self.redirect_output
 
-    def write(self, text: str) -> None:
+    def start(self):
         """
-        Write text to widget
-        @In, text, str, the text to write
-        @Out, None
-        """
-        self.widget.configure(state=tk.NORMAL)
-        self.widget.insert(tk.END, text)
-        self.widget.configure(state=tk.DISABLED)
-        if self.autoscroll:
-            self.widget.see(tk.END)  # autoscroll
-
-    def flush(self):
-        """
-        Flush the output
+        Start the redirector. Uses a daemon thread to monitor the output.
         @In, None
         @Out, None
         """
-        # Nothing to flush
-        pass
+        self.monitor_thread = threading.Thread(target=self.monitor_output)
+        self.monitor_thread.daemon = True
+        self.monitor_thread.start()
+
+    def monitor_output(self):
+        """
+        Monitors the output and updates the widget
+        @In, None
+        @Out, None
+        """
+        while True:
+            # Get the buffer's contents, then clear it
+            text = self.redirect_output.getvalue()
+            self.redirect_output.seek(0)
+            self.redirect_output.truncate(0)
+
+            # Update the widget's text
+            if text:
+                self.widget.config(state=tk.NORMAL)
+                self.widget.insert(tk.END, text)
+                self.widget.config(state=tk.DISABLED)
+                self.widget.see(tk.END)
+
+            # Sleep to prevent busy-waiting
+            time.sleep(0.1)  # FIXME: expose this as a parameter

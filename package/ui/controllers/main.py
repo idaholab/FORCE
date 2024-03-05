@@ -23,8 +23,6 @@ class Controller:
         sys.argv = [sys.argv[0]] + self.file_selection_controller.get_sys_args_from_file_selection()
         # Start the model
         self.model.start()
-        # Update the text output
-        self.view.after(10, self.text_output_controller.update_text_widget)
 
     def start(self):
         self.view.mainloop()
