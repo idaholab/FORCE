@@ -48,13 +48,12 @@ class View:
         """
         self.root.mainloop()
 
-    def quit(self):
+    def quit(self, showdialog: bool = True):
         """
         Quit the application
-        @In, None
+        @In, showdialog, bool, optional, whether to show a dialog before quitting, default is True
         @Out, None
         """
-        response = askokcancel('Abort run', 'Are you sure you want to abort? '
-                               'This will close the window and any text output will be lost.')
-        if response:
+        if not showdialog or askokcancel('Abort run', 'Are you sure you want to abort? '
+                                         'This will close the window and any text output will be lost.'):
             self.root.quit()

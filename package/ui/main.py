@@ -19,3 +19,5 @@ def run_from_gui(func: Callable, **kwargs):
     view = View()
     controller = Controller(model, view)
     controller.start()
+    # Let the controller know to clean up when the view is closed
+    controller.quit(showdialog=False)

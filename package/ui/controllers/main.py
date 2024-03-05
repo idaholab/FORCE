@@ -16,7 +16,7 @@ class Controller:
         # Bind the run button to the model
         self.view.frames["run_abort"].run_button.config(command=self.run_model)
         # Bind the abort button to closing the window
-        self.view.frames["run_abort"].abort_button.config(command=self.view.quit)
+        self.view.frames["run_abort"].abort_button.config(command=self.quit)
 
     def run_model(self):
         # Construct sys.argv from the file selectors
@@ -26,3 +26,12 @@ class Controller:
 
     def start(self):
         self.view.mainloop()
+
+    def quit(self, showdialog: bool = True):
+        """
+        Quit the application
+        @In, showdialog, bool, optional, whether to show a dialog before quitting, default is True
+        @Out, None
+        """
+        self.file_selection_controller.close_persistence()
+        self.view.quit(showdialog)

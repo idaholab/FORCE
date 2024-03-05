@@ -109,6 +109,14 @@ class FileSelectionController:
         args.extend(self.unknown_args)
         return args
 
+    def close_persistence(self):
+        """
+        Closes the file location persistence
+        @In, None
+        @Out, None
+        """
+        self.persistence.close()
+
     def _parse_cli_args(self):
         """
         Parse arguments provided from the command line

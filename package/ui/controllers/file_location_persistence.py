@@ -14,9 +14,9 @@ class RCFile(dict):
         if os.path.exists(self.path):
             self.read()
 
-    def __exit__(self):
+    def close(self):
         """
-        Destructor
+        Save and close the dotfile
         @In, None
         @Out, None
         """
@@ -62,4 +62,12 @@ class FileLocationPersistence:
         @In, value, str, the last file location (file path or directory)
         @Out, None
         """
-        self.rcfile['DEFAULT_DIR'] = os.path.dirname(value)
+        self.rcfile['DEFAULT_DIR'] = os.path.abspath(os.path.dirname(value))
+
+    def close(self):
+        """
+        Closes the file location persistence
+        @In, None
+        @Out, None
+        """
+        self.rcfile.close()
