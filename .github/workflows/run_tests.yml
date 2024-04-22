@@ -13,3 +13,9 @@ jobs:
       - run: pwd
       - run: ./initalize_tests.sh
       - run: source raven/scripts/establish_conda_env.sh --load && ./run_tests
+      - name: Archive
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tests_results
+          path: tests
