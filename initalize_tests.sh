@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git clone git@github.com:idaholab/raven.git
-git clone git@github.com:idaholab/HERON.git
+git clone https://github.com/idaholab/raven.git
+git clone https://github.com/idaholab/HERON.git
 
 cd raven
 
