@@ -13,7 +13,7 @@ python create_apea_components.py APEA_outputs/
 import sys
 import os
 import argparse
-sys.path.append(os.path.dirname(__file__).split("FORCE")[:-1][0]+"FORCE/src")
+sys.path.append(os.path.dirname(__file__).rsplit("FORCE",maxsplit=1)[:-1][0]+"FORCE/src")
 from apea import extract_all_apea_components
 
 # # Specifying terminal command arguments
