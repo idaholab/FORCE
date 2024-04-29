@@ -1,7 +1,8 @@
 #!/bin/bash
 
-git clone https://github.com/idaholab/raven.git
-git clone https://github.com/idaholab/HERON.git
+git submodule init raven
+git submodule init HERON
+git submodule update
 
 cd raven
 
