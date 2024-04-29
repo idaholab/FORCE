@@ -11,7 +11,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: pwd
-      - run: ./initalize_tests.sh
+      - run: WD=`(cd ../../.. && pwd)` && export RAVEN_LIBS_NAME="raven_libs_"`basename $WD` && ./initalize_tests.sh
       - run: source raven/scripts/establish_conda_env.sh --load && ./run_tests
       - name: Archive
         uses: actions/upload-artifact@v4
