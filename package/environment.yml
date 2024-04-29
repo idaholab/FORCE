@@ -1,0 +1,9 @@
+name: force_build_10
+dependencies:
+- python=3.10
+- pip
+- pip:
+  - cx_Freeze
+  - raven-framework
+  - heron-ravenframework
+  - teal-ravenframework

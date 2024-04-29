@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Parse command line arguments:
+# --conda-defs <path> : Path to the conda.sh file
+# --env-file <path> : Path to a conda environment YAML file
+
+ENV_FILE=environment.yml
+while test $# -gt 0; do
+    case "$1" in
+        --conda-defs)
+            shift
+            CONDA_DEFS=$1
+            shift
+            ;;
+        --env-file)
+            shift
+            ENV_FILE=$1
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+# Configure conda to run in the current shell
+source $CONDA_DEFS
+
+# Get the name of the conda environment in the environment.yml file
+echo "Reading the environment file $ENV_FILE"
+ENV_NAME=$(grep name $ENV_FILE | head -n 1 | cut -d ' ' -f 2)
+echo " ... Found environment name: $ENV_NAME"
+
+# If the environment already exists, update it based on the file contents. Otherwise, create it.
+if conda info --envs | grep -q force; then
+    echo " ... Updating the existing environment $ENV_NAME"
+    conda env update -f $ENV_FILE --name $ENV_NAME
+else
+    echo " ... Creating a new environment $ENV_NAME"
+    conda env create -f environment.yml
+fi
+
+# Activate the environment
+conda activate $ENV_NAME
+
+# Build the FORCE executables
+echo "Building the FORCE executables"
+python setup.py install_exe --install-dir force_install
