@@ -2,9 +2,13 @@
 
 # Parse command line arguments:
 # --conda-defs <path> : Path to the conda.sh file
-# --env-file <path> : Path to a conda environment YAML file
+# --env-file <path>   : (Optional) Path to a conda environment YAML file. default: environment.yml
+# --raven-loc <path>  : Path to the RAVEN source code directory
+# --heron-loc <path>  : (Optional) Path to the HERON source code directory. default: $RAVEN_LOC/plugins/HERON
+# --teal-loc <path>   : (Optional) Path to the TEAL source code directory. default: $RAVEN_LOC/plugins/TEAL
 
-ENV_FILE=environment.yml
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 while test $# -gt 0; do
     case "$1" in
         --conda-defs)
@@ -17,11 +21,37 @@ while test $# -gt 0; do
             ENV_FILE=$1
             shift
             ;;
+        --raven-loc)
+            shift
+            RAVEN_LOC=$1
+            shift
+            ;;
+        --heron-loc)
+            shift
+            HERON_LOC=$1
+            shift
+            ;;
+        --teal-loc)
+            shift
+            TEAL_LOC=$1
+            shift
+            ;;
         *)
             break
             ;;
     esac
 done
+
+# Set default values for optional arguments if not provided
+if [ -z "$HERON_LOC" ]; then
+    HERON_LOC=$RAVEN_LOC/plugins/HERON
+fi
+if [ -z "$TEAL_LOC" ]; then
+    TEAL_LOC=$RAVEN_LOC/plugins/TEAL
+fi
+if [ -z "$ENV_FILE" ]; then
+    ENV_FILE=$SCRIPT_DIR/environment.yml
+fi
 
 # Configure conda to run in the current shell
 source $CONDA_DEFS
@@ -45,4 +75,17 @@ conda activate $ENV_NAME
 
 # Build the FORCE executables
 echo "Building the FORCE executables"
-python setup.py install_exe --install-dir force_install
+python setup.py install_exe --install-dir $SCRIPT_DIR/force_install
+
+# Build the documentation for the FORCE package tools and add them to the install directory
+echo "Building the FORCE package tools documentation"
+echo " ... RAVEN location: $RAVEN_LOC"
+echo " ... HERON location: $HERON_LOC"
+echo " ... TEAL location: $TEAL_LOC"
+echo " ... Destination: $SCRIPT_DIR/force_install/docs"
+sh $SCRIPT_DIR/make_docs --raven-dir $RAVEN_LOC --heron-dir $HERON_LOC --teal-dir $TEAL_LOC --dest $SCRIPT_DIR/force_install/docs
+
+# Copy over relevant examples
+echo "Copying over the FORCE examples"
+echo " ... Destination: $SCRIPT_DIR/force_install/examples"
+sh $SCRIPT_DIR/copy_examples --raven-dir $RAVEN_LOC --heron-dir $HERON_LOC --dest $SCRIPT_DIR/force_install/examples

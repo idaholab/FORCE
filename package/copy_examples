@@ -1,0 +1,44 @@
+#!/bin/bash
+# Copies examples from the test directories of RAVEN and HERON to provide examples for users using
+# the standalone install version of FORCE.
+
+# Get the RAVEN and HERON locations as arguments "--raven-dir" and "--heron-dir"
+# The destination directory is "examples" in the current directory but may be changed with the
+# "--dest" argument.
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+EXAMPLES_DIR="$SCRIPT_DIR/examples"
+
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+        --raven-dir)
+        RAVEN_DIR="$2"
+        shift
+        shift
+        ;;
+        --heron-dir)
+        HERON_DIR="$2"
+        shift
+        shift
+        ;;
+        --dest)
+        EXAMPLES_DIR="$2"
+        shift
+        shift
+        ;;
+        *)
+        echo "Unknown option: $1"
+        exit 1
+        ;;
+    esac
+done
+
+# The examples we want to copy are the RAVEN user_guide tests, the HERON workshop tests, and the
+# HERON data directory which contains time series models for those workshop tests.
+EXAMPLES=($RAVEN_DIR/tests/framework/user_guide $HERON_DIR/data $HERON_DIR/tests/workshop)
+mkdir -p $EXAMPLES_DIR
+
+for ex in ${EXAMPLES[@]}; do
+    cp -R "$ex" "$EXAMPLES_DIR"
+done

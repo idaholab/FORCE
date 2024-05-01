@@ -7,13 +7,12 @@
 #                      look for HERON and TEAL as RAVEN plugins.
 #  --heron-dir <path>: (Optional) Path to the HERON repository.
 #  --teal-dir <path>: (Optional) Path to the HERON repository.
+#  --dest <path>: (Optional) Path to the directory where the documentation will be copied to. Default
+#                 is to create a "docs" directory the directory this script is in.
 #  --no-build: (Optional) Skip building the documentation and only gather the existing documentation
 #              PDFs. Default is to rebuild the documentation.
 
 # Parse command line arguments
-RAVEN_DIR=""
-HERON_DIR=""
-TEAL_DIR=""
 NO_BUILD=0
 while [[ $# -gt 0 ]]; do
   key="$1"
@@ -37,6 +36,11 @@ while [[ $# -gt 0 ]]; do
       NO_BUILD=1
       shift
       ;;
+    --dest)
+      DOC_DIR="$2"
+      shift
+      shift
+      ;;
     *)
       echo "Unknown option: $1"
       exit 1
@@ -56,6 +60,11 @@ if [ -z "$HERON_DIR" ]; then
 fi
 if [ -z "$TEAL_DIR" ]; then
   TEAL_DIR="$RAVEN_DIR/plugins/TEAL"
+fi
+
+# Default destination directory is a "docs" directory in the directory this script is in.
+if [ -z "$DOC_DIR" ]; then
+  DOC_DIR="$SCRIPT_DIR/docs"
 fi
 
 # Create a directory to store the documentation. We'll do that in the directory this script is in.
