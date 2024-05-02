@@ -48,7 +48,7 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
       heron_comp_list = []  # The list of compoenents
       for comp in component:
         heron_comp_list.append(comp.attrib["name"]) # The list of components found in the HERON input XML file
-      print(f" \n The following components are already in the HERON input XML file:'{heron_comp_list}'")
+      # print(f" \n The following components are already in the HERON input XML file:'{heron_comp_list}'")
 
   comp_set_files_list = os.listdir(comp_sets_folder)
 
@@ -67,11 +67,11 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
       scaling_factor = comp_set_dict.get('Scaling Factor')
 
       fit_error = comp_set_dict.get('Fitting Average Error (%)')
-      print(f" \n The FORCE component set '{comp_set_name}' is found")
+      # print(f" \n The FORCE component set '{comp_set_name}' is found")
 
       # if the component is already in the HERON file, it gets updated
       if comp_set_name in heron_comp_list:
-        print(f"The component set {comp_set_name} already exists in the HERON XML input file. The {comp_set_name} info will be updated")
+        #print(f"The component set {comp_set_name} already exists in the HERON XML input file. The {comp_set_name} info will be updated")
         for component in components_list:
           for comp in component:
             if comp.attrib["name"] == comp_set_name:
@@ -80,7 +80,7 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
                 if node.tag == "economics":
                   ECO_NODE_FOUND = "True"
                   print(f"The 'economics' node is found in the component {comp.attrib['name']} and will be updated.")
-                  
+
                   for subnode in node:
                     # If the cashflow node is found
                     if subnode.tag == "CashFlow":
@@ -127,7 +127,7 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
 
       else:
         # if the component is not already in the HERON file, it is created.
-        print(f"The component set '{comp_set_name}' is not found in the HERON XMl input file. The componnent node '{comp_set_name}' will be created")
+        # print(f"The component set '{comp_set_name}' is not found in the HERON XMl input file. The componnent node '{comp_set_name}' will be created")
         comp_name_dict = {'name': comp_set_name}
         for components in components_list:
           new_comp_node = ET.SubElement(components, "Component", comp_name_dict)
