@@ -38,7 +38,9 @@
     [./run_RAVEN]
       type = OrderedCSV
       output = 'Runs_o/sweep.csv'
-      rel_err = 1e-2
+      rel_err = 0.01
+      zero_threshold = 1e-9
+      
     [../]  
   [../]
 [] 
