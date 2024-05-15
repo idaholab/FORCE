@@ -36,20 +36,22 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "raven_install\heron.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "raven_install\raven_framework.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "raven_install\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "force_install\heron.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "force_install\raven_framework.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "force_install\Workbench-5.4.1.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "force_install\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{autoprograms}\FORCE\HERON"; Filename: "{app}\heron.exe"
 Name: "{autoprograms}\FORCE\RAVEN"; Filename: "{app}\raven_framework.exe"
 Name: "{autoprograms}\FORCE\TEAL"; Filename: "{app}\teal.exe"
+Name: "{autoprograms}\FORCE\docs"; Filename: "{app}\docs"
+Name: "{autoprograms}\FORCE\examples"; Filename: "{app}\examples"
 Name: "{autodesktop}\HERON"; Filename: "{app}\heron.exe"; Tasks: desktopicon
 Name: "{autodesktop}\RAVEN"; Filename: "{app}\raven_framework.exe"; Tasks: desktopicon
 Name: "{autodesktop}\TEAL"; Filename: "{app}\teal.exe"; Tasks: desktopicon
 
-
-; [Run]
-; Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+[Run]
+Filename: "{app}\Workbench-5.4.1.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
