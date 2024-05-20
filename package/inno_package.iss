@@ -53,5 +53,5 @@ Name: "{autodesktop}\RAVEN"; Filename: "{app}\raven_framework.exe"; Tasks: deskt
 Name: "{autodesktop}\TEAL"; Filename: "{app}\teal.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\Workbench-5.4.1.exe"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
+Filename: "{app}\Workbench-5.4.1.exe"; Description: "Install NEAMS Workbench 5.4.1"; Flags: postinstall
+; TODO: Run additional configuration script for Workbench after install
