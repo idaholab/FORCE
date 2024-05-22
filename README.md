@@ -36,3 +36,7 @@ In addition to the tools available as part of FORCE, several existing use cases 
 
 ## Testing
 The FORCE repo should contain several IES tools. For the FORCE tests in "FORCE/tests/integrations_tests" to work, raven, TEAL, and HERON should be under FORCE. The FORCE tests depend on raven libraries which can be activated as follows: "conda activate raven_libraries"
+
+## Citing FORCE
+FORCE is included in the U.S. Department of Energy [CODE database](https://www.osti.gov/doecode/biblio/74301), which includes citation guidelines for several citation styles.
+DOI:10.11578/dc.20220511.2
