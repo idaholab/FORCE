@@ -42,3 +42,22 @@ mkdir -p $EXAMPLES_DIR
 for ex in ${EXAMPLES[@]}; do
     cp -R "$ex" "$EXAMPLES_DIR"
 done
+
+# Clean up the copied examples, removing files and directories created when running the tests.
+FILES_TO_REMOVE=("tests" "moped_input.xml" "outer.xml" "inner.xml" "cashflow.xml")
+DIRS_TO_REMOVE=("__pycache__" "gold" "*_o")
+for filename in ${FILES_TO_REMOVE[@]}; do
+    find $EXAMPLES_DIR -name $filename -exec rm {} \;
+done
+for dirname in ${DIRS_TO_REMOVE[@]}; do
+    find $EXAMPLES_DIR -type d -name $dirname -exec rm -r {} \;
+done
+
+# If Workbench is installed, convert HERON workshop tests to .heron files
+WORKBENCH_BIN=$(dirname $(realpath $(which Workbench)))
+XML2EDDI=$(realpath $WORKBENCH_BIN/../rte/util/xml2eddi.py)
+if [ -x "$XML2EDDI" ]; then
+    for ex in $(find $EXAMPLES_DIR/workshop -name "heron_input*.xml"); do
+        python $XML2EDDI $ex
+    done
+fi

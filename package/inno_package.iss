@@ -52,6 +52,81 @@ Name: "{autodesktop}\HERON"; Filename: "{app}\heron.exe"; Tasks: desktopicon
 Name: "{autodesktop}\RAVEN"; Filename: "{app}\raven_framework.exe"; Tasks: desktopicon
 Name: "{autodesktop}\TEAL"; Filename: "{app}\teal.exe"; Tasks: desktopicon
 
+[Registry]
+; File association for .heron files
+Root: HKCU; Subkey: "Software\Classes\.heron"; ValueType: string; ValueData: "FORCE.heron"; Flags: createvalueifdoesntexist
+Root: HKCU; Subkey: "Software\Classes\FORCE.heron"; ValueType: string; ValueData: "HERON File"
+Root: HKCU; Subkey: "Software\Classes\FORCE.heron\DefaultIcon"; ValueType: string; ValueData: "{app}\heron.exe,0"
+; The open command will be set dynamically in the [Code] section
+
 [Run]
-Filename: "{app}\Workbench-5.4.1.exe"; Description: "Install NEAMS Workbench 5.4.1"; Flags: postinstall
-; TODO: Run additional configuration script for Workbench after install
+Filename: "{app}\Workbench-5.4.1.exe"; Description: "Install NEAMS Workbench-5.4.1"; Flags: nowait postinstall skipifsilent
+
+[Code]
+var
+  WorkbenchPath: string;
+
+function FindWorkbenchInstallPath(): string;
+var
+    Paths: array of string;
+    Path: string;
+    I: Integer;
+begin
+  Result := '';
+  Paths := [
+    ExpandConstant('{sd}'),
+    ExpandConstant('{userpf}'),
+    ExpandConstant('{commonpf}'),
+    ExpandConstant('{commonpf64}'),
+    ExpandConstant('{app}')
+  ];
+  for I := 0 to GetArrayLength(Paths) - 1 do
+    begin
+        Path := Paths[I];
+        if DirExists(Path + '\Workbench-5.4.1\bin\Workbench.exe') then
+        begin
+          Result := Path + '\Workbench-5.4.1\bin\Workbench.exe';
+          break;
+        end;
+    end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  DefaultAppsFilePath: string;
+  DefaultAppsContent: string;
+  ResultCode: Integer;
+begin
+  if (CurStep = ssPostInstall) and (WorkbenchPath <> '') then
+  begin
+    // Run the "{app}\Workbench-5.4.1.exe" installer
+    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+
+    // Find the path to the Workbench executable
+    WorkbenchPath := FindWorkbenchInstallPath()
+
+    // Associate .heron files with the Workbench executable
+    RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', '', '"' + WorkbenchPath + '" "%1"');
+
+    DefaultAppsFilePath := ExtractFilePath(WorkbenchPath) + 'default.apps.json';
+    DefaultAppsContent :=
+      'applications {' + #13#10 +
+      '   HERON {' + #13#10 +
+      '    configurations {' + #13#10 +
+      '      default {' + #13#10 +
+      '        options {' + #13#10 +
+      '          shared {' + #13#10 +
+      '            "Executable"="' + ExpandConstant('{app}') + '\heron.exe"' + #13#10 +
+      '          }' + #13#10 +
+      '        }' + #13#10 +
+      '      }' + #13#10 +
+      '    }' + #13#10 +
+      '   }' + #13#10 +
+      ' }';
+
+    if not SaveStringToFile(DefaultAppsFilePath, DefaultAppsContent, False) then
+    begin
+      MsgBox('Failed to create default.apps.json in the Workbench directory.', mbError, MB_OK);
+    end;
+  end;
+end;
