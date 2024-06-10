@@ -6,7 +6,7 @@ from collections import namedtuple
 
 from .file_location_persistence import FileLocationPersistence
 from .file_dialog import FileDialogController
-
+from ui.utils import run_in_workbench
 
 class FileSpec:
     """ Input/output file specification for a package. """
@@ -86,6 +86,11 @@ class FileSelectionController:
                 file_dialog_controller.set_filename(filename)
                 self.persistence.set_location(filename)
             self.file_dialog_controllers[spec.description] = file_dialog_controller
+
+        # Set the action for the "Open in Workbench" button
+        if model_package_name == "heron":
+            workbench_func = lambda: run_in_workbench(self.file_dialog_controllers['HERON Input File'].get_filename())
+            self.file_selection.add_open_in_workbench_button(workbench_func)
 
     def get_sys_args_from_file_selection(self):
         """

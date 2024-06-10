@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Callable
 import os
 import tkinter as tk
 
@@ -14,6 +14,7 @@ class FileSelection(tk.Frame):
         """
         super().__init__(master, **kwargs)
         self.file_selectors = {}
+        self.open_in_workbench_button = None
 
     def new_file_selector(self, label: str):
         """
@@ -24,6 +25,17 @@ class FileSelection(tk.Frame):
         frame = SelectAFile(self, label)
         frame.grid(row=len(self.file_selectors), column=0, sticky='w')
         self.file_selectors[label] = frame
+
+    def add_open_in_workbench_button(self, command: Callable):
+        """
+        Create a button to open the file in Workbench. This button is only created once the first
+        file selector is added to the widget. Not every application will need this button, so its
+        creation is deferred until it is needed and is called by the controller.
+        """
+        self.open_in_workbench_button = tk.Button(self, text='Open in Workbench')
+        self.open_in_workbench_button.grid(row=0, column=1, sticky='se')
+        self.grid_columnconfigure(1, weight=1)
+        self.open_in_workbench_button.config(command=command)
 
 
 class SelectAFile(tk.Frame):

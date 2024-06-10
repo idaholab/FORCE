@@ -16,6 +16,7 @@ import re
 import sys
 from HERON.src.main import main
 from ui import run_from_gui
+from ui.utils import run_in_workbench
 from utils import add_local_bin_to_path
 
 
@@ -41,6 +42,10 @@ if __name__ == '__main__':
         sys.argv.remove('-w')
 
     if (args.w or not args.input) and not args.definition:  # if asked to or if no file is passed, run the GUI
+        # try:
+        #     run_in_workbench(args.input)
+        # except RuntimeError:
+        #     run_from_gui(main)
         run_from_gui(main)
     else:
         main()
