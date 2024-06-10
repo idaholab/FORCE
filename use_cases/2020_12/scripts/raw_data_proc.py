@@ -26,7 +26,7 @@ def read_workbook(file_path: Path) -> dict:
         io=DATA_DIR.joinpath(file_path.name),
         sheet_name=None,
         index_col=0,
-        engine='xlrd'
+        # engine='xlrd'
     )
 
 
@@ -83,7 +83,8 @@ def main():
     for state in ["OH", "IL"]:
         for i, key in enumerate(YEARS):
             output_path = TRAIN_DIR.joinpath(case, state, f"Data_{i+1}.csv")
-            final_dat.loc[state, key, :].to_csv(
+            state_year_data = final_dat.loc[(state, key, slice(None)), :]
+            state_year_data.to_csv(
                 path_or_buf=output_path,
                 index_label=['STATE', 'YEAR', 'HOUR']
             )
