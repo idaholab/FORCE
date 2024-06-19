@@ -1,0 +1,11 @@
+[Tests]
+  [./TestMinimalInput]
+    type = GenericExecutable
+    executable = python test_heron.py
+  [../]
+
+  [./TestExpandedInput]
+    type = GenericExecutable
+    executable = python test_heron.py
+  [../]
+[]
