@@ -144,5 +144,145 @@ class TestExpandedInput(unittest.TestCase):
       self.assertEqual(len(dataGens), 1)
       self.assertIsNotNone(dataGens[0].find('./untouched_content_DG'))
 
+@unittest.skip("Waiting for function update")
+class TestNoComponentsNode(unittest.TestCase):
+
+  def setUp(self):
+    # Has no Components node
+    self.heron_xml = """<HERON>
+                        </HERON>"""
+    self.tree = ET.ElementTree(ET.fromstring(self.heron_xml))  
+
+  @patch('xml.etree.ElementTree.parse')
+  @patch('os.listdir')
+  @patch('builtins.open',
+         new_callable=mock_open,
+         read_data="""{
+                          "Component Set Name": "NewComponent",
+                          "Reference Driver": 1000,
+                          "Reference Driver Power Units": "mW",
+                          "Reference Price (USD)": 2000,
+                          "Scaling Factor": 0.5
+                      }""")
+  def test_no_comps_node(self, mock_file, mock_listdir, mock_parse):
+    # Set up the mock to return an XML tree
+    mock_parse.return_value = self.tree
+    mock_listdir.return_value = ['componentSetFake.json']
+
+    # Call the function
+    result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+
+    # FIXME: Check result
+
+class TestNoComponentNodes(unittest.TestCase):
+
+  def setUp(self):
+    # Has no Component nodes
+    self.heron_xml = """<HERON>
+                          <Components>
+                          </Components>
+                        </HERON>"""
+    self.tree = ET.ElementTree(ET.fromstring(self.heron_xml))  
+
+  @patch('xml.etree.ElementTree.parse')
+  @patch('os.listdir')
+  @patch('builtins.open',
+         new_callable=mock_open,
+         read_data="""{
+                          "Component Set Name": "NewComponent",
+                          "Reference Driver": 1000,
+                          "Reference Driver Power Units": "kW",
+                          "Reference Price (USD)": 2000,
+                          "Scaling Factor": 0.5
+                      }""")
+  def test_no_comp_nodes(self, mock_file, mock_listdir, mock_parse):
+    # Set up the mock to return an XML tree
+    mock_parse.return_value = self.tree
+    mock_listdir.return_value = ['componentSetFake.json']
+
+    # Call the function
+    result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+
+    # Verify component node was created
+    component_list = result_tree.findall('./Components/Component')
+    self.assertEqual(len(component_list), 1)
+    self.assertEqual(component_list[0].attrib['name'], 'NewComponent')
+
+    # Verify contents have been added
+    self.assertIsNotNone(component_list[0].findall('./economics/CashFlow'))
+
+class TestMissingSubnodes(unittest.TestCase):
+
+  def setUp(self):
+    # Comp0 has no economics subnode; Comp1 has no CashFlow subnode
+    self.heron_xml = """<HERON>
+                          <Components>
+                            <Component name="Component0">
+                            </Component>
+
+                            <Component name="Component1">
+                              <economics>
+                              </economics>
+                            </Component>
+                          </Components>
+                        </HERON>"""
+    self.tree = ET.ElementTree(ET.fromstring(self.heron_xml))  
+
+  @patch('xml.etree.ElementTree.parse')
+  @patch('os.listdir')
+  def test_missing_subnodes(self, mock_listdir, mock_parse):
+    # Set up the mock to return an XML tree
+    mock_parse.return_value = self.tree
+    mock_listdir.return_value = ['componentSetFake0.json', 'componentSetFake1.json']
+    
+    # Set up the open mock to return different files each time it's used
+    mock_open_twice = unittest.mock.mock_open()
+    mock_open_twice.side_effect = [
+                                    unittest.mock.mock_open(read_data = 
+                                    """{
+                                            "Component Set Name": "Component0",
+                                            "Reference Driver": 1000,
+                                            "Reference Driver Power Units": "mW",
+                                            "Reference Price (USD)": 1000,
+                                            "Scaling Factor": 0.1
+                                        }""").return_value,
+                                    unittest.mock.mock_open(read_data = 
+                                    """{
+                                            "Component Set Name": "Component1",
+                                            "Reference Driver": 2000,
+                                            "Reference Driver Power Units": "mW",
+                                            "Reference Price (USD)": 2000,
+                                            "Scaling Factor": 0.2
+                                        }""").return_value
+                                  ]
+
+    # Call the function with patch for open function
+    with unittest.mock.patch('builtins.open', mock_open_twice):
+      result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+
+    # Verify component nodes
+    comp0 = result_tree.findall('./Components/Component[@name="Component0"]')
+    self.assertEqual(len(comp0), 1)
+    comp1 = result_tree.findall('./Components/Component[@name="Component1"]')
+    self.assertEqual(len(comp1), 1)
+    
+    # Verify comp0 updated correctly
+    with self.subTest("economics node and subnodes were not added correctly"):
+      economics = comp0[0].findall('./economics')
+      self.assertEqual(len(economics), 1)
+      cashflows = economics[0].findall('./CashFlow')
+      self.assertEqual(len(cashflows), 1)
+      self.assertEqual(cashflows[0].attrib["name"], "Component0_capex")
+      ref_driver = cashflows[0].find('./reference_driver/fixed_value')
+      self.assertEqual(ref_driver.text, "1000")
+
+    # Verify comp1 updated correctly
+    with self.subTest("cashflow node and subnodes were not added correctly"):
+      cashflows = comp1[0].findall('./economics/CashFlow')
+      self.assertEqual(len(cashflows), 1)
+      self.assertEqual(cashflows[0].attrib["name"], "Component1_capex")
+      ref_driver = cashflows[0].find('./reference_driver/fixed_value')
+      self.assertEqual(ref_driver.text, "2000")
+
 if __name__ == '__main__':
   unittest.main()

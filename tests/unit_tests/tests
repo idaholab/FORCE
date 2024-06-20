@@ -8,4 +8,19 @@
     type = GenericExecutable
     executable = python test_heron.py
   [../]
+
+  [./TestNoComponentsNode]
+    type = GenericExecutable
+    executable = python test_heron.py
+  [../]
+
+  [./TestNoComponentNodes]
+    type = GenericExecutable
+    executable = python test_heron.py
+  [../]
+
+  [./TestMissingSubnodes]
+    type = GenericExecutable
+    executable = python test_heron.py
+  [../]
 []
