@@ -40,15 +40,18 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
 
   HERON_inp_tree = ET.parse(heron_input_xml)
   components_list = HERON_inp_tree.findall("Components")  # The "components" node
+  # if the "components" node is not found
   if not components_list:
-    print("\n", f"The 'Components' node is not found in the HERON input xml file: {heron_input_xml}")
-  else:
-    for components in components_list:
-      component = components.findall("Component")
-      heron_comp_list = []  # The list of compoenents
-      for comp in component:
-        heron_comp_list.append(comp.attrib["name"]) # The list of components found in the HERON input XML file
-      # print(f" \n The following components are already in the HERON input XML file:'{heron_comp_list}'")
+    print("\n", f"The 'Components' node is not found in the HERON input xml file {heron_input_xml} and a new 'Components' node is created")
+    new_comps_node = ET.SubElement(HERON_inp_tree.getroot(), 'Components')
+    components_list = [new_comps_node]
+
+  for components in components_list:
+    component = components.findall("Component")
+    heron_comp_list = []  # The list of components
+    for comp in component:
+      heron_comp_list.append(comp.attrib["name"]) # The list of components found in the HERON input XML file
+    # print(f" \n The following components are already in the HERON input XML file:'{heron_comp_list}'")
 
   comp_set_files_list = os.listdir(comp_sets_folder)
 
