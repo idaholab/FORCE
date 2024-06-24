@@ -1,26 +1,31 @@
 [Tests]
   [./TestMinimalInput]
     type = GenericExecutable
-    executable = python test_heron.py
+    executable = python -m unittest test_heron.TestMinimalInput
   [../]
 
-  [./TestExpandedInput]
+  [./TestExpandedInput1]
     type = GenericExecutable
-    executable = python test_heron.py
+    executable = python -m unittest test_heron.TestExpandedInput1
+  [../]
+
+  [./TestExpandedInput2]
+    type = GenericExecutable
+    executable = python -m unittest test_heron.TestExpandedInput2
   [../]
 
   [./TestNoComponentsNode]
     type = GenericExecutable
-    executable = python test_heron.py
+    executable = python -m unittest test_heron.TestNoComponentsNode
   [../]
 
   [./TestNoComponentNodes]
     type = GenericExecutable
-    executable = python test_heron.py
+    executable = python -m unittest test_heron.TestNoComponentNodes
   [../]
 
   [./TestMissingSubnodes]
     type = GenericExecutable
-    executable = python test_heron.py
+    executable = python -m unittest test_heron.TestMissingSubnodes
   [../]
 []
