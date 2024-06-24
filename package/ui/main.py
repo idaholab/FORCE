@@ -3,9 +3,6 @@ from ui.models import Model
 from ui.controllers import Controller
 from ui.views import View
 
-from typing import Optional
-import argparse
-
 
 def run_from_gui(func: Callable, **kwargs):
     """

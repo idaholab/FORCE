@@ -14,6 +14,8 @@ romMeta.xml
 
 # Ignore built executables
 build
+force_install
+*.app
 
 # Ignore certain GUI files
 .forceuirc
