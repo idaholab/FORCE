@@ -31,9 +31,9 @@ from xml.etree import ElementTree as ET
 
 def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
   """
-    Create/update components (componnet-sets) in HERON input file
+    Create/update components (component-sets) in HERON input file
     @ In, comp_sets_folder, str, The path of the folder that includes several files of the user-input files
-    These user-input files determine the components which will be grouped together in one set
+        These user-input files determine the components which will be grouped together in one set
     @ In, heron_input_xml, str, The path of the original HERON xml file at which components will be updated/created
     @ Out, HERON_inp_tree, xml.etree.ElementTree.ElementTree, the updated HERON inut file (XML tree)
   """
@@ -51,8 +51,7 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
     heron_comp_list = []  # The list of components
     for comp in component:
       heron_comp_list.append(comp.attrib["name"]) # The list of components found in the HERON input XML file
-    # print(f" \n The following components are already in the HERON input XML file:'{heron_comp_list}'")
-
+    
   comp_set_files_list = os.listdir(comp_sets_folder)
 
   # Goin through the FORCE componentSets to extract relevant info
