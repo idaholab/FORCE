@@ -1,7 +1,7 @@
 import os
 import sys
 import unittest
-from unittest.mock import mock_open, patch, MagicMock
+from unittest.mock import mock_open, patch, call, MagicMock
 import xml.etree.ElementTree as ET
 
 FORCE_LOC = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir))
@@ -36,7 +36,7 @@ class TestMinimalInput(unittest.TestCase):
                           "Scaling Factor": 0.5
                       }""")
   def test_minimal_input(self, mock_file, mock_listdir, mock_parse):
-    # Set up the mock to return an XML tree
+    # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     mock_listdir.return_value = ['componentSetFake.json']
 
@@ -111,7 +111,7 @@ class TestExpandedInput1(unittest.TestCase):
                           "Scaling Factor": 0.5
                       }""")
   def test_expanded_input_1(self, mock_open, mock_listdir, mock_parse):
-    # Set up the mock to return an XML tree
+    # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     # No additional data for XML
     mock_listdir.return_value = ["componentSetFake.json"]
@@ -217,47 +217,46 @@ class TestExpandedInput2(unittest.TestCase):
   @patch('xml.etree.ElementTree.parse')
   @patch('os.listdir')
   def test_expanded_input_2(self, mock_listdir, mock_parse):
-    # Set up the mock to return an XML tree
+    # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     # No additional data for XML
     mock_listdir.return_value = ["componentSetFake0.json", "componentSetFake1.json", "componentSetFake2.json", "componentSetFake3.json"]
 
     # Set up the open mock to return different files each time it's used
     mock_open_mult = mock_open()
-    mock_open_mult.side_effect = [
-                                    mock_open(read_data =
-                                    """{
-                                            "Component Set Name": "Component0",
-                                            "Reference Driver": 1000,
-                                            "Reference Driver Power Units": "mW",
-                                            "Reference Price (USD)": 1000,
-                                            "Scaling Factor": 0.1
-                                        }""").return_value,
-                                    mock_open(read_data =
-                                    """{
-                                            "Component Set Name": "Component1",
-                                            "Reference Driver": 2100,
-                                            "Reference Driver Power Units": "mW",
-                                            "Reference Price (USD)": 2200,
-                                            "Scaling Factor": 0.2
-                                        }""").return_value,
-                                    mock_open(read_data =
-                                    """{
-                                            "Component Set Name": "Component2",
-                                            "Reference Driver": 3100,
-                                            "Reference Driver Power Units": "mW",
-                                            "Reference Price (USD)": 3200,
-                                            "Scaling Factor": 0.3
-                                        }""").return_value,
-                                    mock_open(read_data =
-                                    """{
-                                            "Component Set Name": "Component3",
-                                            "Reference Driver": 4100,
-                                            "Reference Driver Power Units": "mW",
-                                            "Reference Price (USD)": 4200,
-                                            "Scaling Factor": 0.4
-                                        }""").return_value
-                                  ]
+    mock_open_mult.side_effect = [mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "Component0",
+                                          "Reference Driver": 1000,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 1000,
+                                          "Scaling Factor": 0.1
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "Component1",
+                                          "Reference Driver": 2100,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 2200,
+                                          "Scaling Factor": 0.2
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "Component2",
+                                          "Reference Driver": 3100,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 3200,
+                                          "Scaling Factor": 0.3
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "Component3",
+                                          "Reference Driver": 4100,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 4200,
+                                          "Scaling Factor": 0.4
+                                      }""").return_value]
+                                    
 
     # Call the function with patch for open function
     with patch('builtins.open', mock_open_mult):
@@ -391,7 +390,6 @@ class TestExpandedInput2(unittest.TestCase):
           scaling_factor_value = scaling_factor[0].findall('./fixed_value')
           self.assertEqual(scaling_factor_value[0].text, '0.4')
 
-@unittest.skip("Waiting for function update")
 class TestNoComponentsNode(unittest.TestCase):
 
   def setUp(self):
@@ -412,7 +410,7 @@ class TestNoComponentsNode(unittest.TestCase):
                           "Scaling Factor": 0.5
                       }""")
   def test_no_comps_node(self, mock_file, mock_listdir, mock_parse):
-    # Set up the mock to return an XML tree
+    # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     mock_listdir.return_value = ['componentSetFake.json']
 
@@ -446,7 +444,7 @@ class TestNoComponentNodes(unittest.TestCase):
                           "Scaling Factor": 0.5
                       }""")
   def test_no_comp_nodes(self, mock_file, mock_listdir, mock_parse):
-    # Set up the mock to return an XML tree
+    # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     mock_listdir.return_value = ['componentSetFake.json']
 
@@ -481,33 +479,31 @@ class TestMissingSubnodes(unittest.TestCase):
   @patch('xml.etree.ElementTree.parse')
   @patch('os.listdir')
   def test_missing_subnodes(self, mock_listdir, mock_parse):
-    # Set up the mock to return an XML tree
+    # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     mock_listdir.return_value = ['componentSetFake0.json', 'componentSetFake1.json']
     
     # Set up the open mock to return different files each time it's used
-    mock_open_twice = mock_open()
-    mock_open_twice.side_effect = [
-                                    mock_open(read_data =
-                                    """{
-                                            "Component Set Name": "Component0",
-                                            "Reference Driver": 1000,
-                                            "Reference Driver Power Units": "mW",
-                                            "Reference Price (USD)": 1000,
-                                            "Scaling Factor": 0.1
-                                        }""").return_value,
-                                    mock_open(read_data =
-                                    """{
-                                            "Component Set Name": "Component1",
-                                            "Reference Driver": 2000,
-                                            "Reference Driver Power Units": "mW",
-                                            "Reference Price (USD)": 2000,
-                                            "Scaling Factor": 0.2
-                                        }""").return_value
-                                  ]
+    mock_open_mult = mock_open()
+    mock_open_mult.side_effect = [mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "Component0",
+                                          "Reference Driver": 1000,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 1000,
+                                          "Scaling Factor": 0.1
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "Component1",
+                                          "Reference Driver": 2000,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 2000,
+                                          "Scaling Factor": 0.2
+                                      }""").return_value]
 
     # Call the function with patch for open function
-    with patch('builtins.open', mock_open_twice):
+    with patch('builtins.open', mock_open_mult):
       result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
 
     # Verify component nodes
@@ -533,6 +529,173 @@ class TestMissingSubnodes(unittest.TestCase):
       self.assertEqual(cashflows[0].attrib["name"], "Component1_capex")
       ref_driver = cashflows[0].find('./reference_driver/fixed_value')
       self.assertEqual(ref_driver.text, "2000")
+
+class TestEmptyCompSetsFolder(unittest.TestCase):
+  def setUp(self):
+    # Example of a minimal XML structure
+    self.heron_xml = """<HERON>
+                          <Components>
+                            <Component name="ExistingComponent">
+                              <economics>
+                                <CashFlow name="ExistingComponent_capex">
+                                </CashFlow>
+                              </economics>
+                            </Component>
+                          </Components>
+                        </HERON>"""
+    self.tree = ET.ElementTree(ET.fromstring(self.heron_xml))
+  
+  @patch('xml.etree.ElementTree.parse')
+  @patch('os.listdir')
+  # This mock_open should not be called in the function
+  @patch('builtins.open',
+         new_callable=mock_open,
+         read_data="""{
+                          "Component Set Name": "NewComponent",
+                          "Reference Driver": 1000,
+                          "Reference Driver Power Units": "kW",
+                          "Reference Price (USD)": 2000,
+                          "Scaling Factor": 0.5
+                      }""")
+  def test_empty_compsets_folder(self, mock_open, mock_listdir, mock_parse):
+    # Set up the parse mock to return an XML tree
+    mock_parse.return_value = self.tree
+    mock_listdir.return_value = []
+
+    # Call the function
+    result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+
+    # Verify open function was not called
+    mock_open.assert_not_called()
+
+    components_nodes = result_tree.findall('./Components')
+
+    # Verify component node was not corrupted
+    component_nodes = components_nodes[0].findall('./Component')
+    self.assertEqual(len(component_nodes), 1)
+    self.assertEqual(component_nodes[0].attrib['name'], 'ExistingComponent')
+
+@unittest.skip("Waiting for function update (issue #18)")
+class TestCompSetsFolderWithBadJSON(unittest.TestCase):
+  def setUp(self):
+    # Example of a minimal XML structure
+    self.heron_xml = """<HERON>
+                          <Components>
+                            <Component name="ExistingComponent">
+                              <economics>
+                                <CashFlow name="ExistingComponent_capex">
+                                </CashFlow>
+                              </economics>
+                            </Component>
+                          </Components>
+                        </HERON>"""
+    self.tree = ET.ElementTree(ET.fromstring(self.heron_xml))
+  
+  @patch('xml.etree.ElementTree.parse')
+  @patch('os.listdir')
+  @patch('builtins.open',
+         new_callable=mock_open,
+         read_data="Example of bad format")
+  def test_compsets_folder_bad_json(self, mock_open, mock_listdir, mock_parse):
+    # Set up the parse mock to return an XML tree
+    mock_parse.return_value = self.tree
+    mock_listdir.return_value = ['componentSetFake.json']
+
+    # Call the function and check for error
+    caught_bad_json = False
+    try:
+      result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+    except ('json_read_error_name'): #FIXME: replace with correct error once function is updated
+      caught_bad_json = True
+    
+    with self.subTest("Did not respond correctly to bad component set file content"):
+      self.assertEqual(caught_bad_json, True)
+
+@unittest.skip("Waiting for function update (issue #18)")
+class TestCompSetsFolderMultFiles(unittest.TestCase):
+  def setUp(self):
+    # Example of a minimal XML structure
+    self.heron_xml = """<HERON>
+                          <Components>
+                            <Component name="ExistingComponent">
+                              <economics>
+                                <CashFlow name="ExistingComponent_capex">
+                                </CashFlow>
+                              </economics>
+                            </Component>
+                          </Components>
+                        </HERON>"""
+    self.tree = ET.ElementTree(ET.fromstring(self.heron_xml))
+  
+  @patch('xml.etree.ElementTree.parse')
+  @patch('os.listdir')
+  def test_compsets_folder_mult_files(self, mock_listdir, mock_parse):
+    # Set up the parse mock to return an XML tree
+    mock_parse.return_value = self.tree
+    # Only the txt and json files whose names start with 'componentSet' should be opened
+    files_list = ['component.json', 'componentSet.csv', 'componentSet.json', 'componentSetStuff.txt', 
+                  'xcomponentSet.json', 'Set.json', 'compSet.json', 'ComponentSet.json']
+    mock_listdir.return_value = files_list
+
+    # Set up the open mock to return different files each time it's used
+    # It should only be called twice, but it contains data for up to four reads
+    # So it won't break the function when an extra file or two is opened, and the unit tester can catch the bug
+    mock_open_mult = mock_open()
+    mock_open_mult.side_effect = [mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "NewComponent0",
+                                          "Reference Driver": 1000,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 1000,
+                                          "Scaling Factor": 0.1
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "NewComponent1",
+                                          "Reference Driver": 2100,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 2200,
+                                          "Scaling Factor": 0.2
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "NewComponent2",
+                                          "Reference Driver": 3100,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 3200,
+                                          "Scaling Factor": 0.3
+                                      }""").return_value,
+                                  mock_open(read_data =
+                                  """{
+                                          "Component Set Name": "NewComponent3",
+                                          "Reference Driver": 4100,
+                                          "Reference Driver Power Units": "mW",
+                                          "Reference Price (USD)": 4200,
+                                          "Scaling Factor": 0.4
+                                      }""").return_value]
+
+    # Call the function with patch for open function
+    with patch('builtins.open', mock_open_mult):
+      result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+
+    # Verify open function was called on correct files
+    for file in files_list:
+      # if file should have been opened
+      if file in ['componentSet.json', 'componentSetStuff.txt']:
+        with self.subTest(msg="File was not opened and should have been", file = file):
+          # Verify file was opened
+          self.assertIn(call('/fake/folder/'+file), mock_open_mult.call_args_list)
+      # if file should not have been opened
+      else:
+        with self.subTest(msg="File was opened and should not have been", file = file):
+          # Verify file was not opened
+          self.assertNotIn(call('/fake/folder/'+file), mock_open_mult.call_args_list)
+
+    components_node = result_tree.find('./Components')
+
+    # Verify component nodes were updated
+    component_nodes = components_node.findall('./Component')
+    self.assertEqual(len(component_nodes), 3)
 
 # This is not needed for running tests through FORCE/run_tests
 # It does allow tests to be run via the unit tester when test_heron is run directly
