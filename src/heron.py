@@ -90,10 +90,13 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
                         node.append(ET.Comment(f" Some of this component economic info are imported from: {textfile_path}"))
                         print("The 'cashflow' subnode is found too and is updated")
                         Cashflow_NODE_FOUND = "True"
+                        elements_to_update = []
                         for subsubnode in subnode:
                           if subsubnode.tag in ['reference_driver', 'reference_price', 'scaling_factor_x']:
-                            subnode.remove(subsubnode)
+                            elements_to_update.append(subsubnode)
                             print(f"WARNING: The value of the {subsubnode.tag} is updated.")
+                        for element in elements_to_update:
+                          subnode.remove(element)
                         new_cash_node = subnode
                         new_cash_node.append(ET.Comment(f" Some of this component cashFlow info are imported from: {textfile_path}"))
 
