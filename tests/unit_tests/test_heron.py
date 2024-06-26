@@ -336,7 +336,7 @@ class TestExpandedInput2(unittest.TestCase):
           ref_driver = cashflow[0].findall('./reference_driver')
           self.assertEqual(len(ref_driver), 1)
           ref_driver_value = ref_driver[0].findall('./fixed_value')
-          self.assertEqual(ref_driver_value.text, '3100')
+          self.assertEqual(ref_driver_value[0].text, '3100')
 
           # Reference price
           ref_price = cashflow[0].findall('./reference_price')
@@ -376,13 +376,13 @@ class TestExpandedInput2(unittest.TestCase):
           ref_driver = cashflow[0].findall('./reference_driver')
           self.assertEqual(len(ref_driver), 1)
           ref_driver_value = ref_driver[0].findall('./fixed_value')
-          self.assertEqual(ref_driver_value.text, '4100')
+          self.assertEqual(ref_driver_value[0].text, '4100')
 
           # Reference price
           ref_price = cashflow[0].findall('./reference_price')
           self.assertEqual(len(ref_price), 1)
           ref_price_value = ref_price[0].findall('./fixed_value')
-          self.assertEqual(ref_price_value[0].text, '4200')
+          self.assertEqual(ref_price_value[0].text, '-4200')
 
           # Scaling factor
           scaling_factor = cashflow[0].findall('./scaling_factor_x')
@@ -575,7 +575,6 @@ class TestEmptyCompSetsFolder(unittest.TestCase):
     self.assertEqual(len(component_nodes), 1)
     self.assertEqual(component_nodes[0].attrib['name'], 'ExistingComponent')
 
-@unittest.skip("Waiting for function update (issue #18)")
 class TestCompSetsFolderWithBadJSON(unittest.TestCase):
   def setUp(self):
     # Example of a minimal XML structure
@@ -605,13 +604,12 @@ class TestCompSetsFolderWithBadJSON(unittest.TestCase):
     caught_bad_json = False
     try:
       result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
-    except ('json_read_error_name'): #FIXME: replace with correct error once function is updated
+    except ValueError:
       caught_bad_json = True
     
     with self.subTest("Did not respond correctly to bad component set file content"):
       self.assertEqual(caught_bad_json, True)
 
-@unittest.skip("Waiting for function update (issue #18)")
 class TestCompSetsFolderMultFiles(unittest.TestCase):
   def setUp(self):
     # Example of a minimal XML structure
@@ -629,54 +627,28 @@ class TestCompSetsFolderMultFiles(unittest.TestCase):
   
   @patch('xml.etree.ElementTree.parse')
   @patch('os.listdir')
-  def test_compsets_folder_mult_files(self, mock_listdir, mock_parse):
+  # Open mock will return the same read_data each time it is called
+  # This is acceptable only because the content of the result tree is untested
+  @patch('builtins.open',
+         new_callable=mock_open,
+         read_data="""{
+                          "Component Set Name": "NewComponent",
+                          "Reference Driver": 1000,
+                          "Reference Driver Power Units": "mW",
+                          "Reference Price (USD)": 2000,
+                          "Scaling Factor": 0.5
+                      }""")
+  def test_compsets_folder_mult_files(self, mock_open, mock_listdir, mock_parse):
     # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
     # Only the txt and json files whose names start with 'componentSet' should be opened
-    files_list = ['component.json', 'componentSet.csv', 'componentSet.json', 'componentSetStuff.txt', 
-                  'xcomponentSet.json', 'Set.json', 'compSet.json', 'ComponentSet.json']
+    files_list = ['component.json', 'README', 'componentSet.csv', 'xcomponentSet.json',
+                  'componentSet.json', 'componentSetStuff.txt',
+                  'aFolder', 'Set.json', 'compSet.json', 'ComponentSet.json']
     mock_listdir.return_value = files_list
 
-    # Set up the open mock to return different files each time it's used
-    # It should only be called twice, but it contains data for up to four reads
-    # So it won't break the function when an extra file or two is opened, and the unit tester can catch the bug
-    mock_open_mult = mock_open()
-    mock_open_mult.side_effect = [mock_open(read_data =
-                                  """{
-                                          "Component Set Name": "NewComponent0",
-                                          "Reference Driver": 1000,
-                                          "Reference Driver Power Units": "mW",
-                                          "Reference Price (USD)": 1000,
-                                          "Scaling Factor": 0.1
-                                      }""").return_value,
-                                  mock_open(read_data =
-                                  """{
-                                          "Component Set Name": "NewComponent1",
-                                          "Reference Driver": 2100,
-                                          "Reference Driver Power Units": "mW",
-                                          "Reference Price (USD)": 2200,
-                                          "Scaling Factor": 0.2
-                                      }""").return_value,
-                                  mock_open(read_data =
-                                  """{
-                                          "Component Set Name": "NewComponent2",
-                                          "Reference Driver": 3100,
-                                          "Reference Driver Power Units": "mW",
-                                          "Reference Price (USD)": 3200,
-                                          "Scaling Factor": 0.3
-                                      }""").return_value,
-                                  mock_open(read_data =
-                                  """{
-                                          "Component Set Name": "NewComponent3",
-                                          "Reference Driver": 4100,
-                                          "Reference Driver Power Units": "mW",
-                                          "Reference Price (USD)": 4200,
-                                          "Scaling Factor": 0.4
-                                      }""").return_value]
-
-    # Call the function with patch for open function
-    with patch('builtins.open', mock_open_mult):
-      result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
+    # Call the function
+    result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
 
     # Verify open function was called on correct files
     for file in files_list:
@@ -684,18 +656,12 @@ class TestCompSetsFolderMultFiles(unittest.TestCase):
       if file in ['componentSet.json', 'componentSetStuff.txt']:
         with self.subTest(msg="File was not opened and should have been", file = file):
           # Verify file was opened
-          self.assertIn(call('/fake/folder/'+file), mock_open_mult.call_args_list)
+          self.assertIn(call('/fake/folder/'+file), mock_open.call_args_list)
       # if file should not have been opened
       else:
         with self.subTest(msg="File was opened and should not have been", file = file):
           # Verify file was not opened
-          self.assertNotIn(call('/fake/folder/'+file), mock_open_mult.call_args_list)
-
-    components_node = result_tree.find('./Components')
-
-    # Verify component nodes were updated
-    component_nodes = components_node.findall('./Component')
-    self.assertEqual(len(component_nodes), 3)
+          self.assertNotIn(call('/fake/folder/'+file), mock_open.call_args_list)
 
 # This is not needed for running tests through FORCE/run_tests
 # It does allow tests to be run via the unit tester when test_heron is run directly

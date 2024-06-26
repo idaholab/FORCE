@@ -28,4 +28,19 @@
     type = GenericExecutable
     executable = python -m unittest test_heron.TestMissingSubnodes
   [../]
+
+  [./TestEmptyCompSetsFolder]
+    type = GenericExecutable
+    executable = python -m unittest test_heron.TestEmptyCompSetsFolder
+  [../]
+
+  [./TestCompSetsFolderWithBadJSON]
+    type = GenericExecutable
+    executable = python -m unittest test_heron.TestCompSetsFolderWithBadJSON
+  [../]
+
+  [./TestCompSetsFolderMultFiles]
+    type = GenericExecutable
+    executable = python -m unittest test_heron.TestCompSetsFolderMultFiles
+  [../]
 []
