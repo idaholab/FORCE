@@ -59,9 +59,10 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
     if textfile.startswith('componentSet') and (textfile.endswith('.json') or textfile.endswith('.txt')):
       textfile_path = comp_sets_folder+"/"+textfile
       try:
-        comp_set_dict = json.load(open(textfile_path))
+        with open(textfile_path) as textfile_opened:
+          comp_set_dict = json.load(textfile_opened)
       except json.JSONDecodeError as e:
-        raise ValueError(f"The content of {textfile_path} is not in proper JSON format and cannot be read")
+        raise ValueError(f"The content of {textfile_path} is not in proper JSON format and cannot be read") from e
       comp_set_name = comp_set_dict.get('Component Set Name')
 
       ref_driver = comp_set_dict.get('Reference Driver')
