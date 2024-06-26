@@ -181,9 +181,6 @@
           <driver>
             <variable>BOP2_capacity</variable>
           </driver>
-          <scaling_factor_x>
-            <fixed_value>0.692</fixed_value>
-          </scaling_factor_x>
           <!-- Some of this component cashFlow info are imported from: Sets1//componentSet_turbines.txt-->
           <reference_driver>
             <fixed_value>26.4222377835452</fixed_value>
