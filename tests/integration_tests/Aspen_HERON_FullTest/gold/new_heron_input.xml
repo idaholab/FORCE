@@ -49,9 +49,6 @@
           <driver>
             <Function method="capacity">functions</Function>
           </driver>
-          <reference_driver>
-            <fixed_value>10.0</fixed_value>
-          </reference_driver>
           <!-- Some of this component cashFlow info are imported from: Sets1//componentSet_pumps.txt-->
           <reference_driver>
             <fixed_value>2.74763868640817</fixed_value>

@@ -56,9 +56,13 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
 
   # Goin through the FORCE componentSets to extract relevant info
   for textfile in comp_set_files_list:
-    if textfile.startswith('componentSet'):
+    if textfile.startswith('componentSet') and (textfile.endswith('.json') or textfile.endswith('.txt')):
       textfile_path = comp_sets_folder+"/"+textfile
-      comp_set_dict = json.load(open(textfile_path))
+      try:
+        with open(textfile_path) as textfile_opened:
+          comp_set_dict = json.load(textfile_opened)
+      except json.JSONDecodeError as e:
+        raise ValueError(f"The content of {textfile_path} is not in proper JSON format and cannot be read") from e
       comp_set_name = comp_set_dict.get('Component Set Name')
 
       ref_driver = comp_set_dict.get('Reference Driver')
@@ -90,10 +94,13 @@ def create_componentsets_in_HERON(comp_sets_folder, heron_input_xml):
                         node.append(ET.Comment(f" Some of this component economic info are imported from: {textfile_path}"))
                         print("The 'cashflow' subnode is found too and is updated")
                         Cashflow_NODE_FOUND = "True"
+                        elements_to_update = []
                         for subsubnode in subnode:
                           if subsubnode.tag in ['reference_driver', 'reference_price', 'scaling_factor_x']:
-                            subnode.remove(subsubnode)
+                            elements_to_update.append(subsubnode)
                             print(f"WARNING: The value of the {subsubnode.tag} is updated.")
+                        for element in elements_to_update:
+                          subnode.remove(element)
                         new_cash_node = subnode
                         new_cash_node.append(ET.Comment(f" Some of this component cashFlow info are imported from: {textfile_path}"))
 
