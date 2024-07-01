@@ -53,9 +53,41 @@ for dirname in ${DIRS_TO_REMOVE[@]}; do
     find $EXAMPLES_DIR -type d -name $dirname -exec rm -r {} \;
 done
 
+# If building on Mac, replace the %HERON_DATA% magic string with a relative path to the data
+# directory. This is a little hacky but the %HERON_DATA% magic string doesn't look everywhere for
+# the data directory. This is only an issue for the Mac standalone install. HERON will find the
+# data directory correctly on Windows.
+DATA_DIR=$EXAMPLES_DIR/data
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Find all XML files recursively from the current directory
+    find $EXAMPLES_DIR/workshop -type f -name "*.xml" | while read -r file; do
+        # Check if the file contains the %HERON_DATA% magic string. If not, skip this file.
+        grep -q "%HERON_DATA%" "$file" || continue
+
+        # Get the directory of the current XML file
+        FILE_DIR=$(dirname "$file")
+
+        # Calculate the relative path from the XML file directory to the data directory
+        echo "FILE_DIR: $FILE_DIR   DATA_DIR: $DATA_DIR"
+        RELATIVE_PATH=$(python -c "import os.path; print(os.path.relpath('$DATA_DIR', '$FILE_DIR'))")
+        # RELATIVE_PATH=$(realpath -s --relative-to="$FILE_DIR" "$DATA_DIR")
+        echo $RELATIVE_PATH
+
+        # Use sed to replace %HERON_DATA% with the relative path to the data directory
+        sed -i '' "s|%HERON_DATA%|$RELATIVE_PATH|g" "$file"
+    done
+fi
+
 # If Workbench is installed, convert HERON workshop tests to .heron files
-WORKBENCH_BIN=$(dirname $(realpath $(which Workbench)))
-XML2EDDI=$(realpath $WORKBENCH_BIN/../rte/util/xml2eddi.py)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Find the Workbench-*.app directory in the Applications directory
+    WORKBENCH_APP=$(find /Applications -type d -name "Workbench-*.app" | head -n 1)
+    XML2EDDI=$(realpath $WORKBENCH_APP/Contents/rte/util/xml2eddi.py)
+else
+    # Use the readlink command to get the full path to the Workbench executable
+    WORKBENCH_BIN=$(dirname $(readlink -f $(which Workbench)))
+    XML2EDDI=$(realpath $WORKBENCH_BIN/../rte/util/xml2eddi.py)
+fi
 if [ -x "$XML2EDDI" ]; then
     for ex in $(find $EXAMPLES_DIR/workshop -name "heron_input*.xml"); do
         python $XML2EDDI $ex

@@ -132,5 +132,7 @@ echo "Copying over the FORCE examples"
 echo " ... Destination: $SCRIPT_DIR/force_install/examples"
 sh $SCRIPT_DIR/copy_examples --raven-dir $RAVEN_LOC --heron-dir $HERON_LOC --dest $SCRIPT_DIR/force_install/examples
 
-# Copy over Workbench installer .exe
-cp $SCRIPT_DIR/Workbench-5.4.1.exe $SCRIPT_DIR/force_install/
+# Copy over Workbench installer .exe. This is only for the Windows standalone install.
+if [[ "$OSTYPE" == "msys" ]]; then
+    cp $SCRIPT_DIR/Workbench-5.4.1.exe $SCRIPT_DIR/force_install/
+fi

@@ -1,6 +1,5 @@
 # Freeze the FORCE app using cx_Freeze. We require a suitable python environment to be active.
-# set -e
-# python setup.py install_exe --install-dir force_install
+sh build_force
 
 # Set up the FORCE application bundle
 # We'll set up the app so that some FORCE launcher script is the main executable, and the RAVEN,
@@ -13,23 +12,45 @@ cp -R force_install/* FORCE.app/Contents/Resources/
 cp FORCE.icns FORCE.app/Contents/Resources/applet.icns
 
 # Create a new disk image
-hdiutil create -size 3g -fs HFS+ -volname "FORCE" -o force_build.dmg
+hdiutil create -size 5g -fs HFS+ -volname "FORCE" -o force_build.dmg
 
 # Mount the new disk image
 hdiutil attach force_build.dmg -mountpoint /Volumes/FORCE
 
 # Mount the existing .dmg file file Workbench
-# hdiutil attach Workbench-5.4.1.dmg -mountpoint /Volumes/Workbench
+hdiutil attach Workbench-5.4.1.dmg -mountpoint /Volumes/Workbench
 
 # Move the FORCE app to the disk image
 cp -R FORCE.app /Volumes/FORCE/
-# cp -R /Volumes/Workbench/* /Volumes/FORCE/
+cp -R /Volumes/Workbench/Workbench-5.4.1.app /Volumes/FORCE/
+
+# Move the "examples" and "docs" directories from the FORCE app bundle to the top level of the disk
+# image to make them more accessible.
+if [ -d FORCE.app/Contents/Resources/examples ]; then
+    mv /Volumes/FORCE/FORCE.app/Contents/Resources/examples /Volumes/FORCE/
+else
+    echo "WARNING: No examples directory found in FORCE.app bundle"
+fi
+if [ -d FORCE.app/Contents/Resources/docs ]; then
+    mv FORCE.app/Contents/Resources/docs /Volumes/FORCE/
+else
+    echo "WARNING: No docs directory found in FORCE.app bundle"
+fi
+
+# Add .son file to Workbench app to provide a default HERON configuration
+cp default.apps.son /Volumes/FORCE/Workbench-5.4.1.app/Contents/
+
+# Create a symlink to the Applications directory in the app's build directory
+ln -s /Applications /Volumes/FORCE/Applications
 
 # Unmount all the disk images
-# hdiutil detach /Volumes/Workbench
+hdiutil detach /Volumes/Workbench
 hdiutil detach /Volumes/FORCE
 
 # Convert to read-only compressed image
+if [ -f FORCE.dmg ]; then
+    rm FORCE.dmg
+fi
 hdiutil convert force_build.dmg -format UDZO -o FORCE.dmg
 
 # Remove the temporary disk image
