@@ -1,46 +1,46 @@
 [Tests]
   [./TestMinimalInput]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestMinimalInput
+    type = RavenPython
+    input = '-m unittest test_heron.TestMinimalInput'
   [../]
 
   [./TestExpandedInput1]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestExpandedInput1
+    type = RavenPython
+    input = '-m unittest test_heron.TestExpandedInput1'
   [../]
 
   [./TestExpandedInput2]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestExpandedInput2
+    type = RavenPython
+    input = '-m unittest test_heron.TestExpandedInput2'
   [../]
 
   [./TestNoComponentsNode]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestNoComponentsNode
+    type = RavenPython
+    input = '-m unittest test_heron.TestNoComponentsNode'
   [../]
 
   [./TestNoComponentNodes]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestNoComponentNodes
+    type = RavenPython
+    input = '-m unittest test_heron.TestNoComponentNodes'
   [../]
 
   [./TestMissingSubnodes]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestMissingSubnodes
+    type = RavenPython
+    input = '-m unittest test_heron.TestMissingSubnodes'
   [../]
 
   [./TestEmptyCompSetsFolder]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestEmptyCompSetsFolder
+    type = RavenPython
+    input = '-m unittest test_heron.TestEmptyCompSetsFolder'
   [../]
 
   [./TestCompSetsFolderWithBadJSON]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestCompSetsFolderWithBadJSON
+    type = RavenPython
+    input = '-m unittest test_heron.TestCompSetsFolderWithBadJSON'
   [../]
 
   [./TestCompSetsFolderMultFiles]
-    type = GenericExecutable
-    executable = python -m unittest test_heron.TestCompSetsFolderMultFiles
+    type = RavenPython
+    input = '-m unittest test_heron.TestCompSetsFolderMultFiles'
   [../]
 []
