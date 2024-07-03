@@ -2,6 +2,7 @@ import threading
 from typing import Callable
 
 
+
 class Model:
     """ Runs a function in a separate thread """
     def __init__(self, func: Callable, **kwargs):

@@ -57,7 +57,7 @@ function find_raven {
 # Function to find RAVEN plugins given a list of possible locations
 function find_plugin {
     for loc in ${LOCATIONS[@]} $RAVEN_LOC; do
-        for dir in $(find $loc/plugins -maxdepth 1 -type d -iname $1); do
+        for dir in $(find $loc -maxdepth 3 -type d -iname $1 2> /dev/null); do
             echo $(realpath $dir)
             return
         done
@@ -125,7 +125,10 @@ echo " ... RAVEN location: $RAVEN_LOC"
 echo " ... HERON location: $HERON_LOC"
 echo " ... TEAL location: $TEAL_LOC"
 echo " ... Destination: $SCRIPT_DIR/force_install/docs"
-sh $SCRIPT_DIR/make_docs --raven-dir $RAVEN_LOC --heron-dir $HERON_LOC --teal-dir $TEAL_LOC --dest $SCRIPT_DIR/force_install/docs
+# The --no-build flag is used to avoid building the documentation. This is because the documentation
+# requires activatation of the raven_libraries conda environment, otherwise the HERON documentation
+# build will fail. Rebuild the documentation before building the FORCE package!
+sh $SCRIPT_DIR/make_docs --raven-dir $RAVEN_LOC --heron-dir $HERON_LOC --teal-dir $TEAL_LOC --dest $SCRIPT_DIR/force_install/docs --no-build
 
 # Copy over relevant examples
 echo "Copying over the FORCE examples"

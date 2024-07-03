@@ -44,13 +44,13 @@ for ex in ${EXAMPLES[@]}; do
 done
 
 # Clean up the copied examples, removing files and directories created when running the tests.
-FILES_TO_REMOVE=("tests" "moped_input.xml" "outer.xml" "inner.xml" "cashflow.xml")
+FILES_TO_REMOVE=("tests" "moped_input.xml" "outer.xml" "inner.xml" "cash.xml" "*.lib")
 DIRS_TO_REMOVE=("__pycache__" "gold" "*_o")
 for filename in ${FILES_TO_REMOVE[@]}; do
-    find $EXAMPLES_DIR -name $filename -exec rm {} \;
+    find $EXAMPLES_DIR -name $filename -exec rm {} \; 2>/dev/null
 done
 for dirname in ${DIRS_TO_REMOVE[@]}; do
-    find $EXAMPLES_DIR -type d -name $dirname -exec rm -r {} \;
+    find $EXAMPLES_DIR -type d -name $dirname -exec rm -r {} \; 2>/dev/null
 done
 
 # If building on Mac, replace the %HERON_DATA% magic string with a relative path to the data
@@ -84,12 +84,25 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     WORKBENCH_APP=$(find /Applications -type d -name "Workbench-*.app" | head -n 1)
     XML2EDDI=$(realpath $WORKBENCH_APP/Contents/rte/util/xml2eddi.py)
 else
-    # Use the readlink command to get the full path to the Workbench executable
-    WORKBENCH_BIN=$(dirname $(readlink -f $(which Workbench)))
-    XML2EDDI=$(realpath $WORKBENCH_BIN/../rte/util/xml2eddi.py)
+    if ! command -v Workbench &> /dev/null; then
+        # If Workbench isn't in the system PATH. Look in typical installation locations for Workbench to
+        # find the xml2eddi.py script. Common locatoins are /c/Workbench-5.4.1/ and $HOME/Workbench-5.4.1/.
+        if [ -d "/c/Workbench-5.4.1" ]; then
+            XML2EDDI="/c/Workbench-5.4.1/rte/util/xml2eddi.py"
+        elif [ -d "$HOME/Workbench-5.4.1" ]; then
+            XML2EDDI="$HOME/Workbench-5.4.1/rte/util/xml2eddi.py"
+        else
+            XML2EDDI=""  # Workbench not found
+        fi
+    else
+        # Workbench is in the system PATH. Use the location of the Workbench executable to find the xml2eddi.py script.
+        XML2EDDI=$(realpath $(command -v Workbench)/../rte/util/xml2eddi.py)
+    fi
 fi
-if [ -x "$XML2EDDI" ]; then
+
+# If XML2EDDI is not empty, convert the HERON workshop tests to .heron files
+if [ -n "$XML2EDDI" ]; then
     for ex in $(find $EXAMPLES_DIR/workshop -name "heron_input*.xml"); do
-        python $XML2EDDI $ex
+        python $XML2EDDI $ex > ${ex%.xml}.heron
     done
 fi

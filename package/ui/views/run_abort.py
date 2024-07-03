@@ -11,10 +11,12 @@ class RunAbort(tk.Frame):
         @Out, None
         """
         super().__init__(master, **kwargs)
-        self.abort_button = tk.Button(self, text='Abort')
-        self.abort_button.grid(row=0, column=0, sticky='w')
+        button_width = 10
+        self.abort_button = tk.Button(self, text='Abort', width=button_width)
+        self.abort_button.grid(row=0, column=0, sticky='w', padx=5)
 
-        self.run_button = tk.Button(self, text='Run')
-        self.run_button.grid(row=0, column=1, sticky='w')
+        self.run_button = tk.Button(self, text='Run', width=button_width)
+        self.run_button.grid(row=0, column=1, sticky='w', padx=5)
 
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(0, minsize=50)
+        self.grid_columnconfigure(1, weight=1, minsize=50)

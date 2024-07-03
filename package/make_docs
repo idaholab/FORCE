@@ -74,16 +74,19 @@ echo "FORCE documentation directory: $DOC_DIR"
 mkdir -p "$DOC_DIR"
 
 # Build the documentation for the FORCE tools
-for loc in RAVEN_DIR HERON_DIR TEAL_DIR; do
+# for loc in RAVEN_DIR HERON_DIR TEAL_DIR; do
+for loc in HERON_DIR TEAL_DIR; do
   pushd "${!loc}/doc" > /dev/null
+  echo $(pwd)
 
   # If the build flag is set, build the documentation.
   if [ $NO_BUILD -eq 0 ]; then
     echo "Building documentation for $(basename ${!loc})"
-    # Either a Makefile or a make_docs.sh script should be present in the doc directory
-    if [ -f Makefile ]; then
+    if [[ -f "Makefile" ]] && command -v "make" >/dev/null 2>&1; then
       make
-    elif [ -f make_docs.sh ]; then
+    elif [[ -f "make_docs.bat" ]] && [[ $OSTYPE == "msys" ]]; then
+      ./make_docs.bat
+    elif [[ -f "make_docs.sh" ]]; then
       bash make_docs.sh
     else
       echo "ERROR: No Makefile or make_docs.sh script found in $(basename ${!loc}) doc directory."

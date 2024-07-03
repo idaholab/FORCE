@@ -52,10 +52,10 @@ class SelectAFile(tk.Frame):
         super().__init__(master)
         self.file_title = tk.Label(self, text=label)
         self.file_title.grid(row=0, column=0, columnspan=2, sticky='w')
-        self.browse_button = tk.Button(self, text='Browse')
+        self.browse_button = tk.Button(self, text='Browse', width=10, padx=5)
         self.browse_button.grid(row=1, column=0, sticky='w')
         self.filename = tk.StringVar()
         self.filename.set("Select a file")  # Default filename is "Select a file", i.e. no file selected
-        self.filename_label = tk.Label(self, textvariable=self.filename)
-        self.filename_label.grid(row=1, column=1, sticky='w')
+        self.filename_label = tk.Label(self, textvariable=self.filename, bg="white", anchor='w', padx=10, pady=3)
+        self.filename_label.grid(row=1, column=1, sticky='w', padx=5)
         self.grid_columnconfigure(1, weight=1)

@@ -51,6 +51,9 @@ Name: "{autoprograms}\FORCE\examples"; Filename: "{app}\examples"
 Name: "{autodesktop}\HERON"; Filename: "{app}\heron.exe"; Tasks: desktopicon
 Name: "{autodesktop}\RAVEN"; Filename: "{app}\raven_framework.exe"; Tasks: desktopicon
 Name: "{autodesktop}\TEAL"; Filename: "{app}\teal.exe"; Tasks: desktopicon
+; Add desktop icons for the documentation and examples directories
+Name: "{autodesktop}\FORCE Documentation"; Filename: "{app}\docs"; Tasks: desktopicon
+Name: "{autodesktop}\FORCE Examples"; Filename: "{app}\examples"; Tasks: desktopicon
 
 [Registry]
 ; File association for .heron files
@@ -95,6 +98,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 var
   DefaultAppsFilePath: string;
   DefaultAppsContent: string;
+  WorkbenchConfigPath: string;
   ResultCode: Integer;
 begin
   if (CurStep = ssPostInstall) and (WorkbenchPath <> '') then
@@ -108,7 +112,7 @@ begin
     // Associate .heron files with the Workbench executable
     RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', '', '"' + WorkbenchPath + '" "%1"');
 
-    DefaultAppsFilePath := ExtractFilePath(WorkbenchPath) + 'default.apps.json';
+    DefaultAppsFilePath := ExtractFilePath(WorkbenchPath) + 'default.apps.son';
     DefaultAppsContent :=
       'applications {' + #13#10 +
       '   HERON {' + #13#10 +
@@ -124,9 +128,16 @@ begin
       '   }' + #13#10 +
       ' }';
 
+    // Save the default.apps.son file in the Workbench base directory
     if not SaveStringToFile(DefaultAppsFilePath, DefaultAppsContent, False) then
     begin
-      MsgBox('Failed to create default.apps.json in the Workbench directory.', mbError, MB_OK);
+      MsgBox('Failed to create default.apps.son in the Workbench directory.', mbError, MB_OK);
+    end;
+
+    // Save the path to the Workbench executable in a file at {app}/.workbench.
+    if not SaveStringToFile(ExpandConstant('{app}') + '\.workbench', WorkbenchPath, False) then
+    begin
+      MsgBox('Failed to save the path to the Workbench executable.', mbError, MB_OK);
     end;
   end;
 end;

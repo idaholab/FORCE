@@ -1,8 +1,6 @@
 from typing import Optional
 import os
-import tkinter as tk
 import argparse
-from collections import namedtuple
 
 from .file_location_persistence import FileLocationPersistence
 from .file_dialog import FileDialogController
