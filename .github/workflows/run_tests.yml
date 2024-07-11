@@ -13,8 +13,7 @@ jobs:
       - run: pwd
       - run: WD=`(cd ../../.. && pwd)` && export RAVEN_LIBS_NAME="raven_libs_"`basename $WD` && ./initalize_tests.sh
       - run: source raven/scripts/establish_conda_env.sh --load && ./check_py_coverage.sh
-      - run: COV_PCT=`coverage report --format=total`
-      - run: echo "::notice title=Coverage Summary::Code coverage for this repository is now $COV_PCT%. See 'coverage_results' in Artifacts for details."
+      - run: COV_EX=`which coverage` && COV_PCT=`$COV_EX report --format=total` && echo "::notice title=Coverage Summary::Code coverage for this repository is now $COV_PCT%. See 'coverage_results' in Artifacts for details."
       - name: Archive tests results
         uses: actions/upload-artifact@v4
         if: always()
