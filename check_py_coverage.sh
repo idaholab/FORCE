@@ -1,13 +1,15 @@
 #!/bin/bash
-BUILD_DIR=${BUILD_DIR:=$HOME/*/raven_libraries/build}
-INSTALL_DIR=${INSTALL_DIR:=$HOME/*/*/raven_libraries}
+SCRIPT_DIRNAME=`dirname $0`
+SCRIPT_DIR=`(cd $SCRIPT_DIRNAME; pwd)`
+source $SCRIPT_DIR/raven/scripts/establish_conda_env.sh --quiet --load
+RAVEN_LIBS_PATH=`conda env list | awk -v rln="$RAVEN_LIBS_NAME" '$0 ~ rln {print $NF}'`
+BUILD_DIR=${BUILD_DIR:=$RAVEN_LIBS_PATH/build}
+INSTALL_DIR=${INSTALL_DIR:=$RAVEN_LIBS_PATH}
 PYTHON_CMD=${PYTHON_CMD:=python}
 JOBS=${JOBS:=1}
 mkdir -p $BUILD_DIR
 mkdir -p $INSTALL_DIR
 DOWNLOADER='curl -C - -L -O '
-SCRIPT_DIRNAME=`dirname $0`
-SCRIPT_DIR=`(cd $SCRIPT_DIRNAME; pwd)`
 
 ORIGPYTHONPATH="$PYTHONPATH"
 
@@ -48,7 +50,6 @@ cd $SCRIPT_DIR
 #coverage help run
 SRC_DIR=`(cd src && pwd)`
 
-source $SCRIPT_DIR/raven/scripts/establish_conda_env.sh --quiet --load
 # get display var
 DISPLAY_VAR=`(echo $DISPLAY)`
 # reset it
