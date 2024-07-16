@@ -75,17 +75,19 @@ FAILED=()
 echo
 echo "********************************************************************************"
 echo
-echo 'Running FORCE tests ...'
 
 case $TEST_SET in
     0)
-        TEST_DIR=tests/unit_tests
+        TEST_DIR=$SCRIPT_DIR/tests/unit_tests
+        echo Running FORCE unit tests from $TEST_DIR directory ...
         ;;
     1)
-        TEST_DIR=tests/integration_tests
+        TEST_DIR=$SCRIPT_DIR/tests/integration_tests
+        echo Running FORCE integration tests from $TEST_DIR directory ...
         ;;
     2)
-        TEST_DIR=tests
+        TEST_DIR=$SCRIPT_DIR/tests
+        echo Running FORCE unit and integration tests from $TEST_DIR directory ...
         ;;
 esac
     

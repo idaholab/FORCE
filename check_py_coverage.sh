@@ -55,20 +55,18 @@ DISPLAY_VAR=`(echo $DISPLAY)`
 # reset it
 export DISPLAY=
 
-EXTRA="--rcfile=$SRC_DIR/../tests/.coveragerc --source=$SRC_DIR --parallel-mode"
+export COVERAGE_RCFILE="$SRC_DIR/../tests/.coveragerc" # all coverage commands should automatically reference this file now
+EXTRA="--source=$SRC_DIR --parallel-mode"
 export COVERAGE_FILE=`pwd`/.coverage
 
-coverage erase --rcfile="$SRC_DIR/../tests/.coveragerc"
-($SRC_DIR/../run_tests "$@" --python-command="coverage run $EXTRA " || echo run_test done but some tests failed)
+coverage erase
+($SRC_DIR/../run_tests "$@" --python-command="coverage run $EXTRA " || echo run_tests done but some tests failed)
 
 #get DISPLAY BACK
 DISPLAY=$DISPLAY_VAR
 
-## Go to the final directory and generate the html documents
-cd $SCRIPT_DIR/tests/
+## Prepare data and generate the html documents
 pwd
-rm -f .cov_dirs
-for FILE in `find . -name '.coverage.*'`; do dirname $FILE; done | sort | uniq > .cov_dirs
-coverage combine `cat .cov_dirs`
+coverage combine
 coverage html
 

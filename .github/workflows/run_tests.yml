@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v3
       - run: pwd
       - run: WD=`(cd ../../.. && pwd)` && export RAVEN_LIBS_NAME="raven_libs_"`basename $WD` && ./initalize_tests.sh
-      - run: >
+      - run: > # The overhead time added by checking coverage is currently about 19-23%. Reducing the frequency of coverage checks may be preferable if this increases.
           source raven/scripts/establish_conda_env.sh --load &&
           ./check_py_coverage.sh &&
           COV_PCT=`coverage report --format=total` &&
