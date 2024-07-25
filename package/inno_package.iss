@@ -33,7 +33,8 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "workbenchinstall"; Description: "Install NEAMS Workbench-5.4.1"; GroupDescription: "Optional Components"
 
 [Files]
 Source: "force_install\heron.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -62,8 +63,8 @@ Root: HKCU; Subkey: "Software\Classes\FORCE.heron"; ValueType: string; ValueData
 Root: HKCU; Subkey: "Software\Classes\FORCE.heron\DefaultIcon"; ValueType: string; ValueData: "{app}\heron.exe,0"
 ; The open command will be set dynamically in the [Code] section
 
-[Run]
-Filename: "{app}\Workbench-5.4.1.exe"; Description: "Install NEAMS Workbench-5.4.1"; Flags: nowait postinstall skipifsilent
+;[Run]
+;Filename: "{app}\Workbench-5.4.1.exe"; Description: "Install NEAMS Workbench-5.4.1"; Flags: nowait postinstall skipifsilent
 
 [Code]
 var
@@ -77,18 +78,24 @@ var
 begin
   Result := '';
   Paths := [
-    ExpandConstant('{sd}'),
+    ExpandConstant('{%USERPROFILE}'),
     ExpandConstant('{userpf}'),
+    ExpandConstant('{userprograms}'),
     ExpandConstant('{commonpf}'),
     ExpandConstant('{commonpf64}'),
+    ExpandConstant('{commonpf32}'),
+    ExpandConstant('{commonprograms}'),
+    ExpandConstant('{sd}'),
     ExpandConstant('{app}')
   ];
   for I := 0 to GetArrayLength(Paths) - 1 do
     begin
         Path := Paths[I];
-        if DirExists(Path + '\Workbench-5.4.1\bin\Workbench.exe') then
+        // MsgBox('Checking for Workbench at path ' + Path + '\Workbench-5.4.1\bin\Workbench.exe', mbInformation, MB_OK);
+        if FileExists(Path + '\Workbench-5.4.1\bin\Workbench.exe') then
         begin
-          Result := Path + '\Workbench-5.4.1\bin\Workbench.exe';
+          Result := Path + '\Workbench-5.4.1\';
+          // MsgBox('Found workbench at path ' + Result + '!', mbInformation, MB_OK);
           break;
         end;
     end;
@@ -98,24 +105,36 @@ procedure CurStepChanged(CurStep: TSetupStep);
 var
   DefaultAppsFilePath: string;
   DefaultAppsContent: string;
-  WorkbenchConfigPath: string;
   ResultCode: Integer;
 begin
+  // Install Workbench if the user selected the option
+  if CurStep = ssInstall then
+  begin
+    if WizardIsTaskSelected('workbenchinstall') then
+    begin
+      // Run the Workbench installer
+      Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+      // Find the path to the Workbench executable
+      WorkbenchPath := FindWorkbenchInstallPath();
+      // MsgBox('Workbench installed at ' + WorkbenchPath, mbInformation, MB_OK);
+    //end
+    //else
+    //begin
+    //  MsgBox('Workbench component not selected', mbInformation, MB_OK);
+    end;
+  end;
+
+  // If Workbench has been installed, associate .heron files with the Workbench executable
   if (CurStep = ssPostInstall) and (WorkbenchPath <> '') then
   begin
-    // Run the "{app}\Workbench-5.4.1.exe" installer
-    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
-
-    // Find the path to the Workbench executable
-    WorkbenchPath := FindWorkbenchInstallPath()
-
     // Associate .heron files with the Workbench executable
-    RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', '', '"' + WorkbenchPath + '" "%1"');
+    RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', WorkbenchPath + 'bin\Workbench.exe', 'NEAMS Workbench 5.4.1');
 
-    DefaultAppsFilePath := ExtractFilePath(WorkbenchPath) + 'default.apps.son';
+    // default.apps.son file tells Workbench where to find HERON
+    DefaultAppsFilePath := WorkbenchPath + 'default.apps.son';
     DefaultAppsContent :=
       'applications {' + #13#10 +
-      '   HERON {' + #13#10 +
+      '  HERON {' + #13#10 +
       '    configurations {' + #13#10 +
       '      default {' + #13#10 +
       '        options {' + #13#10 +
@@ -125,19 +144,26 @@ begin
       '        }' + #13#10 +
       '      }' + #13#10 +
       '    }' + #13#10 +
-      '   }' + #13#10 +
-      ' }';
+      '  }' + #13#10 +
+      '}';
 
     // Save the default.apps.son file in the Workbench base directory
     if not SaveStringToFile(DefaultAppsFilePath, DefaultAppsContent, False) then
     begin
-      MsgBox('Failed to create default.apps.son in the Workbench directory.', mbError, MB_OK);
+      MsgBox('Failed to create default.apps.son in the Workbench directory. Attempted to write to ' + DefaultAppsFilePath, mbError, MB_OK);
     end;
 
     // Save the path to the Workbench executable in a file at {app}/.workbench.
-    if not SaveStringToFile(ExpandConstant('{app}') + '\.workbench', WorkbenchPath, False) then
+    if not SaveStringToFile(ExpandConstant('{app}') + '\.workbench', 'WORKBENCHDIR=' + WorkbenchPath, False) then
     begin
-      MsgBox('Failed to save the path to the Workbench executable.', mbError, MB_OK);
+      MsgBox('Failed to save the path to the Workbench executable. Attempted to write to ' + ExpandConstant('{app}') + '\.workbench', mbError, MB_OK);
+    end;
+  end
+  else
+  begin
+    if CurStep = ssPostInstall then
+    begin
+      MsgBox('Workbench not installed. Not creating Workbench defaults. WorkbenchPath = ' + WorkbenchPath, mbInformation, MB_OK);
     end;
   end;
 end;

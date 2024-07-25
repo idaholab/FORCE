@@ -1,6 +1,7 @@
 import sys
 import platform
 import os
+import pathlib
 from cx_Freeze import setup, Executable, build_exe
 
 import HERON.templates.write_inner
@@ -11,6 +12,12 @@ build_exe_options = {
     "includes": ["ray.thirdparty_files.colorama","ray.autoscaler._private","pyomo.common.plugins","HERON.templates.template_driver","dask.distributed","imageio.plugins.pillow","imageio.plugins.pillowmulti","imageio.plugins.pillow_info"],
     "include_files": [(HERON.templates.write_inner.__file__,"lib/HERON/templates/write_inner.py")],
 }
+
+# Add all of the HERON template XML files to the build
+write_inner_path = pathlib.Path(HERON.templates.write_inner.__file__)
+for xml_file in os.listdir(write_inner_path.parent):
+    if xml_file.endswith(".xml"):
+        build_exe_options["include_files"].append((write_inner_path.parent / xml_file, f"lib/HERON/templates/{xml_file}"))
 
 # Some files must be included manually for the Windows build
 if platform.system().lower() == "windows":
