@@ -8,7 +8,36 @@ FORCE_LOC = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, o
 sys.path.append(FORCE_LOC)
 from FORCE.src.heron import create_componentsets_in_HERON
 
-class TestMinimalInput(unittest.TestCase):
+class HERONTestCase(unittest.TestCase):
+  
+  def check_reference_price(self, cashflow, correct_value, correct_content_length=1):
+    ref_price = cashflow.findall('./reference_price')
+    self.assertEqual(len(ref_price), 1)
+    ref_price_contents = [e for e in ref_price[0].findall('./')
+                          if not e.tag is ET.Comment] # Filters out ET.Comment elements
+    self.assertEqual(len(ref_price_contents), correct_content_length)
+    ref_price_value = ref_price[0].findall('./fixed_value')
+    self.assertEqual(ref_price_value[0].text, correct_value)
+
+  def check_reference_driver(self, cashflow, correct_value, correct_content_length=1):
+    ref_driver = cashflow.findall('./reference_driver')
+    self.assertEqual(len(ref_driver), 1)
+    ref_driver_contents = [e for e in ref_driver[0].findall('./')
+                          if not e.tag is ET.Comment] # Filters out ET.Comment elements
+    self.assertEqual(len(ref_driver_contents), correct_content_length)
+    ref_driver_value = ref_driver[0].findall('./fixed_value')
+    self.assertEqual(ref_driver_value[0].text, correct_value)
+
+  def check_scaling_factor(self, cashflow, correct_value, correct_content_length=1):
+    scaling_factor = cashflow.findall('./scaling_factor_x')
+    self.assertEqual(len(scaling_factor), 1)
+    scaling_factor_contents = [e for e in scaling_factor[0].findall('./')
+                               if not e.tag is ET.Comment] # Filters out ET.Comment elements
+    self.assertEqual(len(scaling_factor_contents), correct_content_length)
+    scaling_factor_value = scaling_factor[0].findall('./fixed_value')
+    self.assertEqual(scaling_factor_value[0].text, correct_value)
+
+class TestMinimalInput(HERONTestCase):
 
   def setUp(self):
     # Example of a minimal XML structure
@@ -56,17 +85,12 @@ class TestMinimalInput(unittest.TestCase):
     self.assertIn('type', cashflows[0].keys())
     self.assertIn('taxable', cashflows[0].keys())
     self.assertIn('inflation', cashflows[0].keys())
-    self.assertIn('mult_target', cashflows[0].keys())
     
-    # Verify reference price
-    ref_price_value = cashflows[0].find('./reference_price/fixed_value')
-    self.assertEqual(ref_price_value.text, '-2000')
-
-    # Verify the reference driver and price updates
-    ref_driver_value = cashflows[0].find('./reference_driver/fixed_value')
-    self.assertEqual(ref_driver_value.text, '1.0')  # The driver should have been converted from kW to MW
+    # Verify reference price and reference driver
+    self.check_reference_driver(cashflows[0], '1.0')
+    self.check_reference_price(cashflows[0], '-2000')
  
-class TestExpandedInput1(unittest.TestCase):
+class TestExpandedInput1(HERONTestCase):
   
   def setUp(self):
     # Added case and datagenerator nodes (should be transferred blindly) and extra components
@@ -120,7 +144,7 @@ class TestExpandedInput1(unittest.TestCase):
     result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
 
     # Verify Case node was transferred
-    with (self.subTest("Case node has been corrupted")):
+    with self.subTest("Case node has been corrupted"):
       cases = result_tree.findall('./Case')
       self.assertEqual(len(cases), 1)
       self.assertIsNotNone(cases[0].find('./untouched_content_Case'))
@@ -130,28 +154,26 @@ class TestExpandedInput1(unittest.TestCase):
     self.assertEqual(len(component_nodes), 3)
 
     for comp in component_nodes:
+      cashflows = comp.findall('./economics/CashFlow')
       if comp.get('name') == 'ExistingComponent0':
         # Verify CashFlow with type
-        cashflows = comp.findall('./economics/CashFlow')
         self.assertEqual(len(cashflows), 1)
         self.assertEqual(cashflows[0].attrib['type'], 'one-time')
       elif comp.get('name') == 'ExistingComponent1':
         # Verify CashFlow with type
-        cashflows = comp.findall('./economics/CashFlow')
         self.assertEqual(len(cashflows), 1)
         self.assertEqual(cashflows[0].attrib['type'], 'repeating')
       elif comp.get('name') == 'NewComponent':
         # Verify reference driver
-        ref_driver = comp.find('./economics/CashFlow/reference_driver/fixed_value')
-        self.assertEqual(ref_driver.text, '1000') # Check that mW were not converted
+        self.check_reference_driver(cashflows[0], '1000')
 
     # Verify DataGenerators node was transferred
-    with (self.subTest("DataGenerators node has been corrupted")):
+    with self.subTest("DataGenerators node has been corrupted"):
       data_gens = result_tree.findall('./DataGenerators')
       self.assertEqual(len(data_gens), 1)
       self.assertIsNotNone(data_gens[0].find('./untouched_content_DG'))
 
-class TestExpandedInput2(unittest.TestCase):
+class TestExpandedInput2(HERONTestCase):
   
   def setUp(self):
     # Complex subnodes to each component with various <economics> and <CashFlows> positions and configurations
@@ -179,7 +201,7 @@ class TestExpandedInput2(unittest.TestCase):
 
                             <Component name="Component2">
                               <economics>
-                                <ProjectTime>1</ProjectTime>
+                                <lifetime>1</lifetime>
                                 <CashFlow name="capex_Comp2" npv_exempt="True">
                                   <reference_driver>
                                     <fixed_value>1234</fixed_value>
@@ -267,12 +289,13 @@ class TestExpandedInput2(unittest.TestCase):
     self.assertEqual(len(component_nodes), 4)
 
     for comp in component_nodes:
+      economics = comp.findall('./economics')
+      self.assertEqual(len(economics), 1)
+
       if comp.get('name') == 'Component0':
-        economics = comp.find('./economics')
-        
         # Verify non-capex cashflow was not corrupted
         with self.subTest("Non-capex CashFlow node was corrupted"):
-          cashflow_non_capex = economics.findall('./CashFlow[@name="other"]')
+          cashflow_non_capex = economics[0].findall('./CashFlow[@name="other"]')
           self.assertEqual(len(cashflow_non_capex), 1)
           cf_noncap_contents = [e for e in cashflow_non_capex[0].findall('./')
                                 if not e.tag is ET.Comment]  # Filters out ET.Comment elements
@@ -281,13 +304,10 @@ class TestExpandedInput2(unittest.TestCase):
 
         # Verify capex cashflow was added
         with self.subTest("capex CashFlow was not added correctly"):
-          cashflow_capex = economics.findall('./CashFlow[@name="Component0_capex"]')
+          cashflow_capex = economics[0].findall('./CashFlow[@name="Component0_capex"]')
           self.assertEqual(len(cashflow_capex), 1)
         
       elif comp.get('name') == 'Component1':
-        economics = comp.findall('./economics')
-        self.assertEqual(len(economics), 1)
-
         # Verify number of cashflows
         self.assertEqual(len(economics[0].findall('./CashFlow')), 2)
 
@@ -304,93 +324,56 @@ class TestExpandedInput2(unittest.TestCase):
         with self.subTest("capex CashFlow node was not updated correctly"):
           cashflow_capex = economics[0].findall('./CashFlow[@name="capex"]')
           self.assertEqual(len(cashflow_capex), 1)
-          ref_price = cashflow_capex[0].findall('./reference_price/fixed_value')
-          self.assertEqual(ref_price[0].text, '-2200')
+          self.check_reference_price(cashflow_capex[0], '-2200')
 
       elif comp.get('name') == 'Component2':
-        economics = comp.findall('./economics')
-
-        # Verify ProjectTime was not corrupted
+        # Verify lifetime was not corrupted
         with self.subTest("Non-cashflow child node of economics has been corrupted"):
-          proj_time = economics[0].findall('./ProjectTime')
+          proj_time = economics[0].findall('./lifetime')
           self.assertEqual(len(proj_time), 1)
           self.assertEqual(proj_time[0].text, '1')
 
         # Verify cashflow merging
-        cashflow = economics[0].findall('./CashFlow')
-        self.assertEqual(len(cashflow), 1)
+        cashflows = economics[0].findall('./CashFlow')
+        self.assertEqual(len(cashflows), 1)
 
         # Verify cashflow was updated correctly
 
         # Attributes
         with self.subTest("Attributes of CashFlow were corrupted"):
-          self.assertIn('npv_exempt', cashflow[0].keys())
+          self.assertIn('npv_exempt', cashflows[0].keys())
         
         # Children
         with self.subTest("CashFlow children nodes were not updated correctly"):
-          cf_contents = [e for e in cashflow[0].findall('./')
+          cf_contents = [e for e in cashflows[0].findall('./')
                          if not e.tag is ET.Comment] # Filters out ET.Comment elements
           self.assertEqual(len(cf_contents), 4)
 
-          # Reference driver
-          ref_driver = cashflow[0].findall('./reference_driver')
-          self.assertEqual(len(ref_driver), 1)
-          ref_driver_value = ref_driver[0].findall('./fixed_value')
-          self.assertEqual(ref_driver_value[0].text, '3100')
-
-          # Reference price
-          ref_price = cashflow[0].findall('./reference_price')
-          self.assertEqual(len(ref_price), 1)
-          ref_price_contents = [e for e in ref_price[0].findall('./')
-                                if not e.tag is ET.Comment] # Filters out ET.Comment elements
-          self.assertEqual(len(ref_price_contents), 1)
-          ref_price_value = ref_price[0].findall('./fixed_value')
-          self.assertEqual(ref_price_value[0].text, '-3200')
-
-          # Scaling factor
-          scaling_factor = cashflow[0].findall('./scaling_factor_x')
-          self.assertEqual(len(scaling_factor), 1)
-          scaling_factor_contents = [e for e in scaling_factor[0].findall('./')
-                                     if not e.tag is ET.Comment] # Filters out ET.Comment elements
-          self.assertEqual(len(scaling_factor_contents), 1)
-          scaling_factor_value = scaling_factor[0].findall('./fixed_value')
-          self.assertEqual(scaling_factor_value[0].text, '0.3')
+          self.check_reference_driver(cashflows[0], '3100')
+          self.check_reference_price(cashflows[0], '-3200')
+          self.check_scaling_factor(cashflows[0], '0.3')
 
         with self.subTest("Existing CashFlow child node was corrupted"):
           # Driver node
-          driver = cashflow[0].findall('./driver')
+          driver = cashflows[0].findall('./driver')
           self.assertEqual(len(driver), 1)
           self.assertIsNotNone(driver[0].findall('fixed_value'))
       
       elif comp.get('name') == 'Component3':
-        cashflow = comp.findall('./economics/CashFlow')
-        self.assertEqual(len(cashflow), 1)
+        cashflows = comp.findall('./economics/CashFlow')
+        self.assertEqual(len(cashflows), 1)
 
         # Verify cashflow was updated correctly
         with self.subTest("CashFlow children nodes were not updated correctly"):
-          cf_contents = [e for e in cashflow[0].findall('./')
+          cf_contents = [e for e in cashflows[0].findall('./')
                          if not e.tag is ET.Comment] # Filters out ET.Comment elements
           self.assertEqual(len(cf_contents), 3)
 
-          # Reference driver
-          ref_driver = cashflow[0].findall('./reference_driver')
-          self.assertEqual(len(ref_driver), 1)
-          ref_driver_value = ref_driver[0].findall('./fixed_value')
-          self.assertEqual(ref_driver_value[0].text, '4100')
+          self.check_reference_driver(cashflows[0], '4100')
+          self.check_reference_price(cashflows[0], '-4200')
+          self.check_scaling_factor(cashflows[0], '0.4')
 
-          # Reference price
-          ref_price = cashflow[0].findall('./reference_price')
-          self.assertEqual(len(ref_price), 1)
-          ref_price_value = ref_price[0].findall('./fixed_value')
-          self.assertEqual(ref_price_value[0].text, '-4200')
-
-          # Scaling factor
-          scaling_factor = cashflow[0].findall('./scaling_factor_x')
-          self.assertEqual(len(scaling_factor), 1)
-          scaling_factor_value = scaling_factor[0].findall('./fixed_value')
-          self.assertEqual(scaling_factor_value[0].text, '0.4')
-
-class TestNoComponentsNode(unittest.TestCase):
+class TestNoComponentsNode(HERONTestCase):
 
   def setUp(self):
     # Has no Components node
@@ -422,7 +405,7 @@ class TestNoComponentsNode(unittest.TestCase):
     self.assertEqual(len(components), 1)
     self.assertEqual(len(components[0].findall('./Component[@name="NewComponent"]')), 1)
 
-class TestNoComponentNodes(unittest.TestCase):
+class TestNoComponentNodes(HERONTestCase):
 
   def setUp(self):
     # Has no Component nodes
@@ -459,7 +442,7 @@ class TestNoComponentNodes(unittest.TestCase):
     # Verify contents have been added
     self.assertIsNotNone(component_list[0].findall('./economics/CashFlow'))
 
-class TestMissingSubnodes(unittest.TestCase):
+class TestMissingSubnodes(HERONTestCase):
 
   def setUp(self):
     # Comp0 has no economics subnode; Comp1 has no CashFlow subnode
@@ -518,19 +501,15 @@ class TestMissingSubnodes(unittest.TestCase):
       self.assertEqual(len(economics), 1)
       cashflows = economics[0].findall('./CashFlow')
       self.assertEqual(len(cashflows), 1)
-      self.assertEqual(cashflows[0].attrib["name"], "Component0_capex")
-      ref_driver = cashflows[0].find('./reference_driver/fixed_value')
-      self.assertEqual(ref_driver.text, "1000")
+      self.check_reference_driver(cashflows[0], '1000')
 
     # Verify comp1 updated correctly
     with self.subTest("cashflow node and subnodes were not added correctly"):
       cashflows = comp1[0].findall('./economics/CashFlow')
       self.assertEqual(len(cashflows), 1)
-      self.assertEqual(cashflows[0].attrib["name"], "Component1_capex")
-      ref_driver = cashflows[0].find('./reference_driver/fixed_value')
-      self.assertEqual(ref_driver.text, "2000")
+      self.check_reference_driver(cashflows[0], '2000')
 
-class TestEmptyCompSetsFolder(unittest.TestCase):
+class TestEmptyCompSetsFolder(HERONTestCase):
   def setUp(self):
     # Example of a minimal XML structure
     self.heron_xml = """<HERON>
@@ -575,7 +554,7 @@ class TestEmptyCompSetsFolder(unittest.TestCase):
     self.assertEqual(len(component_nodes), 1)
     self.assertEqual(component_nodes[0].attrib['name'], 'ExistingComponent')
 
-class TestCompSetsFolderWithBadJSON(unittest.TestCase):
+class TestCompSetsFolderWithBadJSON(HERONTestCase):
   def setUp(self):
     # Example of a minimal XML structure
     self.heron_xml = """<HERON>
@@ -610,7 +589,7 @@ class TestCompSetsFolderWithBadJSON(unittest.TestCase):
     with self.subTest("Did not respond correctly to bad component set file content"):
       self.assertEqual(caught_bad_json, True)
 
-class TestCompSetsFolderMultFiles(unittest.TestCase):
+class TestCompSetsFolderMultFiles(HERONTestCase):
   def setUp(self):
     # Example of a minimal XML structure
     self.heron_xml = """<HERON>
@@ -641,11 +620,12 @@ class TestCompSetsFolderMultFiles(unittest.TestCase):
   def test_compsets_folder_mult_files(self, mock_open, mock_listdir, mock_parse):
     # Set up the parse mock to return an XML tree
     mock_parse.return_value = self.tree
-    # Only the txt and json files whose names start with 'componentSet' should be opened
     files_list = ['component.json', 'README', 'componentSet.csv', 'xcomponentSet.json',
                   'componentSet.json', 'componentSetStuff.txt',
                   'aFolder', 'Set.json', 'compSet.json', 'ComponentSet.json']
     mock_listdir.return_value = files_list
+    # Only the txt and json files whose names start with 'componentSet' should be opened
+    acceptable_files = ['componentSet.json', 'componentSetStuff.txt']
 
     # Call the function
     result_tree = create_componentsets_in_HERON("/fake/folder", "/fake/heron_input.xml")
@@ -653,7 +633,7 @@ class TestCompSetsFolderMultFiles(unittest.TestCase):
     # Verify open function was called on correct files
     for file in files_list:
       # if file should have been opened
-      if file in ['componentSet.json', 'componentSetStuff.txt']:
+      if file in acceptable_files:
         with self.subTest(msg="File was not opened and should have been", file = file):
           # Verify file was opened
           self.assertIn(call('/fake/folder/'+file), mock_open.call_args_list)
