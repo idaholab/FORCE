@@ -1,0 +1,18 @@
+<DataObjectMetadata name="cashflows">
+  <DataSet type="Static">
+    <dims>
+      <Charger_TES_Charger_capex_CashFlow>cfYears</Charger_TES_Charger_capex_CashFlow>
+      <Discharger_Discharger_capex_CashFlow>cfYears</Discharger_Discharger_capex_CashFlow>
+      <Discharger_Discharger_capex_intcp_CashFlow>cfYears</Discharger_Discharger_capex_intcp_CashFlow>
+      <Grid_grid_sales_CashFlow>cfYears</Grid_grid_sales_CashFlow>
+      <TES_TES_capex_CashFlow>cfYears</TES_TES_capex_CashFlow>
+    </dims>
+    <general>
+      <datasetName>cashflows</datasetName>
+      <outputs>Discharger_Discharger_capex_CashFlow,Discharger_Discharger_capex_intcp_CashFlow,Charger_TES_Charger_capex_CashFlow,TES_TES_capex_CashFlow,Grid_grid_sales_CashFlow</outputs>
+      <pointwise_meta>PointProbability,ProbabilityWeight,prefix</pointwise_meta>
+      <sampleTag>RAVEN_sample_ID</sampleTag>
+    </general>
+  </DataSet>
+  
+</DataObjectMetadata>

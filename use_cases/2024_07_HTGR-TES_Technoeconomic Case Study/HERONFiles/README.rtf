@@ -1,0 +1,14 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Three markets are examined with differentiated initial storage levels and pivot windows. The optimization flow mainly consists of two parts: (1) In sweep mode, a combination set of optimal capacities for each superset is found, which will be used to define bounds (<opt_bounds>) in Heron input, and the initial values (<initial>) in the resulting output.xml for the optimization run. (2) In opt mode, a final set of capacities is determined, which will be utilized in the subsequent transient analysis (e.g., Dymola).\
+\
+The file name follows the following format: <HERONmode>_<ReactorType><#ofARMAsampleGenerated><initialStorageLevel><MARKET>_<PivotLength>. If there are multiple result files in the folder, it indicates that the job aborted due to an error, and there were multiple attempts made to complete the job.\
+\
+NOTE: A step size of 0.2 was used for the opt runs across all cases.\
+\
+}
