@@ -1,0 +1,46 @@
+[Tests]
+  [./TestMinimalInput]
+    type = RavenPython
+    input = '-m unittest test_heron.TestMinimalInput'
+  [../]
+
+  [./TestExpandedInput1]
+    type = RavenPython
+    input = '-m unittest test_heron.TestExpandedInput1'
+  [../]
+
+  [./TestExpandedInput2]
+    type = RavenPython
+    input = '-m unittest test_heron.TestExpandedInput2'
+  [../]
+
+  [./TestNoComponentsNode]
+    type = RavenPython
+    input = '-m unittest test_heron.TestNoComponentsNode'
+  [../]
+
+  [./TestNoComponentNodes]
+    type = RavenPython
+    input = '-m unittest test_heron.TestNoComponentNodes'
+  [../]
+
+  [./TestMissingSubnodes]
+    type = RavenPython
+    input = '-m unittest test_heron.TestMissingSubnodes'
+  [../]
+
+  [./TestEmptyCompSetsFolder]
+    type = RavenPython
+    input = '-m unittest test_heron.TestEmptyCompSetsFolder'
+  [../]
+
+  [./TestCompSetsFolderWithBadJSON]
+    type = RavenPython
+    input = '-m unittest test_heron.TestCompSetsFolderWithBadJSON'
+  [../]
+
+  [./TestCompSetsFolderMultFiles]
+    type = RavenPython
+    input = '-m unittest test_heron.TestCompSetsFolderMultFiles'
+  [../]
+[]
