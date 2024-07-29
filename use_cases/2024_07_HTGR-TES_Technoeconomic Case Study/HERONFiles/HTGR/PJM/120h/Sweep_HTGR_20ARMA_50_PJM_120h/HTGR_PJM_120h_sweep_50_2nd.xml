@@ -1,0 +1,241 @@
+<HERON>
+  <Case name="HTGR_PJM_120h_sweep_50Str2nd">
+    <mode>sweep</mode>   
+    <parallel>
+      <runinfo>
+        <expectedTime>96:0:0</expectedTime>
+        <memory>4g</memory>
+      </runinfo>
+    </parallel>
+    <num_arma_samples>20</num_arma_samples>
+    <!--<debug></debug>-->
+    <time_discretization>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
+      <end_time>119</end_time>
+      <num_steps>120</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>30</ProjectTime>
+      <DiscountRate>0.08</DiscountRate>
+      <tax>0.08</tax>
+      <inflation>0.03</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <pyomo><solver>ipopt</solver></pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <stats_metric>expectedValue</stats_metric>
+      <opt_metric>NPV</opt_metric>
+      <type>max</type>
+      <persistence>2</persistence> 
+    </optimization_settings>
+  </Case>
+
+  <Components>
+    <!-- PRODUCERS -->
+    <Component name="SteamGen"> <!-- Steam generator coupled to the nuclear power plant-->
+      <produces resource="reactor_heat" dispatch="fixed"> <!--Currently changed to Fixed may be changed to "indepedent" later -->
+        <capacity resource="reactor_heat">
+          <fixed_value>203</fixed_value> <!-- MWth -->
+        </capacity>
+      </produces>
+      <economics> <!--no economic values assigned, we consider brownfield approaches (reactor already built at sites and TES will be added on top of it)-->
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="Converter1">
+      <!-- Virtual free component to make sure TES is not bypassed -->
+      <produces resource="heat" dispatch="independent"> <!-- should be independent otherwise all reactor heat will be converted into "heat" directed into NewBOP-->
+        <consumes>reactor_heat</consumes>
+        <capacity resource="reactor_heat">
+          <fixed_value>-203</fixed_value>
+          <!-- Reactor could send all its power to the TES -->
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="reactor_heat">-1</rate>
+            <rate resource="heat">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="NewBOP">
+      <produces resource="electricity" dispatch="independent">
+        <consumes>heat</consumes>
+        <capacity resource="heat">
+          <!--<opt_bounds debug_value="-305.4">-400,-203</opt_bounds>--> <!-- MWth-->
+          <!--<fixed_value>-305.4</fixed_value>-->
+          <sweep_values>-340	-360	-380	-400</sweep_values>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="heat">-1</rate>
+            <rate resource="electricity">0.431</rate> <!--now single-phase/singlephase fully decoupled TES has a slightly higher efficiency, compared to the previous configuration (0.42%)-->
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="NewBOP_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <!--TODO: dummy values, replace-->
+          <driver>
+            <variable>NewBOP_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-33486397.9</fixed_value>
+            <!--  $/MWth, updated -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.631</fixed_value>
+            <!-- TODOupdated  -->
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>-305.4</fixed_value>
+            <!-- TODO updated -->
+          </reference_driver>
+        </CashFlow>
+        <CashFlow name="NewBOP_capex_intcp" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <fixed_value>16661065</fixed_value>  <!--negative intercept in the cost function considered to be postive values in calculating NPV-->
+          </driver>
+          <reference_price>
+            <fixed_value>1</fixed_value>
+            <!--  $/MWth, updated-->
+          </reference_price>
+        </CashFlow>
+        <!-- Assuming OM costs negligible to compared to NPP's -->
+      </economics>
+    </Component>
+
+    <Component name="Charger">
+      <produces resource="tes_heat" dispatch="independent">
+        <consumes>reactor_heat</consumes>
+        <capacity resource="reactor_heat">
+          <!--<opt_bounds debug_value="-200">-203,0</opt_bounds>--> <!-- MWth-->
+          <!--<fixed_value>-200</fixed_value>-->
+          <sweep_values>-200, -203</sweep_values>
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="reactor_heat">-1</rate>
+            <rate resource="tes_heat">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="TES_Charger_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <!--TODO: dummy values, replace-->
+          <driver>
+            <variable>Charger_capacity</variable>
+          </driver>
+          <reference_price> <!--costs count as a negative value-->
+            <fixed_value>-234181.4</fixed_value>
+            <!--  $/MWhth, Updated -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0</fixed_value>
+            <!-- TODO Updated  -->
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>-203.6</fixed_value> <!--negative value for the purpose of making the term (D/D') positive-->
+            <!-- TODO Updated  -->
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+    
+    <Component name="TES">
+      <stores resource="tes_heat" dispatch="independent">
+        <capacity resource="tes_heat">
+          <!--<opt_bounds debug_value="1000">0,1218</opt_bounds>-->
+          <sweep_values>600	700	800	900	1000	1100	1200	1218</sweep_values>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0.5</fixed_value>
+        </initial_stored>
+        <RTE>0.9</RTE> <!--TODO: check this value -->
+      </stores>
+      <economics>
+        <lifetime>30</lifetime> <!-- TODO check this value-->
+        <!-- TODO: OM ??-->
+        <CashFlow name="TES_capex" type="one-time" taxable="True" inflation="None" mult_target="False">
+          <!--TODO: dummy values, replace-->
+          <driver>
+            <variable>TES_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-22258933.6</fixed_value>
+            <!--  $/MWhth, Updated  -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>0.787</fixed_value>
+            <!-- Updated  -->
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>916.2</fixed_value>
+            <!-- Updated -->
+          </reference_driver>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="Convert2">
+      <!-- Virtual free component to make sure TES is not bypassed -->
+      <produces resource="heat" dispatch="independent">
+        <consumes>tes_heat</consumes>
+        <capacity resource="tes_heat">
+          <fixed_value>-203</fixed_value>
+          <!-- Reactor could send all its power to the TES -->
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="tes_heat">-1</rate>
+            <rate resource="heat">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+    <Component name="Grid">
+      <!-- Market sink with price signal from ERC or PJM ARMA -->
+      <demands resource="electricity" dispatch="dependent">
+        <capacity>
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="grid_sales" type="repeating" taxable="True" inflation="None" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier> <!-- to make positive (revenue)-->
+          </driver>
+          <reference_price>
+            <ARMA variable='price'>price</ARMA> <!-- $/MWh -->
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+  </Components>
+
+  <DataGenerators>
+    <ARMA name='price' variable="price">/home/chos/tes/M2_HERON_HTGR_FullyDecoupled/arma_PJM_120h.pk</ARMA>
+  </DataGenerators>
+</HERON>
