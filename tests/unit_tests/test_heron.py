@@ -9,8 +9,18 @@ sys.path.append(FORCE_LOC)
 from FORCE.src.heron import create_componentsets_in_HERON
 
 class HERONTestCase(unittest.TestCase):
+  """
+    Allows for the addition of more complex checks than the `assert` options in the unittest.TestCase class
+  """
   
   def check_reference_price(self, cashflow, correct_value, correct_content_length=1):
+    """
+      Checks that the reference price of the given cashflow was correctly updated
+      @ In, cashflow, ET.Element, a <cashflow> xml node within which to check the reference price
+      @ In, correct_value, string, the expected value for the reference price's <fixed_value> subnode
+      @ In, correct_content_length, int, optional, the expected total number of subnodes to <reference_price>
+      @ Out, None
+    """
     ref_price = cashflow.findall('./reference_price')
     self.assertEqual(len(ref_price), 1)
     ref_price_contents = [e for e in ref_price[0].findall('./')
@@ -20,6 +30,13 @@ class HERONTestCase(unittest.TestCase):
     self.assertEqual(ref_price_value[0].text, correct_value)
 
   def check_reference_driver(self, cashflow, correct_value, correct_content_length=1):
+    """
+      Checks that the reference driver of the given cashflow was correctly updated
+      @ In, cashflow, ET.Element, a <cashflow> xml node within which to check the reference driver
+      @ In, correct_value, string, the expected value for the reference driver's <fixed_value> subnode
+      @ In, correct_content_length, int, optional, the expected total number of subnodes to <reference_driver>
+      @ Out, None
+    """
     ref_driver = cashflow.findall('./reference_driver')
     self.assertEqual(len(ref_driver), 1)
     ref_driver_contents = [e for e in ref_driver[0].findall('./')
@@ -29,6 +46,13 @@ class HERONTestCase(unittest.TestCase):
     self.assertEqual(ref_driver_value[0].text, correct_value)
 
   def check_scaling_factor(self, cashflow, correct_value, correct_content_length=1):
+    """
+      Checks that the scaling factor of the given cashflow was correctly updated
+      @ In, cashflow, ET.Element, a <cashflow> xml node within which to check the scaling factor
+      @ In, correct_value, string, the expected value for the scaling factor's <fixed_value> subnode
+      @ In, correct_content_length, int, optional, the expected total number of subnodes to <scaling_factor_x>
+      @ Out, None
+    """
     scaling_factor = cashflow.findall('./scaling_factor_x')
     self.assertEqual(len(scaling_factor), 1)
     scaling_factor_contents = [e for e in scaling_factor[0].findall('./')
