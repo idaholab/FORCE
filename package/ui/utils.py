@@ -259,6 +259,29 @@ def create_workbench_heron_default(workbench_dir: pathlib.Path):
                 "}\n")
 
 
+def convert_xml_to_heron(xml_file: pathlib.Path, workbench_path: pathlib.Path) -> pathlib.Path:
+    """
+    Converts an .xml file to a .heron file using Workbench's xml2eddi.py conversion script.
+
+    @ In, xml_file, pathlib.Path, the path to the .xml file to convert
+    @ In, workbench_path, pathlib.Path, the path to the Workbench installation directory
+    @ Out, heron_file, pathlib.Path, the path to the converted .heron file
+    """
+    # Find the xml2eddi.py script in the Workbench installation directory
+    xml2eddi_script = workbench_path / "rte" / "util" / "xml2eddi.py"
+    if not xml2eddi_script.exists():
+        print("ERROR: Could not find the xml2eddi.py script in the Workbench installation directory.")
+        return None
+
+    # Convert the .xml file to a .heron file by running the xml2eddi.py script with the .xml file as
+    # an argument and redirecting the output to a .heron file with the same name.
+    heron_file = xml_file.with_suffix(".heron")
+    with open(heron_file, "w") as f:
+        subprocess.run(["python", str(xml2eddi_script), str(xml_file)], stdout=f)
+
+    return heron_file
+
+
 def run_in_workbench(file: str | None = None):
     """
     Opens the given file in the NEAMS Workbench
@@ -273,21 +296,35 @@ def run_in_workbench(file: str | None = None):
         return
 
     # Create Workbench default configuration for HERON if a default configurations file does not exist
-    create_workbench_heron_default(get_workbench_dir_from_exe_path(workbench_path))
+    workbench_install_dir = get_workbench_dir_from_exe_path(workbench_path)
+    create_workbench_heron_default(workbench_install_dir)
+
+    # Convert the .xml file to a .heron file if one was provided
+    if file is not None:
+        file = pathlib.Path(file)
+        if not file.exists():
+            print(f"ERROR: The file {file} does not exist.")
+            return
+
+        if file.suffix == ".xml":
+            heron_file = convert_xml_to_heron(file, workbench_install_dir)
+            if heron_file is None:
+                return
+            file = heron_file
+        file = str(file)
 
     # Open the file in Workbench
     # Currently, we're only able to open the MacOS version of Workbench by opening the app itself.
     # This does not accept a file as an argument, so users will need to open Workbench, then open
     # the desired file manually from within the app.
     command = str(workbench_path)
-    if file is not None and platform.system() == "Windows":
-        command += ' ' + file
+    # if file is not None and platform.system() == "Windows":
+    #     command += ' ' + file
 
     print("Opening Workbench...", file=sys.__stdout__)
     print("***If this is the first time you are running Workbench, this may take a few minutes!***\n", file=sys.__stdout__)
     if platform.system() == "Windows":
-        # os.system(command)
-        subprocess.run(command)
+        subprocess.run([command, file])
     else:
         # NOTE: untested on Linux as of 2024-07-22
-        subprocess.call(["/usr/bin/open", "-n", "-a", workbench_path])
+        subprocess.run(["/usr/bin/open", "-n", "-a", workbench_path])

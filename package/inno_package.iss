@@ -58,8 +58,8 @@ Name: "{autodesktop}\FORCE Examples"; Filename: "{app}\examples"; Tasks: desktop
 
 [Registry]
 ; File association for .heron files
-Root: HKCU; Subkey: "Software\Classes\.heron"; ValueType: string; ValueData: "FORCE.heron"; Flags: createvalueifdoesntexist
-Root: HKCU; Subkey: "Software\Classes\FORCE.heron"; ValueType: string; ValueData: "HERON File"
+Root: HKCU; Subkey: "Software\Classes\.heron"; ValueType: string; ValueName: ""; ValueData: "FORCE.heron"; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Classes\FORCE.heron"; ValueType: string; ValueName: ""; ValueData: "HERON File"; Flags: uninsdeletekey
 Root: HKCU; Subkey: "Software\Classes\FORCE.heron\DefaultIcon"; ValueType: string; ValueData: "{app}\heron.exe,0"
 ; The open command will be set dynamically in the [Code] section
 
@@ -107,28 +107,16 @@ var
   DefaultAppsContent: string;
   ResultCode: Integer;
 begin
-  // Install Workbench if the user selected the option
-  if CurStep = ssInstall then
+  // Install Workbench if the user selected the option and associate .heron files with the Workbench executable
+  if (CurStep = ssPostInstall) and WizardIsTaskSelected('workbenchinstall') then
   begin
-    if WizardIsTaskSelected('workbenchinstall') then
-    begin
-      // Run the Workbench installer
-      Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
-      // Find the path to the Workbench executable
-      WorkbenchPath := FindWorkbenchInstallPath();
-      // MsgBox('Workbench installed at ' + WorkbenchPath, mbInformation, MB_OK);
-    //end
-    //else
-    //begin
-    //  MsgBox('Workbench component not selected', mbInformation, MB_OK);
-    end;
-  end;
+    // Run the Workbench installer
+    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+    // Find the path to the Workbench executable
+    WorkbenchPath := FindWorkbenchInstallPath();
 
-  // If Workbench has been installed, associate .heron files with the Workbench executable
-  if (CurStep = ssPostInstall) and (WorkbenchPath <> '') then
-  begin
     // Associate .heron files with the Workbench executable
-    RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', WorkbenchPath + 'bin\Workbench.exe', 'NEAMS Workbench 5.4.1');
+    RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', '', '"' + WorkbenchPath + 'bin\Workbench.exe' + '" "%1"');
 
     // default.apps.son file tells Workbench where to find HERON
     DefaultAppsFilePath := WorkbenchPath + 'default.apps.son';
