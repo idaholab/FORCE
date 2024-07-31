@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<Simulation verbosity="debug">
+  <TestInfo>
+    <name>Elec_Train</name>
+    <author>WILLLD4</author>
+    <created>2023</created>
+    <descrEtion>
+      This trains a stochastic ARMA using synthetic large chemical plant electric data (MWe)
+    </descrEtion>
+    <classesTested>SupervisedLearning.ARMA</classesTested>
+  </TestInfo>
+
+  <RunInfo>
+    <WorkingDir>Elec_Train</WorkingDir>
+    <Sequence>load, train, meta, serialize, sample</Sequence>
+  </RunInfo>
+
+  <Files>
+    <Input name="input">../DataElec.csv</Input>
+    <Input name="pk">ElecARMA.pk</Input>
+  </Files>
+
+  <Steps>
+    <IOStep name="load">
+      <Input class="Files" type="">input</Input>
+      <Output class="DataObjects" type="HistorySet">input</Output>
+    </IOStep>
+
+    <RomTrainer name="train">
+      <Input class="DataObjects" type="HistorySet">input</Input>
+      <Output class="Models" type="ROM">arma</Output>
+    </RomTrainer>
+
+    <IOStep name="meta">
+      <Input class="Models" type="ROM">arma</Input>
+      <Output class="DataObjects" type="DataSet">meta</Output>
+      <Output class="OutStreams" type="Print">romMeta</Output>
+    </IOStep>
+
+    <IOStep name="serialize">
+      <Input class="Models" type="ROM">arma</Input>
+      <Output class="Files" type="">pk</Output>
+    </IOStep>
+
+    <MultiRun name="sample">
+      <Input class="DataObjects" type="PointSet">placeholder</Input>
+      <Model class="Models" type="ROM">arma</Model>
+      <Sampler class="Samplers" type="MonteCarlo">mc</Sampler>
+      <Output class="DataObjects" type="DataSet">synth</Output>
+      <Output class="OutStreams" type="Print">synth</Output>
+    </MultiRun>
+
+  </Steps>
+
+  <DataObjects>
+    <PointSet name="placeholder">
+      <Input>scaling</Input>
+      <Output>OutputPlaceHolder</Output>
+    </PointSet>
+
+    <HistorySet name="input">
+      <Input>scaling,YEAR</Input>
+      <Output>E_D,HOUR</Output>
+      <options>
+        <pivotParameter>HOUR</pivotParameter>
+      </options>
+    </HistorySet>
+
+    <DataSet name="synth">
+      <Input>scaling</Input>
+      <Output>E_D</Output>
+      <Index var="YEAR">E_D</Index>
+      <Index var="HOUR">E_D</Index>
+    </DataSet>
+    <DataSet name="meta"/>
+  </DataObjects>
+
+  <Models>
+    <ROM name="arma" subType="ARMA">
+      <pivotParameter>HOUR</pivotParameter>
+      <Features>scaling</Features>
+      <Target>E_D,HOUR</Target>
+      <P>3</P>
+      <Q>1</Q>
+      <!--<Fourier>24</Fourier>-->
+      <SpecificFourier variables='E_D'>
+        <periods>8760, 4380, 2920, 2190, 1460</periods>
+      </SpecificFourier>
+      <preserveInputCDF>True</preserveInputCDF>
+      <reseedCopies>True</reseedCopies>
+      <seed>1998</seed>
+      <Segment grouping="interpolate">
+        <macroParameter>YEAR</macroParameter>
+        <Classifier class="Models" type="PostProcessor">classifier</Classifier>
+        <evalMode>full</evalMode>
+        <subspace pivotLength="120" shift="first">HOUR</subspace>
+        <evaluationClusterChoice>random</evaluationClusterChoice>
+      </Segment>
+    </ROM>
+    <PostProcessor name="classifier" subType="DataMining">
+      <KDD labelFeature="labels" lib="SciKitLearn">
+        <Features>E_D</Features>
+        <SKLtype>cluster|KMeans</SKLtype>
+        <n_clusters>2</n_clusters>
+        <tol>1E-12</tol>
+        <init>k-means++</init>
+        <random_state>3</random_state>
+        <precompute_distances>True</precompute_distances>
+      </KDD>
+    </PostProcessor>
+  </Models>
+
+  <OutStreams>
+    <Print name="romMeta">
+      <type>csv</type>
+      <source>meta</source>
+    </Print>
+
+    <Print name="synth">
+      <type>csv</type>
+      <source>synth</source>
+    </Print>
+  </OutStreams>
+
+  <Samplers>
+    <MonteCarlo name="mc">
+      <samplerInit>
+        <limit>1</limit>
+        <initialSeed>1998</initialSeed>
+      </samplerInit>
+      <constant name="scaling">1.0</constant>
+    </MonteCarlo>
+  </Samplers>
+</Simulation>
