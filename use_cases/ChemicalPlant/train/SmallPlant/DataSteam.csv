@@ -1,0 +1,4 @@
+scaling,YEAR,filename
+1,2020,../../data/SmallPlant/Steam_data_2020.csv
+1,2021,../../data/SmallPlant/Steam_data_2021.csv
+1,2022,../../data/SmallPlant/Steam_data_2022.csv

@@ -1,0 +1,771 @@
+<HERON>
+  <TestInfo>
+    <name>IES</name>
+    <author>iza_and_logan</author>
+    <created>2024</created>
+    <description>
+    This input file evaluates a nuclear heat and power integration with a large chemical plant, with an optimization run.
+    The chemical plant requires electric power and steam at three pressures (HP,IP, and LP)
+    The CHP plant is model at a component level with turbines between different steam conditions.
+    Three reactor types are considered (A-LWR, HTGR, SFR).
+    TES systems have a fixed capacity and no CAPEX
+
+    Based off of work from  INL/RPT-24-78505
+    </description>
+    <classesTested>HERON</classesTested>
+  </TestInfo>
+
+  <Case name="opt_Tech_selection">
+    <mode>opt</mode>
+    <!--<debug>
+       <inner_samples>1</inner_samples>
+       <macro_steps>1</macro_steps>
+       <dispatch_plot>True</dispatch_plot>
+     </debug>-->
+    <num_arma_samples>10</num_arma_samples> 
+    <time_discretization>
+      <year_variable>YEAR</year_variable>
+      <time_variable>HOUR</time_variable>
+      <end_time>119</end_time>
+      <num_steps>120</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>3</ProjectTime>
+      <DiscountRate>0.08</DiscountRate> 
+      <tax>0.3</tax>                    
+      <inflation>0.06</inflation>   
+    </economics>
+    <dispatcher>
+      <pyomo>
+      <solver>ipopt</solver>
+      <debug_mode>True</debug_mode>
+      <rolling_window_length>120</rolling_window_length>
+      </pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <algorithm>
+        <BayesianOpt>
+          <acquisition>LowerConfidenceBound</acquisition>
+          <seed>180</seed>
+        </BayesianOpt>
+      </algorithm>
+      <opt_metric>NPV</opt_metric>
+      <type>max</type>
+      <persistence>2</persistence>
+      <convergence>
+        <objective>1e-3</objective>
+      </convergence>
+    </optimization_settings>
+
+  </Case>
+  
+  <!-- -->
+  <!-- REACTORS -->
+  <!-- -->
+  
+ 
+  
+  <!-- HTGR -->
+<Components>  
+ <Component name="HTGR">
+      <produces resource="HTGRheat" dispatch="fixed">
+        <capacity resource="HTGRheat">
+        <opt_bounds>0, 1200</opt_bounds>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>60</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="False" inflation="none" mult_target="False">
+          <driver>
+            <variable>HTGR_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-515720</fixed_value> 
+          </reference_price>
+        </CashFlow>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>HTGRheat</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-17.26</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="HTGRturb">
+      <produces resource="electricity,HP" dispatch="independent">
+        <consumes>HTGRheat</consumes>
+        <capacity resource="HP">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="HTGRheat">2.886</rate>
+            <rate resource="electricity">.33338</rate>
+			      <rate resource="HP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+
+  
+  <!-- HTGR STORAGE -->
+  
+	
+	<Component name="HTGR_storage">
+      <stores resource="HTGR_store" dispatch="independent">
+        <capacity resource="HTGR_store">
+        <fixed_value>1000</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0.2</fixed_value>
+        </initial_stored>
+        <periodic_level>True</periodic_level>
+        <RTE>0.99</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>HTGR_store</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-3.5</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="HTGRtoStorage">
+      <produces resource="HTGR_store" dispatch="independent">
+        <consumes>HTGRheat</consumes>
+        <capacity resource="HTGR_store">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="HTGRheat">1</rate>
+			      <rate resource="HTGR_store">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+	<Component name="HTGRstoreturb">
+      <produces resource="electricity,HP" dispatch="independent">
+        <consumes>HTGR_store</consumes>
+        <capacity resource="HP">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="HTGR_store">2.829</rate>
+            <rate resource="electricity">.29616</rate>
+			      <rate resource="HP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+
+	
+	
+		
+	
+  
+  <!-- SFR -->
+  
+
+	<Component name="SFR">
+      <produces resource="SFRheat" dispatch="fixed">
+        <capacity resource="SFRheat">
+          <opt_bounds>0, 1200</opt_bounds> 
+        </capacity>
+      </produces>
+        <economics>
+        <lifetime>60</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="False" inflation="none" mult_target="False">
+          <driver>
+            <variable>SFR_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-360770</fixed_value> 
+          </reference_price>
+        </CashFlow>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>SFRheat</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-19.27</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="SFRturb">
+      <produces resource="electricity,HP" dispatch="independent">
+        <consumes>SFRheat</consumes>
+        <capacity resource="HP">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="SFRheat">2.657</rate>
+            <rate resource="electricity">.12435</rate>
+			      <rate resource="HP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+
+	
+  
+  <!-- SFR STORAGE -->
+  
+	
+	<Component name="SFR_storage">
+      <stores resource="SFR_store" dispatch="independent">
+      <capacity resource="SFR_store">
+        <fixed_value>1000</fixed_value>
+          </capacity>
+        <initial_stored>
+          <fixed_value>0.2</fixed_value>
+        </initial_stored>
+        <periodic_level>True</periodic_level>
+        <RTE>0.99</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>SFR_store</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-3.5</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="SFRtoStorage">
+      <produces resource="SFR_store" dispatch="independent">
+        <consumes>SFRheat</consumes>
+        <capacity resource="SFR_store">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="SFRheat">1</rate>
+			<rate resource="SFR_store">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+	<Component name="SFRstoreturb">
+      <produces resource="electricity,HP" dispatch="independent">
+        <consumes>SFR_store</consumes>
+        <capacity resource="HP">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="SFR_store">2.626</rate>
+            <rate resource="electricity">.08699</rate>
+			<rate resource="HP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+
+
+  
+  <!-- LWR -->
+  	
+  
+	<Component name="LWR">
+      <produces resource="LWRheat" dispatch="fixed">
+        <capacity resource="LWRheat">
+          <opt_bounds>0, 1500</opt_bounds> 
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>60</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="False" inflation="none" mult_target="False">
+          <driver>
+            <variable>LWR_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-373026</fixed_value> 
+          </reference_price>
+        </CashFlow>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>LWRheat</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-8.25</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+
+    		<Component name="LWRcomp">
+      <produces resource="HP" dispatch="independent">
+        <consumes>LWRheat,electricity</consumes>
+        <capacity resource="HP">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="LWRheat">2.319</rate>
+            <rate resource="electricity">.1022</rate>
+			      <rate resource="HP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+	<Component name="LWRturb">
+      <produces resource="electricity,IP" dispatch="independent">
+        <consumes>LWRheat</consumes>
+        <capacity resource="IP">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="LWRheat">2.319</rate>
+            <rate resource="electricity">.0015</rate>
+			<rate resource="IP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+
+	
+  
+  <!-- LWR STORAGE -->
+  
+	
+	<Component name="LWR_storage">
+      <stores resource="LWR_store" dispatch="independent">
+        <capacity resource="LWR_store">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0.01</fixed_value>
+        </initial_stored>
+        <periodic_level>True</periodic_level>
+        <RTE>0.9</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+          <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>LWR_store</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-3.5</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="LWRtoStorage">
+      <produces resource="LWR_store" dispatch="independent">
+        <consumes>LWRheat</consumes>
+        <capacity resource="LWR_store">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="LWRheat">1</rate>
+			<rate resource="LWR_store">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+	<Component name="LWRstoreturb">
+      <produces resource="electricity,IP" dispatch="independent">
+        <consumes>LWR_store</consumes>
+        <capacity resource="IP">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="LWR_store">2.359</rate>
+            <rate resource="electricity">.06632</rate>
+			<rate resource="IP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+  	<Component name="LWRstorecomp">
+      <produces resource="HP" dispatch="independent">
+        <consumes>LWR_store,electricity</consumes>
+        <capacity resource="HP">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="LWR_store">2.4</rate>
+            <rate resource="electricity">.1022</rate>
+			      <rate resource="HP">1</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+  
+  
+  
+  <!-- HP -->
+  
+  
+    <Component name="HPT">
+      <produces resource="electricity,IP" dispatch="independent">
+        <consumes>HP</consumes>
+        <capacity resource="electricity">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="HP">1</rate>
+            <rate resource="electricity">0.227</rate>
+			      <rate resource="IP">.97</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+
+  
+  <!-- IP -->
+  
+  
+    <Component name="IPT">
+      <produces resource="electricity,LP" dispatch="independent">
+        <consumes>IP</consumes>
+        <capacity resource="LP">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="IP">1</rate>
+            <rate resource="electricity">0.146</rate>
+			      <rate resource="LP">.95</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+
+  <!-- LP -->
+  
+  
+    <Component name="LPT">
+      <produces resource="electricity" dispatch="independent">
+        <consumes>LP</consumes>
+        <capacity resource="electricity">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="LP">1</rate>
+            <rate resource="electricity">0.293</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+	
+  <!-- MARKETS -->
+  
+  
+  <Component name="HPdemand">
+      <demands resource="HP" dispatch="fixed">
+        <capacity>
+          <ARMA variable="HP_D">HP_ARMA</ARMA>
+          <multiplier>-1</multiplier>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="HP_consume" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>HP</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>100.00</fixed_value> <!--Sell prices for fixed demand markets do not effect the delta NPV of the system-->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="IPdemand">
+      <demands resource="IP" dispatch="fixed">
+        <capacity>
+          <ARMA variable="IP_D">IP_ARMA</ARMA>
+          <multiplier>-1</multiplier>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="IP_consume" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>IP</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>100.00</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="LPdemand">
+      <demands resource="LP" dispatch="fixed">
+        <capacity>
+          <ARMA variable="LP_D">LP_ARMA</ARMA>
+          <multiplier>-1</multiplier>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="LP_consume" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>LP</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>100.00</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="electricitydemand">
+      <demands resource="electricity" dispatch="fixed">
+        <capacity>
+          <ARMA variable="E_D">E_ARMA</ARMA>
+          <!--<fixed_value>200</fixed_value>-->
+          <multiplier>-1</multiplier>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="e_consume" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>100.00</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+	
+  <Component name="grid_1"> <!--Grid 1 sells electricity at a some what resonable price but is limited in capacity-->
+      <demands resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>-10</fixed_value> 
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="e1_sales" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>80.00</fixed_value> <!--  $80/MWhe = $.08/KWhe  -->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+      <Component name="grid_2"> <!--Grid 2 sells electricity at an low price but has a large capacity-->
+      <demands resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>-50</fixed_value> 
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="e2_sales" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10.00</fixed_value> <!--  $10/MWhe = $.01/KWhe  -->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+  
+  
+  <Component name="import_rate1"> <!--Like the grid sales, electric imports have two level, import one is resonable price but low capacity-->
+      <produces resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>10</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_rate1" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>400</fixed_value>  <!--  $400/MWhe = $.40/KWhe  -->
+          </reference_price>
+        </CashFlow>
+      </economics>
+</Component>
+<Component name="import_rate2"> <!--import rate two is very expensive to incourage building nuclear instead-->
+      <produces resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_rate2" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10000</fixed_value> <!--  $10,000/MWhe = $10.0/KWhe  -->
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+
+<Component name="import_HP"> <!--Importing Steam is not really an option in this scenario but to allow the optimize to solve imports with high costs are added-->
+      <produces resource="HP" dispatch="independent">
+        <capacity resource="HP">
+          <fixed_value>500</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_HP" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>HP</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10000</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="import_LP">
+      <produces resource="LP" dispatch="independent">
+        <capacity resource="LP">
+          <fixed_value>500</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_LP" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>LP</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10000</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+    <Component name="import_IP">
+      <produces resource="IP" dispatch="independent">
+        <capacity resource="IP">
+          <fixed_value>500</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_IP" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>IP</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10000</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+
+
+
+
+
+
+</Components>
+ 
+
+  <DataGenerators>
+    <ARMA name='HP_ARMA' variable="HP_D">../../train/LargePlant/HP_Train/HPARMA.pk</ARMA>
+	<ARMA name='IP_ARMA' variable="IP_D">../../train/LargePlant/IP_Train/IPARMA.pk</ARMA>
+	<ARMA name='LP_ARMA' variable="LP_D">../../train/LargePlant/LP_Train/LPARMA.pk</ARMA>
+	<ARMA name='E_ARMA' variable="E_D">../../train/LargePlant/Elec_Train/ElecARMA.pk</ARMA>
+  </DataGenerators>
+
+</HERON>
