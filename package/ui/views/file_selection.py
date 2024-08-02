@@ -1,5 +1,4 @@
 from typing import Optional, Callable
-import os
 import tkinter as tk
 
 

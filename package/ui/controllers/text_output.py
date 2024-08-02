@@ -20,17 +20,19 @@ class TextOutputController:
 
     def toggle_show_text(self):
         """
-        Toggle the visibility of the output text widget
+        Toggle the visibility of the output text widget and resize the window to fit
         @In, None
         @Out, None
         """
         if self.view.is_showing:  # Hide output
-            self.view.text.grid_forget()
+            # self.view.text.grid_forget()
+            self.view.hide_text_output()
             self.view.show_hide_button.config(text='Show Output')
         else:  # Show output
-            self.view.text.grid(row=1, column=0, sticky='nsew')
+            # self.view.text.grid(row=1, column=0, sticky='nsew')
+            self.view.show_text_output()
             self.view.show_hide_button.config(text='Hide Output')
-        self.view.is_showing = not self.view.is_showing
+        # self.view.is_showing = not self.view.is_showing
 
 
 class StdoutRedirector:

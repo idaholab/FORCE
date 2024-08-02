@@ -2,6 +2,7 @@ import sys
 
 from .file_selection import FileSelectionController
 from .text_output import TextOutputController
+from .model_status import ModelStatusController
 
 
 class Controller:
@@ -12,6 +13,7 @@ class Controller:
         # Initialize controllers
         self.file_selection_controller = FileSelectionController(self.model, self.view.frames["file_selection"])
         self.text_output_controller = TextOutputController(self.model, self.view.frames["text_output"])
+        self.model_status_controller = ModelStatusController(self.model, self.view.frames["text_output"].model_status)
 
         # Bind the run button to the model
         self.view.frames["run_abort"].run_button.config(command=self.run_model)

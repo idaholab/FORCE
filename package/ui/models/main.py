@@ -1,6 +1,15 @@
 import threading
 from typing import Callable
+import time
+from enum import Enum
 
+
+class ModelStatus(Enum):
+    """ Enum for model status """
+    NOT_STARTED = "Not yet run"
+    RUNNING = "Running"
+    FINISHED = "Finished"
+    ERROR = "Error"
 
 
 class Model:
@@ -15,6 +24,7 @@ class Model:
         self.func = func
         self.thread = None
         self.kwargs = kwargs
+        self.status = ModelStatus.NOT_STARTED
 
     def start(self):
         """
@@ -22,8 +32,23 @@ class Model:
         @In, None
         @Out, None
         """
-        self.thread = threading.Thread(target=self.func, kwargs=self.kwargs)
+        def func_wrapper():
+            """
+            Wrapper for the function to run and set the status to FINISHED when done
+            @In, None
+            @Out, None
+            """
+            self.status = ModelStatus.RUNNING
+            try:
+                self.func(**self.kwargs)
+            except:
+                self.status = ModelStatus.ERROR
+            else:
+                self.status = ModelStatus.FINISHED
+
+        self.thread = threading.Thread(target=func_wrapper)
         self.thread.daemon = True
+        self.thread.name = self.get_package_name()
         self.thread.start()
 
     def get_package_name(self):
