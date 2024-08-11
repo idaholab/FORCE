@@ -39,7 +39,7 @@ Name: "workbenchinstall"; Description: "Install NEAMS Workbench-5.4.1"; GroupDes
 [Files]
 Source: "force_install\heron.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "force_install\raven_framework.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "force_install\Workbench-5.4.1.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "force_install\Workbench-5.4.1.exe"; DestDir: "{app}"; Flags: ignoreversion deleteafterinstall
 Source: "force_install\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -70,6 +70,28 @@ Root: HKCU; Subkey: "Software\Classes\FORCE.heron\DefaultIcon"; ValueType: strin
 var
   WorkbenchPath: string;
 
+procedure InitializeProgressBar();
+begin
+  WizardForm.ProgressGauge.Style := npbstMarquee;
+  WizardForm.ProgressGauge.Visible := True;
+end;
+
+procedure RunWorkbenchInstaller();
+var
+  ResultCode: Integer;
+begin
+  InitializeProgressBar();
+  WizardForm.StatusLabel.Caption := 'Installing NEAMS Workbench-5.4.1...';
+
+  try
+    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), ExpandConstant('/S /D={autopf}\Workbench-5.4.1\'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  finally
+    WizardForm.ProgressGauge.Visible := False;
+    WizardForm.ProgressGauge.Style := npbstNormal;
+    WizardForm.StatusLabel.Caption := '';
+  end;
+end;
+
 function FindWorkbenchInstallPath(): string;
 var
     Paths: array of string;
@@ -77,7 +99,11 @@ var
     I: Integer;
 begin
   Result := '';
+  // Workbench should be installed in {autopf} alongside the FORCE installation, but we'll also check
+  // other common locations for the Workbench executable just in case it hasn't been found there.
   Paths := [
+    ExpandConstant('{autopf}'),
+    ExpandConstant('{app}'),
     ExpandConstant('{%USERPROFILE}'),
     ExpandConstant('{userpf}'),
     ExpandConstant('{userprograms}'),
@@ -85,8 +111,7 @@ begin
     ExpandConstant('{commonpf64}'),
     ExpandConstant('{commonpf32}'),
     ExpandConstant('{commonprograms}'),
-    ExpandConstant('{sd}'),
-    ExpandConstant('{app}')
+    ExpandConstant('{sd}')
   ];
   for I := 0 to GetArrayLength(Paths) - 1 do
     begin
@@ -110,8 +135,9 @@ begin
   // Install Workbench if the user selected the option and associate .heron files with the Workbench executable
   if (CurStep = ssPostInstall) and WizardIsTaskSelected('workbenchinstall') then
   begin
-    // Run the Workbench installer
-    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+    // Initialize the marquee progress bar
+    RunWorkbenchInstaller();
+
     // Find the path to the Workbench executable
     WorkbenchPath := FindWorkbenchInstallPath();
 

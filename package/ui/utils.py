@@ -142,9 +142,10 @@ def find_workbench() -> pathlib.Path | None:
     # Is this being run from a frozen executable or via the source code? Changes where the package's
     # base directory is located, changing where to look for the .workbench file.
     if is_frozen_app():  # Frozen executable
-        workbench_file = current_file_dir.parent.parent / ".workbench"
+        force_base_dir = current_file_dir.parent.parent
     else:  # Source code
-        workbench_file = current_file_dir.parent / ".workbench"
+        force_base_dir = current_file_dir.parent
+    workbench_file = force_base_dir / ".workbench"
     workbench_path = check_workbench_file_for_dir(workbench_file)  # Returns None if file doesn't exist or is invalid
 
     # If that .workbench file doesn't exist, we can look around for the Workbench executable
@@ -155,7 +156,8 @@ def find_workbench() -> pathlib.Path | None:
             workbench_path = wb_path
         else:
             # Manually search through a few common directories for the Workbench installation
-            for path in ["$HOMEDRIVE", "$PROGRAMFILES", "$HOME", "$APPDATA", "$LOCALAPPDATA"]:
+            for path in [force_base_dir.parent, force_base_dir, "$HOMEDRIVE", "$PROGRAMFILES",
+                         "$HOME", "$APPDATA", "$LOCALAPPDATA"]:
                 path = pathlib.Path(os.path.expandvars(path))
                 if not path.exists():
                     continue
@@ -222,7 +224,7 @@ def create_workbench_heron_default(workbench_dir: pathlib.Path):
 
     # Is this a frozen executable or source code? Changes where the package's base directory is located.
     if (current_file_dir.parent / "heron.py").exists():  # Source code
-        heron_path = current_file_dir.parent.parent / "heron.py"
+        heron_path = current_file_dir.parent / "heron.py"
     else:  # Frozen executable
         heron_path = current_file_dir.parent.parent / "heron"
         # Windows executables have a ".exe" extension
@@ -231,18 +233,17 @@ def create_workbench_heron_default(workbench_dir: pathlib.Path):
 
     # If the HERON executable doesn't exist, we can't create the Workbench configuration file
     if not heron_path.exists():
-        print(f"ERROR: Could not find the HERON executable in the directory {heron_path.parent}.")
         return
 
     # Create the configuration file for Workbench
     workbench_config_file = workbench_dir / "default.apps.son"
     if workbench_config_file.exists():
         # If the default app config file already exists, don't overwrite it.
-        print("Workbench default.apps.son file already exists! No edits made.")
         return
 
     # If the file doesn't exist, create it and add a configuration for HERON
-    print("Adding HERON configuration to NEAMS Workbench", workbench_config_file)
+    print("Adding HERON configuration to NEAMS Workbench", workbench_config_file,
+          "with HERON executable", heron_path)
     with open(workbench_config_file, "w") as f:
         f.write("applications {\n"
                 "  HERON {\n"
@@ -276,8 +277,18 @@ def convert_xml_to_heron(xml_file: pathlib.Path, workbench_path: pathlib.Path) -
     # Convert the .xml file to a .heron file by running the xml2eddi.py script with the .xml file as
     # an argument and redirecting the output to a .heron file with the same name.
     heron_file = xml_file.with_suffix(".heron")
+    print(f"Converting {xml_file} to {heron_file} using {xml2eddi_script}...")
+    # Use Workbench's entry.bat script (or entry.sh) to access the app's internal Python environment
+    # to run the script
+    entry_script = workbench_path / "rte" / "entry.bat"
+    if platform.system() != "Windows":
+        entry_script = entry_script.with_suffix(".sh")
+    if not entry_script.exists():
+        print("ERROR: Could not find the entry script in the Workbench installation directory.")
+        return None
+
     with open(heron_file, "w") as f:
-        subprocess.run(["python", str(xml2eddi_script), str(xml_file)], stdout=f)
+        subprocess.run([str(entry_script), str(xml2eddi_script), str(xml_file)], stdout=f)
 
     return heron_file
 
@@ -317,14 +328,19 @@ def run_in_workbench(file: str | None = None):
     # Currently, we're only able to open the MacOS version of Workbench by opening the app itself.
     # This does not accept a file as an argument, so users will need to open Workbench, then open
     # the desired file manually from within the app.
-    command = str(workbench_path)
     # if file is not None and platform.system() == "Windows":
     #     command += ' ' + file
 
     print("Opening Workbench...", file=sys.__stdout__)
-    print("***If this is the first time you are running Workbench, this may take a few minutes!***\n", file=sys.__stdout__)
+    print("***If this is the first time you are running Workbench, this may take a few minutes!***\n",
+          file=sys.__stdout__)
     if platform.system() == "Windows":
-        subprocess.run([command, file])
+        if file is None:
+            command = str(workbench_path)
+        else:
+            command = [str(workbench_path), file]
+        print("using command", command)
+        subprocess.run(command)
     else:
         # NOTE: untested on Linux as of 2024-07-22
         subprocess.run(["/usr/bin/open", "-n", "-a", workbench_path])
