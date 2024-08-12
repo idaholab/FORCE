@@ -58,18 +58,12 @@ Name: "{autodesktop}\FORCE Examples"; Filename: "{app}\examples"; Tasks: desktop
 
 [Registry]
 ; File association for .heron files
-Root: HKCU; Subkey: "Software\Classes\.heron"; ValueType: string; ValueName: ""; ValueData: "FORCE.heron"; Flags: uninsdeletevalue
-Root: HKCU; Subkey: "Software\Classes\FORCE.heron"; ValueType: string; ValueName: ""; ValueData: "HERON File"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\FORCE.heron\DefaultIcon"; ValueType: string; ValueData: "{app}\heron.exe,0"
+Root: HKCU; Subkey: "Software\Classes\.heron"; ValueType: string; ValueName: ""; ValueData: "FORCE.heron"; Flags: uninsdeletevalue; Check: WizardIsTaskSelected('workbenchinstall')
+Root: HKCU; Subkey: "Software\Classes\FORCE.heron"; ValueType: string; ValueName: ""; ValueData: "HERON File"; Flags: uninsdeletekey; Check: WizardIsTaskSelected('workbenchinstall')
+Root: HKCU; Subkey: "Software\Classes\FORCE.heron\DefaultIcon"; ValueType: string; ValueData: "{app}\heron.exe,0"; Check: WizardIsTaskSelected('workbenchinstall')
 ; The open command will be set dynamically in the [Code] section
 
-;[Run]
-;Filename: "{app}\Workbench-5.4.1.exe"; Description: "Install NEAMS Workbench-5.4.1"; Flags: nowait postinstall skipifsilent
-
 [Code]
-var
-  WorkbenchPath: string;
-
 procedure InitializeProgressBar();
 begin
   WizardForm.ProgressGauge.Style := npbstMarquee;
@@ -84,7 +78,7 @@ begin
   WizardForm.StatusLabel.Caption := 'Installing NEAMS Workbench-5.4.1...';
 
   try
-    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), ExpandConstant('/S /D={autopf}\Workbench-5.4.1\'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    Exec(ExpandConstant('{app}\Workbench-5.4.1.exe'), ExpandConstant('/S /D={autopf}\Workbench-5.4.1\'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
   finally
     WizardForm.ProgressGauge.Visible := False;
     WizardForm.ProgressGauge.Style := npbstNormal;
@@ -92,42 +86,9 @@ begin
   end;
 end;
 
-function FindWorkbenchInstallPath(): string;
-var
-    Paths: array of string;
-    Path: string;
-    I: Integer;
-begin
-  Result := '';
-  // Workbench should be installed in {autopf} alongside the FORCE installation, but we'll also check
-  // other common locations for the Workbench executable just in case it hasn't been found there.
-  Paths := [
-    ExpandConstant('{autopf}'),
-    ExpandConstant('{app}'),
-    ExpandConstant('{%USERPROFILE}'),
-    ExpandConstant('{userpf}'),
-    ExpandConstant('{userprograms}'),
-    ExpandConstant('{commonpf}'),
-    ExpandConstant('{commonpf64}'),
-    ExpandConstant('{commonpf32}'),
-    ExpandConstant('{commonprograms}'),
-    ExpandConstant('{sd}')
-  ];
-  for I := 0 to GetArrayLength(Paths) - 1 do
-    begin
-        Path := Paths[I];
-        // MsgBox('Checking for Workbench at path ' + Path + '\Workbench-5.4.1\bin\Workbench.exe', mbInformation, MB_OK);
-        if FileExists(Path + '\Workbench-5.4.1\bin\Workbench.exe') then
-        begin
-          Result := Path + '\Workbench-5.4.1\';
-          // MsgBox('Found workbench at path ' + Result + '!', mbInformation, MB_OK);
-          break;
-        end;
-    end;
-end;
-
 procedure CurStepChanged(CurStep: TSetupStep);
 var
+  WorkbenchPath: string;
   DefaultAppsFilePath: string;
   DefaultAppsContent: string;
   ResultCode: Integer;
@@ -139,7 +100,7 @@ begin
     RunWorkbenchInstaller();
 
     // Find the path to the Workbench executable
-    WorkbenchPath := FindWorkbenchInstallPath();
+    WorkbenchPath := ExpandConstant('{autopf}\Workbench-5.4.1\');
 
     // Associate .heron files with the Workbench executable
     RegWriteStringValue(HKEY_CURRENT_USER, 'Software\Classes\FORCE.heron\shell\open\command', '', '"' + WorkbenchPath + 'bin\Workbench.exe' + '" "%1"');
@@ -168,16 +129,9 @@ begin
     end;
 
     // Save the path to the Workbench executable in a file at {app}/.workbench.
-    if not SaveStringToFile(ExpandConstant('{app}') + '\.workbench', 'WORKBENCHDIR=' + WorkbenchPath, False) then
+    if not SaveStringToFile(ExpandConstant('{app}\.workbench'), 'WORKBENCHDIR=' + WorkbenchPath, False) then
     begin
-      MsgBox('Failed to save the path to the Workbench executable. Attempted to write to ' + ExpandConstant('{app}') + '\.workbench', mbError, MB_OK);
-    end;
-  end
-  else
-  begin
-    if CurStep = ssPostInstall then
-    begin
-      MsgBox('Workbench not installed. Not creating Workbench defaults. WorkbenchPath = ' + WorkbenchPath, mbInformation, MB_OK);
+      MsgBox('Failed to save the path to the Workbench executable. Attempted to write to ' + ExpandConstant('{app}\.workbench'), mbError, MB_OK);
     end;
   end;
 end;
