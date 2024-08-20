@@ -33,7 +33,8 @@ if platform.system().lower() == "windows":
 else:
     ipopt_path = os.path.join(os.path.dirname(sys.executable), "ipopt")
     build_exe_options["include_files"] += [
-       (ipopt_path, "local/bin/ipopt")
+    #    (ipopt_path, "local/bin/ipopt")
+       (ipopt_path, "ipopt")  # put it in main directory
     ]
 
 setup(

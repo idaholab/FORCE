@@ -52,10 +52,9 @@ def get_workbench_dir_from_exe_path(workbench_exe_path: pathlib.Path) -> pathlib
     @ In, workbench_exe_path, pathlib.Path, the path to the Workbench executable
     @ Out, workbench_dir, pathlib.Path, the path to the Workbench installation directory
     """
-    if platform.system() == "Darwin":
-        workbench_dir = workbench_exe_path.parent.parent.parent
-    else:
-        workbench_dir = workbench_exe_path.parent.parent
+    # NOTE: for macOS, this returns the path to the "Contents" directory in the app bundle, not the
+    # app bundle's root directory. However, this keeps pathing more consistent with other platforms.
+    workbench_dir = workbench_exe_path.parent.parent
     return workbench_dir
 
 
@@ -251,7 +250,7 @@ def create_workbench_heron_default(workbench_dir: pathlib.Path):
                 "      default {\n"
                 "        options {\n"
                 "          shared {\n"
-                f"            \"Executable\"=\"{heron_path}\"\n"
+                f"            Executable=\"{heron_path}\"\n"
                 "          }\n"
                 "        }\n"
                 "      }\n"
@@ -271,7 +270,8 @@ def convert_xml_to_heron(xml_file: pathlib.Path, workbench_path: pathlib.Path) -
     # Find the xml2eddi.py script in the Workbench installation directory
     xml2eddi_script = workbench_path / "rte" / "util" / "xml2eddi.py"
     if not xml2eddi_script.exists():
-        print("ERROR: Could not find the xml2eddi.py script in the Workbench installation directory.")
+        print(f"ERROR: Could not find the xml2eddi.py script in the Workbench installation directory ({str(workbench_path)}). "
+              f"Checked {str(xml2eddi_script)}.")
         return None
 
     # Convert the .xml file to a .heron file by running the xml2eddi.py script with the .xml file as
