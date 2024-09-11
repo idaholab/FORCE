@@ -1,0 +1,306 @@
+<HERON>
+  <TestInfo>
+    <name>IES</name>
+    <author>willld4</author>
+    <created>2024</created>
+    <description>
+    This input file evaluates a nuclear heat and power integration 
+    with a large chemical plant, with a optimization of RX and TES sizes.
+    The chemical plant requires electric power and steam.
+
+    Based off of work from  INL/RPT-24-78505
+    </description>
+    <classesTested>HERON</classesTested>
+  </TestInfo>
+
+  <Case name="opt_RX_TES">
+    <mode>opt</mode>
+    <!--<debug>
+       <inner_samples>3</inner_samples>
+       <macro_steps>1</macro_steps>
+       <dispatch_plot>True</dispatch_plot>
+     </debug>-->
+    <num_arma_samples>15</num_arma_samples> 
+    <time_discretization>
+      <year_variable>YEAR</year_variable>
+      <time_variable>HOUR</time_variable>
+      <end_time>119</end_time>
+      <num_steps>120</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>3</ProjectTime>
+      <DiscountRate>0.08</DiscountRate> 
+      <tax>0.3</tax>                    
+      <inflation>0.06</inflation>   
+    </economics>
+    <dispatcher>
+      <pyomo>
+      <solver>ipopt</solver>
+      <debug_mode>True</debug_mode>
+      <rolling_window_length>120</rolling_window_length>
+      </pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <algorithm>
+        <BayesianOpt>
+          <acquisition>LowerConfidenceBound</acquisition>
+          <seed>180</seed>
+        </BayesianOpt>
+      </algorithm>
+      <opt_metric>NPV</opt_metric>
+      <type>max</type>
+      <persistence>2</persistence>
+      <convergence>
+        <objective>5e-3</objective>
+      </convergence>
+    </optimization_settings>
+
+
+  </Case>
+  
+  <!-- -->
+  <!-- REACTORS -->
+  <!-- -->
+  
+ 
+  
+  <!-- microRX -->
+<Components>  
+ <Component name="RX">
+      <produces resource="RXheat" dispatch="fixed">
+        <capacity resource="RXheat">
+        <opt_bounds debug_value="167.35">150,190</opt_bounds>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>3</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="False" inflation="none" mult_target="False">
+          <driver>
+            <variable>RX_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-1130000</fixed_value> 
+          </reference_price>
+        </CashFlow>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>RXheat</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-38</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+	<Component name="RXcondturb">
+      <produces resource="electricity" dispatch="independent">
+        <consumes>RXheat</consumes>
+        <capacity resource="electricity">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="RXheat">1</rate>
+            <rate resource="electricity">.3773</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+    <Component name="RXBPturb">
+      <produces resource="electricity,steam" dispatch="independent">
+        <consumes>RXheat</consumes>
+        <capacity resource="electricity">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="RXheat">1</rate>
+            <rate resource="electricity">.1836</rate>
+            <rate resource="steam">.3016</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+    <Component name="RXHX">
+      <produces resource="steam" dispatch="independent">
+        <consumes>RXheat</consumes>
+        <capacity resource="steam">
+          <fixed_value>1000</fixed_value> 
+        </capacity>
+        <transfer>
+          <ratio>
+            <rate resource="RXheat">1</rate>
+            <rate resource="steam">.46602</rate>
+          </ratio>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>5</lifetime>
+      </economics>
+    </Component>
+	
+
+  
+  <!-- RX STORAGE -->
+  
+	
+	<Component name="RX_storage">
+      <stores resource="RXheat" dispatch="independent">
+        <capacity resource="RXheat">
+        <opt_bounds debug_value="183.22">5,300</opt_bounds>
+        </capacity>
+        <initial_stored>
+          <fixed_value>0.2</fixed_value>
+        </initial_stored>
+        <periodic_level>True</periodic_level>
+        <RTE>0.99</RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="False" inflation="none" mult_target="False">
+          <driver>
+            <variable>RX_storage_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-4190</fixed_value> 
+          </reference_price>
+        </CashFlow>
+        <CashFlow inflation="none" mult_target="FALSE" name="VOM" taxable="Flase" type="repeating">
+          <driver>
+            <activity>RXheat</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-3.5</fixed_value>
+          </reference_price>
+          </CashFlow>
+      </economics>
+    </Component>
+	
+  
+
+	
+  <!-- MARKETS -->
+  
+  
+  <Component name="steamdemand">
+      <demands resource="steam" dispatch="fixed">
+        <capacity>
+          <ARMA variable="steam_D">steam_ARMA</ARMA>
+          <multiplier>-1</multiplier>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="steam_consume" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>steam</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>1000.00</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+   
+	
+	<Component name="electricitydemand">
+      <demands resource="electricity" dispatch="fixed">
+        <capacity>
+          <ARMA variable="E_D">E_ARMA</ARMA>
+          <!--<fixed_value>200</fixed_value>-->
+          <multiplier>-1</multiplier>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>5</lifetime>
+        <CashFlow name="e_consume" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>1000.00</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+	
+  
+<Component name="import_rate1">
+      <produces resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>10</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_rate2" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>400</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+<Component name="import_rate2">
+      <produces resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+          <fixed_value>1000</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_rate2" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>10000</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+<Component name="import_steam">
+      <produces resource="steam" dispatch="independent">
+        <capacity resource="steam">
+          <fixed_value>100</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>1</lifetime>
+        <CashFlow name="import_steam" type="repeating" taxable='True' inflation='none' mult_target='False'>
+          <driver>
+            <activity>steam</activity>
+            <multiplier>-1</multiplier>
+          </driver>
+          <reference_price>
+            <fixed_value>100000</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+</Components>
+ 
+
+  <DataGenerators>
+    <ARMA name='steam_ARMA' variable="steam_D">../../train/SmallPlant/Steam_Train/SteamARMA.pk</ARMA>
+	  <ARMA name='E_ARMA' variable="E_D">../../train/SmallPlant/Elec_Train/ElecARMA.pk</ARMA>
+  </DataGenerators>
+
+</HERON>
