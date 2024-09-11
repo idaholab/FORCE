@@ -8,7 +8,7 @@ Contributors: Sam J. Root, Rami M. Saeed, and Tyler L. Westover
 
 Description:
 ARMA synthetic models are used to generate synthetic price signals for ERCOT, PJM, and MISO. HERON input takes synthetic profile files and specifications of HTGR-Liquid Metal Battery (LMB) system to assess optimal sizing and economics (Net Present Value, NPV) in the individual markets.
-
+   
 Data for the historical Realtime Locational Marginal Price (LMP) from ERCOT, PJM, and MISO are used to train synthetic data models. The optimal sizes of nuclear-TES systems are examined based on 120-hour (73 clusters).
 
 For details on generating these files, please refer to the RAVEN wiki (https://github.com/idaholab/raven/wiki/runningRAVEN). 
