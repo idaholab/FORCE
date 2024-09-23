@@ -91,7 +91,7 @@ case $TEST_SET in
         ;;
 esac
     
-$PYTHON_COMMAND $SCRIPT_DIR/raven/rook/main.py --config-file=$SCRIPT_DIR/developer_tools/rook.ini --test-dir $TEST_DIR --testers-dir $RAVEN_DIR/scripts/TestHarness/testers,$RAVEN_DIR/../HERON/src/Testers "${ARGS[@]}"
+$PYTHON_COMMAND $SCRIPT_DIR/raven/rook/main.py --config-file=$SCRIPT_DIR/developer_tools/rook.ini --test-dir $TEST_DIR --testers-dir $RAVEN_DIR/scripts/TestHarness/testers,$RAVEN_DIR/../HERON/src/Testers,$RAVEN_DIR/../src/Testers "${ARGS[@]}"
 
 # store return codes individually (rc) and combined (ALL_PASS)
 rc=$?

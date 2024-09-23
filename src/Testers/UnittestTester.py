@@ -1,6 +1,11 @@
 import os
-from raven.scripts import library_handler
-from raven.scripts.TestHarness.testers import RavenPython
+import sys
+
+FORCE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(FORCE_DIR)
+from raven.scripts.TestHarness.testers.RavenPython import RavenPython
+# clear scripts from path
+sys.path.pop()
 
 try:
   import unittest
@@ -8,7 +13,7 @@ try:
 except ModuleNotFoundError or ImportError:
   unittest_found = False
 
-class UnittestTester(RavenPython):
+class Unittest(RavenPython):
   """
   This class simplifies use of the unittest module for running unit tests through rook.
   """
@@ -22,8 +27,8 @@ class UnittestTester(RavenPython):
       @ Out, params, _ValidParameters, the parameters for this class.
     """
     params = RavenPython.get_valid_params()
+    # 'input' param can be test case or test suite; unittest will handle either when called
     params.add_param('unittest_args', '', "Arguments to the unittest module")
-    params.add_param('test_sequence_to_run', '', "Ordered list of test cases in the input file to run")
     return params
   
   def __init__(self, name, params):
@@ -62,4 +67,4 @@ class UnittestTester(RavenPython):
       pythonCommand = self._get_python_command()
     else:
       pythonCommand = self.specs["python_command"]
-    return pythonCommand+" "+self.specs["input"]
+    return ' '.join([pythonCommand, '-m unittest', self.specs["unittest_args"], self.specs["input"]])
