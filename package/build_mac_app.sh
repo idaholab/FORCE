@@ -1,5 +1,4 @@
-# Freeze the FORCE app using cx_Freeze. We require a suitable python environment to be active.
-sh build_force
+#!/bin/bash
 
 # Set up the FORCE application bundle
 # We'll set up the app so that some FORCE launcher script is the main executable, and the RAVEN,
@@ -7,9 +6,9 @@ sh build_force
 # Build the initial app from the force_launcher.scpt AppleScript
 osacompile -o FORCE.app force_launcher.scpt
 # Now copy over the force_install directory contents to the application's Resources directory
-cp -R force_install/* FORCE.app/Contents/Resources/
+cp -Rp force_install/* FORCE.app/Contents/Resources/
 # Overwrite the app's icon with the FORCE icon
-cp FORCE.icns FORCE.app/Contents/Resources/applet.icns
+cp icons/FORCE.icns FORCE.app/Contents/Resources/applet.icns
 
 # Create a new disk image
 hdiutil create -size 5g -fs HFS+ -volname "FORCE" -o force_build.dmg
@@ -20,9 +19,20 @@ hdiutil attach force_build.dmg -mountpoint /Volumes/FORCE
 # Mount the existing .dmg file file Workbench
 hdiutil attach Workbench-5.4.1.dmg -mountpoint /Volumes/Workbench
 
+# Add the workshop tests and data directories to FORCE so that Workbench's autocomplete works for workshop examples
+mkdir FORCE.app/Contents/Resources/tests
+mkdir FORCE.app/Contents/Resources/examples
+cp -Rp examples/workshop FORCE.app/Contents/Resources/tests/
+cp -Rp examples/data FORCE.app/Contents/Resources/examples/
+
 # Move the FORCE app to the disk image
-cp -R FORCE.app /Volumes/FORCE/
-cp -R /Volumes/Workbench/Workbench-5.4.1.app /Volumes/FORCE/
+cp -Rp FORCE.app /Volumes/FORCE/
+cp -Rp /Volumes/Workbench/Workbench-5.4.1.app /Volumes/FORCE/
+
+# Move the "examples" and "docs" directories from the FORCE app bundle to the top level of the disk
+# image to make them more accessible.
+cp -Rp examples /Volumes/FORCE/
+cp -Rp docs /Volumes/FORCE/
 
 # Move the "examples" and "docs" directories from the FORCE app bundle to the top level of the disk
 # image to make them more accessible.

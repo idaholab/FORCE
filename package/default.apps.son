@@ -1,0 +1,13 @@
+applications {
+  HERON {
+    configurations {
+      default {
+        options {
+          shared {
+            Executable="/Applications/FORCE.app/Contents/Resources/heron"
+          }
+        }
+      }
+    }
+  }
+}

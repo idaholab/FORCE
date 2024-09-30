@@ -74,8 +74,7 @@ echo "FORCE documentation directory: $DOC_DIR"
 mkdir -p "$DOC_DIR"
 
 # Build the documentation for the FORCE tools
-# for loc in RAVEN_DIR HERON_DIR TEAL_DIR; do
-for loc in HERON_DIR TEAL_DIR; do
+for loc in RAVEN_DIR HERON_DIR TEAL_DIR; do
   pushd "${!loc}/doc" > /dev/null
   echo $(pwd)
 
