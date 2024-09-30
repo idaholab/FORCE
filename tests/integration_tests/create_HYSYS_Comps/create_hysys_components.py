@@ -15,7 +15,7 @@ import os
 import argparse
 
 # import from the vertical_inegration/src
-sys.path.append(os.path.dirname(__file__).split("FORCE")[:-1][0]+"FORCE/src")
+sys.path.append(os.path.dirname(__file__).rsplit("FORCE",maxsplit=1)[:-1][0]+"FORCE/src")
 from hysys import extract_all_hysys_components
 
 

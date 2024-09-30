@@ -1,0 +1,31 @@
+name: Github FORCE run tests
+run-name: ${{ github.actor }} is testing out FORCE
+on: [push, pull_request]
+jobs:
+  Runtests-FORCE-Linux:
+    runs-on: [self-hosted, linux]
+    steps:
+      - run: echo " The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo " This job is now running on a ${{ runner.os }} server"
+      - run: echo " The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: pwd
+      - run: WD=`(cd ../../.. && pwd)` && export RAVEN_LIBS_NAME="raven_libs_"`basename $WD` && ./initalize_tests.sh
+      - run: > # The overhead time added by checking coverage is currently about 19-23%. Reducing the frequency of coverage checks may be preferable if this increases.
+          source raven/scripts/establish_conda_env.sh --load &&
+          ./check_py_coverage.sh &&
+          COV_PCT=`coverage report --format=total` &&
+          echo "::notice title=Coverage Summary::Code coverage for this repository is now $COV_PCT%. See 'coverage_results' in Artifacts for details."
+      - name: Archive tests results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tests_results
+          path: tests
+      - name: Archive coverage results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage_results
+          path: tests/coverage_html_report

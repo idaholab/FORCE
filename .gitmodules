@@ -1,0 +1,6 @@
+[submodule "raven"]
+	path = raven
+	url = https://github.com/idaholab/raven.git
+[submodule "HERON"]
+	path = HERON
+	url = https://github.com/idaholab/HERON.git

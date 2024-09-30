@@ -19,7 +19,7 @@ import sys
 import argparse
 
 # import from the vertical_inegration/src
-sys.path.insert(1, os.path.dirname(__file__).split("FORCE")[:-1][0]+"FORCE/src")
+sys.path.insert(1, os.path.dirname(__file__).rsplit("FORCE",maxsplit=2)[:-1][0]+"FORCE/src")
 from hysys import extract_all_hysys_components
 from apea import extract_all_apea_components
 from force import create_all_force_components_from_hysys_apea

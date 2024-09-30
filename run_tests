@@ -10,6 +10,7 @@ else
 fi
 SCRIPT_DIR=`(cd $SCRIPT_DIRNAME; pwd)`
 
+TEST_SET=2 # 0 for unit tests, 1 for integration tests, 2 for both
 
 # source read ravenrc script
 RAVEN_RC_SCRIPT=$SCRIPT_DIR/raven/scripts/read_ravenrc.sh
@@ -18,6 +19,25 @@ source $RAVEN_RC_SCRIPT
 
 # set up installation manager
 INSTALLATION_MANAGER=$(read_ravenrc "INSTALLATION_MANAGER")
+
+# read command-line arguments
+ARGS=()
+for A in "$@"; do
+    case $A in
+        --unit-tests)
+            TEST_SET=0
+            ;;
+        --integration-tests)
+            TEST_SET=1
+            ;;
+        --all-tests)
+            TEST_SET=2
+            ;;
+        *)
+            ARGS+=("$A")
+            ;;
+    esac
+done
 
 
 echo 'Loading libraries ...'
@@ -55,9 +75,23 @@ FAILED=()
 echo
 echo "********************************************************************************"
 echo
-echo 'Running FORCE tests ...'
 
-$PYTHON_COMMAND $SCRIPT_DIR/raven/rook/main.py --config-file=$SCRIPT_DIR/developer_tools/rook.ini --testers-dir $RAVEN_DIR/scripts/TestHarness/testers,$RAVEN_DIR/../HERON/src/Testers "${ARGS[@]}"
+case $TEST_SET in
+    0)
+        TEST_DIR=$SCRIPT_DIR/tests/unit_tests
+        echo Running FORCE unit tests from $TEST_DIR directory ...
+        ;;
+    1)
+        TEST_DIR=$SCRIPT_DIR/tests/integration_tests
+        echo Running FORCE integration tests from $TEST_DIR directory ...
+        ;;
+    2)
+        TEST_DIR=$SCRIPT_DIR/tests
+        echo Running FORCE unit and integration tests from $TEST_DIR directory ...
+        ;;
+esac
+    
+$PYTHON_COMMAND $SCRIPT_DIR/raven/rook/main.py --config-file=$SCRIPT_DIR/developer_tools/rook.ini --test-dir $TEST_DIR --testers-dir $RAVEN_DIR/scripts/TestHarness/testers,$RAVEN_DIR/../HERON/src/Testers "${ARGS[@]}"
 
 # store return codes individually (rc) and combined (ALL_PASS)
 rc=$?

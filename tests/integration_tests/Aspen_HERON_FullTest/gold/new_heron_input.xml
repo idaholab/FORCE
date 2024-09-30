@@ -14,7 +14,7 @@
 
   <Case name="Runs">
     <mode>sweep</mode>
-    <num_arma_samples>3</num_arma_samples>
+    <num_arma_samples>20</num_arma_samples>
     <time_discretization>
       <time_variable>Time</time_variable>
       <end_time>2</end_time>
@@ -49,16 +49,13 @@
           <driver>
             <Function method="capacity">functions</Function>
           </driver>
-          <reference_driver>
-            <fixed_value>10.0</fixed_value>
-          </reference_driver>
           <!-- Some of this component cashFlow info are imported from: Sets1//componentSet_pumps.txt-->
           <reference_driver>
             <fixed_value>2.74763868640817</fixed_value>
             <!--Units : MW-->
           </reference_driver>
           <reference_price>
-            <fixed_value>-1428015.4590150523</fixed_value>
+            <fixed_value>-1428015.4587681948</fixed_value>
             <!--Reference Price (USD)-->
           </reference_price>
           <scaling_factor_x>

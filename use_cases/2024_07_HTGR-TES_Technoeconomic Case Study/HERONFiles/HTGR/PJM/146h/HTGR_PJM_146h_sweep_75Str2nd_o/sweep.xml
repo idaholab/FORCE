@@ -1,0 +1,12 @@
+<DataObjectMetadata name="grid">
+  <DataSet type="Static">
+    <general>
+      <datasetName>grid</datasetName>
+      <inputs>SteamGen_capacity,Converter1_capacity,NewBOP_capacity,Charger_capacity,TES_capacity,Convert2_capacity,Grid_capacity</inputs>
+      <outputs>mean_NPV,std_NPV,med_NPV,max_NPV,min_NPV,perc_5_NPV,perc_95_NPV,samp_NPV,var_NPV</outputs>
+      <pointwise_meta>PointProbability,ProbabilityWeight,ProbabilityWeight-Charger_capacity,ProbabilityWeight-NewBOP_capacity,ProbabilityWeight-TES_capacity,prefix</pointwise_meta>
+      <sampleTag>RAVEN_sample_ID</sampleTag>
+    </general>
+  </DataSet>
+  
+</DataObjectMetadata>
