@@ -1,0 +1,235 @@
+<HERON>
+  <Case name="HTGR_LMB_ERCOT_PW100_Base">
+    <mode>sweep</mode>
+    <parallel>
+      <runinfo>
+        <expectedTime>96:0:0</expectedTime>
+        <memory>4g</memory>
+      </runinfo>
+    </parallel>
+    <num_arma_samples>20</num_arma_samples>
+   <debug>
+      <inner_samples>20</inner_samples>
+      <macro_steps>20</macro_steps>
+      <dispatch_plot>False</dispatch_plot>
+   </debug>
+    <time_discretization>
+      <time_variable>hour</time_variable>
+      <year_variable>Year</year_variable>
+      <end_time>119</end_time>
+      <num_steps>120</num_steps>
+    </time_discretization>
+    <economics>
+      <ProjectTime>20</ProjectTime>
+      <!-- <ProjectTime>30</ProjectTime> --> <!-- Uncomment the following node based on the scenario. -->
+      <DiscountRate>0.07</DiscountRate>
+      <tax>0.00</tax>
+      <inflation>0.00</inflation>
+      <verbosity>50</verbosity>
+    </economics>
+    <dispatcher>
+      <pyomo><solver>cbc</solver></pyomo>
+    </dispatcher>
+    <optimization_settings>
+      <stats_metric>expectedValue</stats_metric>
+      <opt_metric>NPV</opt_metric>
+      <type>max</type>
+      <persistence>2</persistence>
+    </optimization_settings>
+  </Case>
+
+  <Components>
+    <Component name="HTGR">
+      <produces resource="electricity" dispatch="fixed">
+        <capacity resource="electricity">
+          <fixed_value>9.6</fixed_value> <!-- MWe -->
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex" type="one-time" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <variable>HTGR_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-14001000</fixed_value> <!-- Base -->
+            <!-- <fixed_value>-8616000</fixed_value>--> <!-- L CAPEX Uncomment the following node based on the scenario. -->
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+        </CashFlow>
+        <CashFlow name="fixed_OM" type="repeating" period="year" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <variable>HTGR_capacity</variable>
+          </driver>
+          <reference_price>
+            <fixed_value>-136000</fixed_value> <!-- Base -->
+            <!-- <fixed_value>-118000</fixed_value>--> <!--L Fixed OM Uncomment the following node based on the scenario. -->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="VOM" type="repeating" taxable="False" inflation="none">
+          <driver>
+            <activity>electricity</activity>
+          </driver>
+          <reference_price>
+            <fixed_value>-13.6</fixed_value>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="powerdummy">
+      <produces resource="heat" dispatch="independent">
+        <consumes>tes_heat</consumes>
+        <capacity resource="tes_heat">
+          <fixed_value>100</fixed_value> <!-- Uncomment the following node based on the scenario. -->
+          <!--<fixed_value>10</fixed_value>--> <!--10 MW-->
+          <!--<fixed_value>20/fixed_value>-->  <!--20 MW -->
+          <!--<fixed_value>30</fixed_value>--> <!--30 MW -->
+          <!--<fixed_value>40</fixed_value> --> <!--40 MW -->
+          <!--<fixed_value>50</fixed_value>--> <!--50 MW-->
+          <!--<fixed_value>60/fixed_value>-->  <!--60 MW -->
+          <!--<fixed_value>70</fixed_value>--> <!--70 MW -->
+          <!--<fixed_value>80</fixed_value> --> <!--80 MW -->
+          <!--<fixed_value>90</fixed_value> --> <!--90 MW -->
+        </capacity>
+        <transfer>
+          <linear>
+            <rate resource="tes_heat">-1</rate>
+            <rate resource="heat">1</rate>
+          </linear>
+        </transfer>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+      </economics>
+    </Component>
+
+
+    <Component name="LMB">
+      <stores resource="electricity" dispatch="independent">
+        <capacity resource="electricity">
+           <sweep_values debug_value="300">0 100	200	300 400 500 600 600 800 900</sweep_values> <!--Power Level 100; Duration 0-9h Uncomment the following node based on the scenario. -->
+           <!-- <sweep_values>0	10	20	30	40	50	60	70	80	90</sweep_values> --><!--Power Level 10; Duration 0-9h-->
+           <!-- <sweep_values>0	20	40	60	80	100	120	140	160	180</sweep_values> --><!--Power Level 20; Duration 0-9h-->
+           <!-- <sweep_values>0	30	60	90	120	150	180	210	240	270</sweep_values> --><!--Power Level 30; Duration 0-9h-->
+           <!-- <sweep_values>0	40	80	120	160	200	240	280	320	360</sweep_values> --><!--Power Level 40; Duration 0-9h-->
+           <!-- <sweep_values>0	50	100	150	200	250	300	350	400	450</sweep_values> --><!--Power Level 50; Duration 0-9h-->
+           <!-- <sweep_values>0	60	120	180	240	300	360	420	480	540</sweep_values> --><!--Power Level 60; Duration 0-9h-->
+           <!-- <sweep_values>0	70	140	210	280	350	420	490	560	630</sweep_values> --><!--Power Level 70; Duration 0-9h-->
+           <!-- <sweep_values>0	80	160	240	320	400	480	560	640	720</sweep_values> --><!--Power Level 80; Duration 0-9h-->
+           <!-- <sweep_values>0	90	180	270	360	450	540	630	720	810</sweep_values> --><!--Power Level 90; Duration 0-9h-->
+          </capacity>
+        <initial_stored>
+          <fixed_value>0.8</fixed_value>
+        </initial_stored>
+        <periodic_level>True</periodic_level>
+        <RTE>
+          0.722
+        </RTE>
+      </stores>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="capex_energy" type="one-time" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <variable>LMB_capacity</variable>
+            <multiplier>-1000</multiplier><!--kwh to MWh-->
+          </driver>
+          <reference_price>
+            <Function method="energyocc">transfers</Function>
+          </reference_price>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value> <!--make it positive-->
+          </scaling_factor_x>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+        </CashFlow>
+        <CashFlow name="LMB_capex_power" type="one-time" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <variable>powerdummy_capacity</variable>
+            <multiplier>-1000</multiplier>
+          </driver>
+          <reference_price>
+            <Function method="powerocc">transfers</Function> <!--kw to MW-->
+          </reference_price>
+        </CashFlow>
+        <CashFlow name="fixed_OM" type="repeating" period="year" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <variable>LMB_capacity</variable>
+            <multiplier>-1000</multiplier>
+          </driver>
+          <reference_price>
+            <Function method="fixedOM">transfers</Function>
+          </reference_price>
+        </CashFlow>
+      </economics>
+    </Component>
+
+
+
+    <Component name="Grid">
+      <demands resource="electricity" dispatch="dependent">
+        <capacity resource="electricity">
+          <fixed_value>-1e200</fixed_value>
+        </capacity>
+      </demands>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="grid_sales" type="repeating" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier> <!-- to make positive (revenue)-->
+          </driver>
+          <reference_price>
+            <ARMA variable='price'>price</ARMA> <!-- $/MWh -->
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+
+    <Component name="Grid_import">
+      <produces resource="electricity" dispatch="dependent">
+        <capacity resource="electricity">
+          <fixed_value>1e200</fixed_value>
+        </capacity>
+      </produces>
+      <economics>
+        <lifetime>30</lifetime>
+        <CashFlow name="grid_import" type="repeating" taxable="False" inflation="None" mult_target="False">
+          <driver>
+            <activity>electricity</activity>
+            <multiplier>-1</multiplier> <!-- to make positive (cost)-->
+          </driver>
+          <reference_price>
+            <ARMA variable='price'>price</ARMA> <!-- $/MWh -->
+          </reference_price>
+          <reference_driver>
+            <fixed_value>1</fixed_value>
+          </reference_driver>
+          <scaling_factor_x>
+            <fixed_value>1</fixed_value>
+          </scaling_factor_x>
+        </CashFlow>
+      </economics>
+    </Component>
+  </Components>
+
+  <DataGenerators>
+    <ARMA name='price' variable="price">%ARMA%/arma_ERC_120h_73.pk</ARMA>
+    <!-- <ARMA name='price' variable="price">Type in the path to your file/arma_PJM_120h_73.pk</ARMA> -->
+    <!-- <ARMA name='price' variable="price">Type in the path to your file/arma_MIS_120h_73.pk</ARMA> -->
+    <Function name="transfers">transfers.py</Function>
+  </DataGenerators>
+</HERON>
+
