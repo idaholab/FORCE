@@ -17,34 +17,34 @@ NO_BUILD=0
 while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
-    --raven-dir)
-      RAVEN_DIR="$2"
-      shift
-      shift
-      ;;
-    --heron-dir)
-      HERON_DIR="$2"
-      shift
-      shift
-      ;;
-    --teal-dir)
-      TEAL_DIR="$2"
-      shift
-      shift
-      ;;
-    --no-build)
-      NO_BUILD=1
-      shift
-      ;;
-    --dest)
-      DOC_DIR="$2"
-      shift
-      shift
-      ;;
-    *)
-      echo "Unknown option: $1"
-      exit 1
-      ;;
+  --raven-dir)
+    RAVEN_DIR="$2"
+    shift
+    shift
+    ;;
+  --heron-dir)
+    HERON_DIR="$2"
+    shift
+    shift
+    ;;
+  --teal-dir)
+    TEAL_DIR="$2"
+    shift
+    shift
+    ;;
+  --no-build)
+    NO_BUILD=1
+    shift
+    ;;
+  --dest)
+    DOC_DIR="$2"
+    shift
+    shift
+    ;;
+  *)
+    echo "Unknown option: $1"
+    exit 1
+    ;;
   esac
 done
 
@@ -80,27 +80,27 @@ for loc in RAVEN_DIR HERON_DIR TEAL_DIR; do
 
   # If the build flag is set, build the documentation.
   if [ $NO_BUILD -eq 0 ]; then
-    echo "Building documentation for $(basename ${!loc})"
-    if [[ -f "Makefile" ]] && command -v "make" >/dev/null 2>&1; then
-      make
-    elif [[ -f "make_docs.bat" ]] && [[ $OSTYPE == "msys" ]]; then
-      ./make_docs.bat
-    elif [[ -f "make_docs.sh" ]]; then
-      bash make_docs.sh
-    else
-      echo "ERROR: No Makefile or make_docs.sh script found in $(basename ${!loc}) doc directory."
-      exit 1
-    fi
+  echo "Building documentation for $(basename ${!loc})"
+  if [[ -f "Makefile" ]] && command -v "make" >/dev/null 2>&1; then
+    make
+  elif [[ -f "make_docs.bat" ]] && [[ $OSTYPE == "msys" ]]; then
+    ./make_docs.bat
+  elif [[ -f "make_docs.sh" ]]; then
+    bash make_docs.sh
+  else
+    echo "ERROR: No Makefile or make_docs.sh script found in $(basename ${!loc}) doc directory."
+    exit 1
+  fi
   fi
 
   # The PDFs that are generated are located in either a "pdfs" or "pdf" directory
   if [ -d pdfs ]; then
-    cp pdfs/*.pdf $DOC_DIR
+  cp pdfs/*.pdf $DOC_DIR
   elif [ -d pdf ]; then
-    cp pdf/*.pdf $DOC_DIR
+  cp pdf/*.pdf $DOC_DIR
   else
-    echo "ERROR: No PDFs found in $(basename ${!loc}) doc directory."
-      exit 1
+  echo "ERROR: No PDFs found in $(basename ${!loc}) doc directory."
+    exit 1
   fi
 
   popd > /dev/null

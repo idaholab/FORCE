@@ -37,14 +37,14 @@ cp -Rp docs /Volumes/FORCE/
 # Move the "examples" and "docs" directories from the FORCE app bundle to the top level of the disk
 # image to make them more accessible.
 if [ -d FORCE.app/Contents/Resources/examples ]; then
-    mv /Volumes/FORCE/FORCE.app/Contents/Resources/examples /Volumes/FORCE/
+  mv /Volumes/FORCE/FORCE.app/Contents/Resources/examples /Volumes/FORCE/
 else
-    echo "WARNING: No examples directory found in FORCE.app bundle"
+  echo "WARNING: No examples directory found in FORCE.app bundle"
 fi
 if [ -d FORCE.app/Contents/Resources/docs ]; then
-    mv FORCE.app/Contents/Resources/docs /Volumes/FORCE/
+  mv FORCE.app/Contents/Resources/docs /Volumes/FORCE/
 else
-    echo "WARNING: No docs directory found in FORCE.app bundle"
+  echo "WARNING: No docs directory found in FORCE.app bundle"
 fi
 
 # Add .son file to Workbench app to provide a default HERON configuration
@@ -59,7 +59,7 @@ hdiutil detach /Volumes/FORCE
 
 # Convert to read-only compressed image
 if [ -f FORCE.dmg ]; then
-    rm FORCE.dmg
+  rm FORCE.dmg
 fi
 hdiutil convert force_build.dmg -format UDZO -o FORCE.dmg
 

@@ -27,36 +27,36 @@ import multiprocessing
 
 
 if __name__ == '__main__':
-    # For Windows, this is required to avoid an infinite loop when running a multiprocessing script from a frozen executable.
-    # cx_Freeze provides a hook for this that is supposed to be called automatically to fix this issue on all platforms,
-    # but for now, it doesn't seem to resolve the issue on macOS.
-    multiprocessing.freeze_support()
+  # For Windows, this is required to avoid an infinite loop when running a multiprocessing script from a frozen executable.
+  # cx_Freeze provides a hook for this that is supposed to be called automatically to fix this issue on all platforms,
+  # but for now, it doesn't seem to resolve the issue on macOS.
+  multiprocessing.freeze_support()
 
-    # Adds the "local/bin" directory to the system path in order to find ipopt and other executables
-    add_local_bin_to_path()
+  # Adds the "local/bin" directory to the system path in order to find ipopt and other executables
+  add_local_bin_to_path()
 
-    # Parse the command line arguments
-    import argparse
-    parser = argparse.ArgumentParser(description='RAVEN')
-    parser.add_argument('-w', action='store_true', default=False, required=False,help='Run in the GUI')
-    parser.add_argument('input', nargs='*', help='RAVEN input file')
-    args, unknown = parser.parse_known_args()
+  # Parse the command line arguments
+  import argparse
+  parser = argparse.ArgumentParser(description='RAVEN')
+  parser.add_argument('-w', action='store_true', default=False, required=False,help='Run in the GUI')
+  parser.add_argument('input', nargs='*', help='RAVEN input file')
+  args, unknown = parser.parse_known_args()
 
-    # More than one argument may be parsed for "input". Move any arguments that aren't an XML file to
-    # the unknown arguments list.
-    args_to_move = []
-    for arg in args.input:
-       if not arg.endswith('.xml'):
-          args_to_move.append(arg)
-    for arg in args_to_move:
-       args.input.remove(arg)
-       unknown.insert(0, arg)
+  # More than one argument may be parsed for "input". Move any arguments that aren't an XML file to
+  # the unknown arguments list.
+  args_to_move = []
+  for arg in args.input:
+     if not arg.endswith('.xml'):
+      args_to_move.append(arg)
+  for arg in args_to_move:
+     args.input.remove(arg)
+     unknown.insert(0, arg)
 
-    # sys.argv is used by the main function, so we need to remove the -w argument
-    if args.w:
-        sys.argv.remove('-w')
+  # sys.argv is used by the main function, so we need to remove the -w argument
+  if args.w:
+    sys.argv.remove('-w')
 
-    if args.w or not args.input:  # run the GUI if asked to (-w) or if no input file is given
-        run_from_gui(main, checkLibraries=True)
-    else:
-        sys.exit(main(True))
+  if args.w or not args.input:  # run the GUI if asked to (-w) or if no input file is given
+    run_from_gui(main, checkLibraries=True)
+  else:
+    sys.exit(main(True))

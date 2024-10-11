@@ -10,28 +10,28 @@ EXAMPLES_DIR="$SCRIPT_DIR/examples"
 
 while [[ $# -gt 0 ]]
 do
-    key="$1"
-    case $key in
-        --raven-dir)
-        RAVEN_DIR="$2"
-        shift
-        shift
-        ;;
-        --heron-dir)
-        HERON_DIR="$2"
-        shift
-        shift
-        ;;
-        --dest)
-        EXAMPLES_DIR="$2"
-        shift
-        shift
-        ;;
-        *)
-        echo "Unknown option: $1"
-        exit 1
-        ;;
-    esac
+  key="$1"
+  case $key in
+    --raven-dir)
+    RAVEN_DIR="$2"
+    shift
+    shift
+    ;;
+    --heron-dir)
+    HERON_DIR="$2"
+    shift
+    shift
+    ;;
+    --dest)
+    EXAMPLES_DIR="$2"
+    shift
+    shift
+    ;;
+    *)
+    echo "Unknown option: $1"
+    exit 1
+    ;;
+  esac
 done
 
 # The examples we want to copy are the RAVEN user_guide tests, the HERON workshop tests, and the
@@ -40,17 +40,17 @@ EXAMPLES=($RAVEN_DIR/tests/framework/user_guide $HERON_DIR/data $HERON_DIR/tests
 mkdir -p $EXAMPLES_DIR
 
 for ex in ${EXAMPLES[@]}; do
-    cp -R "$ex" "$EXAMPLES_DIR"
+  cp -R "$ex" "$EXAMPLES_DIR"
 done
 
 # Clean up the copied examples, removing files and directories created when running the tests.
 DIRS_TO_REMOVE=("__pycache__" "gold" "*_o")
 for dirname in ${DIRS_TO_REMOVE[@]}; do
-    find $EXAMPLES_DIR -type d -name $dirname -exec rm -r {} \; 2>/dev/null
+  find $EXAMPLES_DIR -type d -name $dirname -exec rm -r {} \; 2>/dev/null
 done
 FILES_TO_REMOVE=("tests" "moped_input.xml" "outer.xml" "inner.xml" "cash.xml" "*.lib" "write_inner.py" "*.heron" "*.heron.xml")
 for filename in ${FILES_TO_REMOVE[@]}; do
-    find $EXAMPLES_DIR -name $filename -exec rm {} \; 2>/dev/null
+  find $EXAMPLES_DIR -name $filename -exec rm {} \; 2>/dev/null
 done
 
 # If building on Mac, replace the %HERON_DATA% magic string with a relative path to the data
