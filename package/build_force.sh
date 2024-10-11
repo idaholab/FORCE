@@ -9,6 +9,7 @@ while [[ $# -gt 0 ]]; do
       CONDA_DEFS="$2"
       shift
       shift
+      source $CONDA_DEFS
       ;;
     *)
       echo "Unknown option: $1"
@@ -19,7 +20,6 @@ done
 
 # Establish conda environment
 conda create -n force_build_310 python=3.10 -y
-source $CONDA_DEFS
 conda activate force_build_310
 
 # Check that the conda environment is active. If not, exit.

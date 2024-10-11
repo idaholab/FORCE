@@ -7,9 +7,10 @@ Windows and macOS are the only operating systems currently supported.
 Linux users are encouraged to use pip-installed or source built versions of the RAVEN, HERON, and TEAL software packages.
 
 ## 1. Build FORCE executables
-Create a conda environment `force_build_310`, install the RAVEN, HERON, and TEAL pip packages, and build the FORCE executables using the script
+Create a conda environment `force_build_310`, install the RAVEN, HERON, and TEAL pip packages, and build the FORCE executables using the script `build_force.sh`.
+The path to the conda executable must be provided using the `--conda-defs` argument.
 ```console
-./build_force.sh
+./build_force.sh --conda-defs <path to conda directory>/etc/profile.d/conda.sh
 ```
 
 ## 2. Add IPOPT to build directory (Windows only)
@@ -34,17 +35,22 @@ cp -R examples force_install/examples
 cp -R docs force_install/docs
 ```
 When running the `make_docs.sh` script, the optional `--no-build` flag may be added if the desired documentation PDFs have already been built, and you do not wish to rebuild the documents.
+If using the `--no-build` option, there is no need to have the `raven_libraries` active.
+```console
+./make_docs.sh --no-build --raven-dir /path/to/raven --heron-dir /path/to/HERON --teal-dir /path/to/TEAL
+cp -R docs force_install/docs
+```
 
 ## 4. Get NEAMS Workbench installer
 The installers for the NEAMS Workbench software can be found here:
 https://code.ornl.gov/neams-workbench/downloads/-/tree/5.4.1?ref_type=heads
 
 Download `Workbench-5.4.1.exe` for Windows and `Workbench-5.4.1.dmg` for macOS.
-Place this file in the current directory.
+Place this file in the `force_install` directory on Windows or the current directory on macOS.
 
 Windows:
 ```console
-cp ~/Downloads/Workbench-5.4.1.exe .
+cp ~/Downloads/Workbench-5.4.1.exe force_install
 ```
 
 macOS:
