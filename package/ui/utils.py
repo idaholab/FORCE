@@ -334,13 +334,13 @@ def run_in_workbench(file: str | None = None):
   print("Opening Workbench...", file=sys.__stdout__)
   print("***If this is the first time you are running Workbench, this may take a few minutes!***\n",
       file=sys.__stdout__)
-  if platform.system() == "Windows":
+  if platform.system() == "Darwin":  # macOS
+    subprocess.run(["/usr/bin/open", "-n", "-a", workbench_path])
+  else:  # Windows, Linux
+    # NOTE: untested on Linux as of 2024-10-11
     if file is None:
       command = str(workbench_path)
     else:
       command = [str(workbench_path), file]
     print("using command", command)
     subprocess.run(command)
-  else:
-    # NOTE: untested on Linux as of 2024-07-22
-    subprocess.run(["/usr/bin/open", "-n", "-a", workbench_path])
