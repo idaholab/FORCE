@@ -1,46 +1,46 @@
 [Tests]
   [./TestMinimalInput]
-    type = RavenPython
-    input = '-m unittest test_heron.TestMinimalInput'
+    type = Unittest
+    input = 'test_heron.TestMinimalInput'
   [../]
 
   [./TestExpandedInput1]
-    type = RavenPython
-    input = '-m unittest test_heron.TestExpandedInput1'
+    type = Unittest
+    input = 'test_heron.TestExpandedInput1'
   [../]
 
   [./TestExpandedInput2]
-    type = RavenPython
-    input = '-m unittest test_heron.TestExpandedInput2'
+    type = Unittest
+    input = 'test_heron.TestExpandedInput2'
   [../]
 
   [./TestNoComponentsNode]
-    type = RavenPython
-    input = '-m unittest test_heron.TestNoComponentsNode'
+    type = Unittest
+    input = 'test_heron.TestNoComponentsNode'
   [../]
 
   [./TestNoComponentNodes]
-    type = RavenPython
-    input = '-m unittest test_heron.TestNoComponentNodes'
+    type = Unittest
+    input = 'test_heron.TestNoComponentNodes'
   [../]
 
   [./TestMissingSubnodes]
-    type = RavenPython
-    input = '-m unittest test_heron.TestMissingSubnodes'
+    type = Unittest
+    input = 'test_heron.TestMissingSubnodes'
   [../]
 
   [./TestEmptyCompSetsFolder]
-    type = RavenPython
-    input = '-m unittest test_heron.TestEmptyCompSetsFolder'
+    type = Unittest
+    input = 'test_heron.TestEmptyCompSetsFolder'
   [../]
 
   [./TestCompSetsFolderWithBadJSON]
-    type = RavenPython
-    input = '-m unittest test_heron.TestCompSetsFolderWithBadJSON'
+    type = Unittest
+    input = 'test_heron.TestCompSetsFolderWithBadJSON'
   [../]
 
   [./TestCompSetsFolderMultFiles]
-    type = RavenPython
-    input = '-m unittest test_heron.TestCompSetsFolderMultFiles'
+    type = Unittest
+    input = 'test_heron.TestCompSetsFolderMultFiles'
   [../]
 []
