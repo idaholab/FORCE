@@ -49,6 +49,10 @@ cd $SCRIPT_DIR
 
 #coverage help run
 SRC_DIR=`(cd src && pwd)`
+if [[ "$SRC_DIR" == "/c"* ]]
+then
+    SRC_DIR="C:${SRC_DIR:2}"
+fi
 
 # get display var
 DISPLAY_VAR=`(echo $DISPLAY)`
