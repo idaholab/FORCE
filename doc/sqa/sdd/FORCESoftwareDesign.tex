@@ -1,0 +1,28 @@
+\section{Software Design}
+\subsection{Introduction}
+The Framework for Optimization of ResourCes and Economics is a collection of software tools,models, and datasets acquired and developed under the Integrated Energy Systems (IES) program toenable analysis of technical and economic viability of myriad IES configurations. FORCE is the consolidating interface and data repository for all the IES toolsets ranging from macrotechnoeconomic analysis to transient process modeling and experimental validation for integrated energy systems. 
+
+FORCE leverages the work performed by prior IES analysts who are experts in HERON, HYBRID,RAVEN, TEAL, and FARM workflow development to automate workflow generation including the functionality of all of these opensource toolsets as well as distributable data and models from previous analyses.
+
+Inputs to FORCE depend on the desired workflow. FORCE includes two primary workflows: Macro-technoeconomic analysis using HERON or transient process modeling using HYBRID. Both HERON and HYBRID leverage methods from TEAL, RAVEN, and FARM. Further,analysis in HERON informs HYBRID and vice versa. Traditionally this interaction has been manual rather than automated. FORCE delivers a unified platform for IES analysis and data transfer. This unification eliminates error prone ad-hoc coupling between the underlying toolsets and provides a consistent and singular analysis process 
+
+\subsection{FORCE Repository Structure}
+The FORCE Repository structure will be as follows
+
+\begin{itemize}
+\item \textbf{\textit{Use Cases}}: Folder containing the Previous examples, Trained Data, and Original Market Data
+\item \textbf{\textit{Src}}: Folder containing the Plotters, Regression System, User Manual and Documentation
+\item \textbf{\textit{SubModules}}: Folder containing the primary submodules of FORCE. 
+\end{itemize}
+
+
+\subsection{Regression Test System}
+FORCE a repository that contains a series of Use Cases and base training data capable of producing potential integrated energy system configurations. To test these models the RAVEN based regression system ROOK has been utilized. This testing system has been linked with the Continuous Integration tool to automatically test the models when new modifications are added to the repository. To do this RAVEN has been sub-moduled within FORCE. 
+
+\subsubsection{Regression Tests}
+ROOK operates via a basic testing harness. The testing harness includes a “tests” file that contains the tolerance limits, a gold folder with a gold test file, a simulation file to run, a file with which to launch the simulation, and a directory of tests to run. 
+
+These tests are of workflows that are specific to integrated energy system workflow generation. FORCE is designed to be able to provide a techno-economic assessment of different integrated energy systems. As part of this FORCE includes the generation of workflows capable of implementing stochastic time series of wind, solar, and electric price data created via the Auto Regressive Moving Averages (ARMAs) algorithms within RAVEN into a workflow that can then be utilized. The creation of these ARMAs using data held within the FORCE repository is maintained using the ROOK system. 
+
+
+
